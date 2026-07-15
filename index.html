@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OTOPOS</title>
-<!-- PENTING: Link CSS Bootstrap agar tampilan rapi -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   body{background:#f5f5f5; padding-bottom:70px}
@@ -24,7 +23,6 @@
 </head>
 <body>
 
-<!-- DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div class="header-bengkel text-center mb-3">
     <img id="logoDashboard" src="" style="width:60px; display:none;" class="mb-2 rounded-circle border border-3 border-white">
@@ -37,40 +35,70 @@
       <div class="col-6"><div class="card text-center p-3 border-0 shadow-sm"><h4 class="text-success fw-bold mb-0" id="jumlahService">0</h4><small class="text-muted">Service Selesai</small></div></div>
       <div class="col-12"><div class="card text-center p-3 border-0 shadow-sm bg-warning-subtle"><h4 class="text-warning fw-bold mb-0" id="jumlahKendaraan">0</h4><small class="text-muted">Kendaraan Dikerjakan</small></div></div>
     </div>
-    <h6 class="fw-bold mb-2">Menu Utama</h6>
-    <div class="menu-card" onclick="showPage('page-kendaraan')"><div class="me-3 fs-4">🏍️</div><div><b>Kendaraan Ditangani</b></div></div>
-    <div class="menu-card" onclick="showPage('page-riwayat')"><div class="me-3 fs-4">📜</div><div><b>Riwayat Service</b></div></div>
-    <div class="menu-card" onclick="showPage('page-part')"><div class="me-3 fs-4">📦</div><div><b>Daftar Part</b></div></div>
-    <div class="menu-card" onclick="showPage('page-laporan')"><div class="me-3 fs-4">📊</div><div><b>Laporan</b></div></div>
-    <div class="menu-card" onclick="showPage('page-mekanik')"><div class="me-3 fs-4">👨‍🔧</div><div><b>Daftar Mekanik</b></div></div>
-    <div class="menu-card" onclick="showPage('page-setting')"><div class="me-3 fs-4">⚙️</div><div><b>Setting Bengkel</b></div></div>
+    <div class="menu-card" onclick="showPage('page-kendaraan')"><div>🏍️</div><div class="ms-3"><b>Kendaraan Ditangani</b></div></div>
+    <div class="menu-card" onclick="showPage('page-riwayat')"><div>📜</div><div class="ms-3"><b>Riwayat Service</b></div></div>
+    <div class="menu-card" onclick="showPage('page-part')"><div>📦</div><div class="ms-3"><b>Daftar Part</b></div></div>
+    <div class="menu-card" onclick="showPage('page-setting')"><div>⚙️</div><div class="ms-3"><b>Setting Bengkel</b></div></div>
   </div>
 </div>
 
-<!-- (SISA HALAMAN LAINNYA TETAP SEPERTI SEMULA) -->
-<!-- Pastikan script ini ada di bagian bawah -->
+<div id="page-setting" class="page">
+  <nav class="navbar navbar-dark bg-primary mb-3"><div class="container-fluid"><a class="navbar-brand" onclick="showPage('page-dashboard')">← Kembali</a></div></nav>
+  <div class="container">
+    <div class="card p-3">
+      <input id="namaBengkel" class="form-control mb-2" placeholder="Nama Bengkel">
+      <input id="alamatBengkel" class="form-control mb-2" placeholder="Alamat">
+      <input id="logoBengkel" type="file" class="form-control mb-2" onchange="previewLogo(event)">
+      <button class="btn btn-primary w-100" onclick="simpanDataBengkel()">SIMPAN DATA</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Fungsi utama untuk navigasi dan data tetap sama
-  function showPage(id){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-  }
-  
-  function loadDataBengkel(){
+let daftarPart = JSON.parse(localStorage.getItem('daftarPart')) || [];
+let daftarKendaraan = JSON.parse(localStorage.getItem('daftarKendaraan')) || [];
+let riwayatService = JSON.parse(localStorage.getItem('riwayatService')) || [];
+
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function loadDashboard(){
+    let hariIni = new Date().toLocaleDateString('id-ID');
+    let serviceHariIni = riwayatService.filter(r => r.tanggal.includes(hariIni));
+    let omset = serviceHariIni.reduce((a, b) => a + (parseInt(b.total)||0), 0);
+    document.getElementById('omsetHariIni').innerText = 'Rp ' + omset.toLocaleString('id-ID');
+    document.getElementById('jumlahService').innerText = serviceHariIni.length;
+    document.getElementById('jumlahKendaraan').innerText = daftarKendaraan.length;
+}
+
+function loadDataBengkel(){
     document.getElementById('namaDashboard').innerText = localStorage.getItem('namaBengkel') || 'OTOPOS';
     document.getElementById('alamatDashboard').innerText = localStorage.getItem('alamatBengkel') || '';
     let logo = localStorage.getItem('logoBengkel');
-    if(logo){
-        document.getElementById('logoDashboard').src = logo;
-        document.getElementById('logoDashboard').style.display = 'block';
-    }
-  }
-  
-  // Panggil data saat halaman dimuat
-  window.onload = function() {
+    if(logo){ document.getElementById('logoDashboard').src = logo; document.getElementById('logoDashboard').style.display = 'block'; }
+    document.getElementById('namaBengkel').value = localStorage.getItem('namaBengkel') || '';
+    document.getElementById('alamatBengkel').value = localStorage.getItem('alamatBengkel') || '';
+}
+
+function simpanDataBengkel(){
+    localStorage.setItem('namaBengkel', document.getElementById('namaBengkel').value);
+    localStorage.setItem('alamatBengkel', document.getElementById('alamatBengkel').value);
+    alert('Data Tersimpan');
     loadDataBengkel();
-    // Tambahkan fungsi load lainnya di sini
-  };
+}
+
+function previewLogo(event){
+    let reader = new FileReader();
+    reader.onload = function(e){
+        localStorage.setItem('logoBengkel', e.target.result);
+        loadDataBengkel();
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+window.onload = function() {
+    loadDataBengkel();
+    loadDashboard();
+};
 </script>
 </body>
 </html>
