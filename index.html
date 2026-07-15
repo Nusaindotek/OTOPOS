@@ -7,18 +7,18 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   body{background:#f5f5f5; padding-bottom:70px}
- .page{display:none}
- .page.active{display:block}
- .menu-card{border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,.05);padding:16px;margin-bottom:12px;background:#fff;cursor:pointer}
- .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
- .status-free{background:#28a745}
- .status-sibuk{background:#dc3545}
- .avatar{width:40px;height:40px;border-radius:50%;background:#0d6efd;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
- .kendaraan-tab{border:2px solid #eee; cursor:pointer}
- .kendaraan-tab.active{border-color:#0d6efd; background:#e7f1ff}
- .badge-stok-aman{background:#d1e7dd;color:#0f5132}
- .modal-bg{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;}
- .modal-box{background:#fff; width:90%; max-width:400px; margin:120px auto; padding:16px; border-radius:12px;}
+.page{display:none}
+.page.active{display:block}
+.menu-card{border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,.05);padding:16px;margin-bottom:12px;background:#fff;cursor:pointer}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.status-free{background:#28a745}.status-sibuk{background:#dc3545}
+.avatar{width:40px;height:40px;border-radius:50%;background:#0d6efd;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.kendaraan-tab{border:2px solid #eee; cursor:pointer}
+.kendaraan-tab.active{border-color:#0d6efd; background:#e7f1ff}
+.badge-stok-aman{background:#d1e7dd;color:#0f5132}.badge-selesai{background:#cff4fc;color:#055160}
+.modal-bg{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;}
+.modal-box{background:#fff; width:90%; max-width:400px; margin:120px auto; padding:16px; border-radius:12px;}
+.list-item{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee}
 </style>
 </head>
 <body>
@@ -32,10 +32,11 @@
   </div>
   <div class="container">
     <div class="row g-2 mb-3">
-      <div class="col-6"><div class="card text-center p-3"><h4 class="text-primary fw-bold">Rp 3.4 Jt</h4><small>Omset Hari Ini</small></div></div>
-      <div class="col-6"><div class="card text-center p-3"><h4 class="text-primary fw-bold">12</h4><small>Service Hari Ini</small></div></div>
+      <div class="col-6"><div class="card text-center p-3"><h4 class="text-primary fw-bold" id="omsetHariIni">Rp 0</h4><small>Omset Hari Ini</small></div></div>
+      <div class="col-6"><div class="card text-center p-3"><h4 class="text-primary fw-bold" id="jumlahService">0</h4><small>Service Hari Ini</small></div></div>
     </div>
     <div class="menu-card" onclick="showPage('page-kendaraan')"><b>Kendaraan Ditangani</b></div>
+    <div class="menu-card" onclick="showPage('page-riwayat')"><b>Riwayat Service</b></div> <!-- BARU -->
     <div class="menu-card" onclick="showPage('page-part')"><b>Daftar Part</b></div>
     <div class="menu-card" onclick="showPage('page-input-part')"><b>Input Part</b></div>
     <div class="menu-card" onclick="showPage('page-mekanik')"><b>Daftar Mekanik</b></div>
@@ -44,31 +45,74 @@
   </div>
 </div>
 
-<!-- 2. KENDARAAN + KASIR -->
+<!-- 2. KENDARAAN -->
 <div id="page-kendaraan" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KENDARAAN</span>
+    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KENDARAAN DITANGANI</span>
     <button class="btn btn-light btn-sm" onclick="showModal('modalKendaraan')">+ Tambah</button></div></nav>
   <div class="container py-3">
     <div class="row g-2" id="listKendaraan"></div>
-    <div class="card p-3 mt-3">
-      <h6 class="fw-bold">Total: Rp 150.000</h6>
-      <button class="btn btn-primary w-100" onclick="showPage('page-kasir')">LANJUT KE KASIR</button>
-    </div>
+    <small class="text-muted">*Klik kartu untuk isi detail service</small>
   </div>
 </div>
 
+<!-- 2B. DETAIL SERVICE -->
+<div id="page-detail-service" class="page">
+  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+    <a class="navbar-brand" onclick="showPage('page-kendaraan')">←</a><span class="navbar-brand mx-auto fw-bold">DETAIL SERVICE</span></div></nav>
+  <div class="container py-3">
+    <div class="card p-3 mb-3">
+      <h6 id="detailPlat" class="fw-bold"></h6>
+      <small id="detailTipe" class="text-muted"></small>
+    </div>
+    <div class="card p-3 mb-3">
+      <h6 class="fw-bold">1. Diagnosis Kerusakan</h6>
+      <textarea id="diagnosis" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="card p-3 mb-3">
+      <h6 class="fw-bold">2. Pilih Mekanik</h6>
+      <select id="selectMekanik" class="form-control"></select>
+    </div>
+    <div class="card p-3 mb-3">
+      <div class="d-flex justify-content-between mb-2">
+        <h6 class="fw-bold">3. Part Digunakan</h6>
+        <button class="btn btn-sm btn-primary" onclick="showModal('modalTambahPart')">+ Tambah Part</button>
+      </div>
+      <div id="listPartDipakai"></div>
+      <h6 class="text-end mt-2">Subtotal Part: Rp <span id="subtotalPart">0</span></h6>
+    </div>
+    <div class="card p-3 mb-3">
+      <h6 class="fw-bold">4. Jasa Service</h6>
+      <input id="biayaJasa" type="number" class="form-control" value="50000">
+    </div>
+    <h5 class="text-end fw-bold">TOTAL: Rp <span id="totalAkhir">0</span></h5>
+    <button class="btn btn-success w-100 mt-2" onclick="lanjutKasir()">LANJUT KE KASIR</button>
+  </div>
+</div>
+
+<!-- 3. KASIR -->
 <div id="page-kasir" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-kendaraan')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
+    <a class="navbar-brand" onclick="showPage('page-detail-service')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
   <div class="container py-3">
-    <div class="card p-3 mb-3"><b>B 1234 ABC</b><br><small>Honda Beat</small></div>
-    <div class="card p-3 mb-3"><h6>Total: Rp 150.000</h6></div>
-    <button class="btn btn-success w-100" onclick="window.print()">BAYAR & CETAK</button>
+    <div class="card p-3 mb-3">
+      <b id="kasirPlat"></b><br><small id="kasirTipe"></small>
+    </div>
+    <div class="card p-3 mb-3" id="kasirDetail"></div>
+    <h5 class="text-end fw-bold">TOTAL BAYAR: Rp <span id="kasirTotal">0</span></h5>
+    <button class="btn btn-success w-100 mb-2" onclick="selesaikanService()">SELESAI & SIMPAN</button> <!-- TOMBOL BARU -->
+    <button class="btn btn-outline-secondary w-100" onclick="window.print()">CETAK STRUK</button>
   </div>
 </div>
 
-<!-- 3. DAFTAR PART -->
+<!-- 3B. RIWAYAT SERVICE - BARU -->
+<div id="page-riwayat" class="page">
+  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">RIWAYAT SERVICE</span></div></nav>
+  <div class="container py-3" id="listRiwayat"></div>
+</div>
+
+<!-- 4. DAFTAR PART -->
 <div id="page-part" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR PART</span>
@@ -79,7 +123,7 @@
   </div>
 </div>
 
-<!-- 4. INPUT PART -->
+<!-- 5. INPUT PART -->
 <div id="page-input-part" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-part')">←</a><span class="navbar-brand mx-auto fw-bold">INPUT PART</span></div></nav>
@@ -94,7 +138,7 @@
   </div>
 </div>
 
-<!-- 5. DAFTAR MEKANIK -->
+<!-- 6. DAFTAR MEKANIK -->
 <div id="page-mekanik" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR MEKANIK</span>
@@ -102,33 +146,23 @@
   <div class="container py-3"><div class="card p-3" id="listMekanik"></div></div>
 </div>
 
-<!-- 6. LAPORAN -->
-<div id="page-laporan" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+<!-- 7. LAPORAN + SETTING -->
+<div id="page-laporan" class="page"><nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">LAPORAN</span></div></nav>
   <div class="container py-3"><div class="card p-3 text-center">Halaman Laporan</div></div>
 </div>
 
-<!-- 7. SETTING -->
-<div id="page-setting" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+<div id="page-setting" class="page"><nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">SETTING</span></div></nav>
   <div class="container py-3">
     <div class="card p-3 mb-3">
       <h6 class="fw-bold">Data Bengkel</h6>
-      <input id="namaBengkel" class="form-control mb-2" placeholder="Nama Bengkel">
-      <input id="alamatBengkel" class="form-control mb-2" placeholder="Alamat Bengkel">
-      <label>Logo Bengkel</label>
+      <input id="namaBengkel" class="form-control mb-2">
+      <input id="alamatBengkel" class="form-control mb-2">
       <input id="logoBengkel" type="file" accept="image/*" class="form-control mb-2" onchange="previewLogo(event)">
       <img id="previewLogo" src="" style="width:80px; display:none;" class="mb-2 rounded">
       <button class="btn btn-primary w-100" onclick="simpanDataBengkel()">SIMPAN DATA</button>
     </div>
-    <div class="card p-3 mb-3">
-      <h6 class="fw-bold">Setting Struk</h6>
-      <textarea id="footerStruk" class="form-control mb-2" rows="3"></textarea>
-      <button class="btn btn-primary w-100" onclick="simpanFooter()">SIMPAN FOOTER</button>
-    </div>
-    <div class="card p-3"><button class="btn btn-outline-danger w-100" onclick="alert('Logout')">Logout</button></div>
   </div>
 </div>
 
@@ -154,6 +188,17 @@
   </div>
 </div>
 
+<!-- MODAL TAMBAH PART KE SERVICE -->
+<div id="modalTambahPart" class="modal-bg">
+  <div class="modal-box">
+    <h6 class="fw-bold mb-3">Tambah Part ke Service</h6>
+    <select id="selectPart" class="form-control mb-2"></select>
+    <input id="qtyPart" type="number" value="1" class="form-control mb-3">
+    <button class="btn btn-primary w-100 mb-2" onclick="tambahPartKeService()">TAMBAH</button>
+    <button class="btn btn-outline-secondary w-100" onclick="hideModal('modalTambahPart')">BATAL</button>
+  </div>
+</div>
+
 <!-- FOOTER NAV -->
 <nav class="navbar fixed-bottom bg-white border-top">
   <div class="container-fluid justify-content-around">
@@ -164,73 +209,109 @@
 </nav>
 
 <script>
-// NAVIGASI
+let currentService = {id:0, plat:'', tipe:'', diagnosis:'', mekanik:'', parts:[], jasa:50000, total:0, tanggal:new Date().toLocaleString('id-ID')};
+
+// NAV
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function showModal(id){document.getElementById(id).style.display='block';}
 function hideModal(id){document.getElementById(id).style.display='none';}
 
-// DATA GLOBAL
-let daftarPart = JSON.parse(localStorage.getItem('daftarPart')) || [{kode:'OLI001',nama:'Oli MPX 1',stok:15,harga:55000}];
-let daftarMekanik = JSON.parse(localStorage.getItem('daftarMekanik')) || [{id:1,nama:'Asep',status:'sibuk'},{id:2,nama:'Cecep',status:'free'}];
-let daftarKendaraan = JSON.parse(localStorage.getItem('daftarKendaraan')) || [{plat:'B 1234 ABC',tipe:'Honda Beat'}];
+// DATA
+let daftarPart = JSON.parse(localStorage.getItem('daftarPart')) || [];
+let daftarMekanik = JSON.parse(localStorage.getItem('daftarMekanik')) || [];
+let daftarKendaraan = JSON.parse(localStorage.getItem('daftarKendaraan')) || [];
+let riwayatService = JSON.parse(localStorage.getItem('riwayatService')) || [];
 
-// PART
-function simpanPart(){
-  if(namaPart.value==''){alert('Nama Part wajib');return}
-  let partBaru={kode:kodePart.value,nama:namaPart.value,stok:stokPart.value,harga:hargaPart.value}
-  daftarPart.push(partBaru);localStorage.setItem('daftarPart',JSON.stringify(daftarPart));
-  alert('Part berhasil disimpan');kodePart.value='';namaPart.value='';stokPart.value='0';hargaPart.value='';
-  showPage('page-part');loadDaftarPart();
-}
-function loadDaftarPart(){
-  let html='';daftarPart.forEach(p=>{html+=`<tr><td>${p.nama}</td><td><span class="badge badge-stok-aman">${p.stok}</span></td><td>Rp ${parseInt(p.harga).toLocaleString('id-ID')}</td></tr>`});
-  document.getElementById('tabelPart').innerHTML=html;
+// KLIK KENDARAAN
+function bukaDetailService(id){
+  let k = daftarKendaraan.find(x=>x.id==id);
+  currentService = {id:id, plat:k.plat, tipe:k.tipe, diagnosis:'', mekanik:'', parts:[], jasa:50000, total:0, tanggal:new Date().toLocaleString('id-ID')};
+  detailPlat.innerText = k.plat; detailTipe.innerText = k.tipe;
+  loadSelectMekanik(); loadSelectPart(); loadListPartDipakai(); hitungTotal();
+  showPage('page-detail-service');
 }
 
-// MEKANIK
-function simpanMekanik(){
-  if(namaMekanik.value == ''){ alert('Nama mekanik wajib diisi'); return; }
-  let m={id:Date.now(),nama:namaMekanik.value,status:statusMekanik.value}
-  daftarMekanik.push(m);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));
-  hideModal('modalMekanik');namaMekanik.value='';loadDaftarMekanik();
+// PART DI SERVICE
+function loadSelectPart(){let html='';daftarPart.forEach(p=>{html+=`<option value="${p.kode}">${p.nama} - Rp ${parseInt(p.harga).toLocaleString('id-ID')}</option>`});selectPart.innerHTML=html;}
+function tambahPartKeService(){let kode=selectPart.value;let part=daftarPart.find(p=>p.kode==kode);let qty=parseInt(qtyPart.value);currentService.parts.push({nama:part.nama, harga:part.harga, qty:qty});hideModal('modalTambahPart');loadListPartDipakai();hitungTotal();}
+function loadListPartDipakai(){let html='';let subtotal=0;currentService.parts.forEach(p=>{let total=p.harga*p.qty;subtotal+=total;html+=`<div class="list-item"><div>${p.nama} x${p.qty}</div><div>Rp ${total.toLocaleString('id-ID')}</div></div>`});listPartDipakai.innerHTML=html||'<small class="text-muted">Belum ada part</small>';subtotalPart.innerText=subtotal.toLocaleString('id-ID');}
+
+// MEKANIK + TOTAL
+function loadSelectMekanik(){let html='';daftarMekanik.forEach(m=>{html+=`<option value="${m.nama}">${m.nama}</option>`});selectMekanik.innerHTML=html;}
+function hitungTotal(){let subtotalPart=currentService.parts.reduce((a,b)=>a+(b.harga*b.qty),0);let jasa=parseInt(biayaJasa.value)||0;currentService.total=subtotalPart+jasa;totalAkhir.innerText=currentService.total.toLocaleString('id-ID');}
+biayaJasa.oninput=hitungTotal;
+
+// LANJUT KASIR
+function lanjutKasir(){
+  currentService.diagnosis=diagnosis.value; currentService.mekanik=selectMekanik.value; currentService.jasa=parseInt(biayaJasa.value);
+  kasirPlat.innerText=currentService.plat; kasirTipe.innerText=currentService.tipe; kasirTotal.innerText=currentService.total.toLocaleString('id-ID');
+  let html=`<b>Diagnosis:</b> ${currentService.diagnosis}<br><b>Mekanik:</b> ${currentService.mekanik}<br><hr>`;
+  currentService.parts.forEach(p=>{html+=`${p.nama} x${p.qty} = Rp ${(p.harga*p.qty).toLocaleString('id-ID')}<br>`});
+  html+=`<hr>Jasa: Rp ${currentService.jasa.toLocaleString('id-ID')}`;
+  kasirDetail.innerHTML=html; showPage('page-kasir');
 }
+
+// SELESAIKAN & SIMPAN RIWAYAT - FITUR BARU
+function selesaikanService(){
+  // 1. Simpan ke riwayat
+  riwayatService.push(currentService);
+  localStorage.setItem('riwayatService',JSON.stringify(riwayatService));
+
+  // 2. Kurangi stok part
+  currentService.parts.forEach(pDipakai=>{
+    let part = daftarPart.find(x=>x.nama==pDipakai.nama);
+    if(part) part.stok = parseInt(part.stok) - parseInt(pDipakai.qty);
+  });
+  localStorage.setItem('daftarPart',JSON.stringify(daftarPart));
+
+  // 3. Hapus motor dari daftar "ditangani"
+  daftarKendaraan = daftarKendaraan.filter(k=>k.id!=currentService.id);
+  localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));
+
+  alert('Service Selesai & Tersimpan');
+  loadDaftarKendaraan(); loadDaftarPart(); loadRiwayat(); loadDashboard();
+  showPage('page-dashboard');
+}
+
+// LOAD RIWAYAT
+function loadRiwayat(){
+  let html='';
+  riwayatService.slice().reverse().forEach(r=>{
+    html+=`<div class="card p-3 mb-2">
+      <div class="d-flex justify-content-between">
+        <div><b>${r.plat}</b><br><small>${r.tipe}</small></div>
+        <span class="badge badge-selesai">Selesai</span>
+      </div>
+      <small>Mekanik: ${r.mekanik} | ${r.tanggal}</small><br>
+      <b>Total: Rp ${r.total.toLocaleString('id-ID')}</b>
+    </div>`;
+  });
+  listRiwayat.innerHTML = html || '<div class="text-center text-muted">Belum ada riwayat</div>';
+}
+
+// DASHBOARD
+function loadDashboard(){
+  let hariIni = new Date().toLocaleDateString('id-ID');
+  let serviceHariIni = riwayatService.filter(r=>r.tanggal.includes(hariIni));
+  let omset = serviceHariIni.reduce((a,b)=>a+b.total,0);
+  omsetHariIni.innerText = 'Rp ' + omset.toLocaleString('id-ID');
+  jumlahService.innerText = serviceHariIni.length;
+}
+
+// FUNGSI LAIN
+function simpanPart(){if(namaPart.value==''){alert('Nama Part wajib');return}let partBaru={kode:kodePart.value,nama:namaPart.value,stok:stokPart.value,harga:hargaPart.value};daftarPart.push(partBaru);localStorage.setItem('daftarPart',JSON.stringify(daftarPart));alert('Part berhasil disimpan');showPage('page-part');loadDaftarPart();}
+function loadDaftarPart(){let html='';daftarPart.forEach(p=>{html+=`<tr><td>${p.nama}</td><td><span class="badge badge-stok-aman">${p.stok}</span></td><td>Rp ${parseInt(p.harga).toLocaleString('id-ID')}</td></tr>`});tabelPart.innerHTML=html;}
+function simpanMekanik(){if(namaMekanik.value==''){alert('Nama wajib');return}let m={id:Date.now(),nama:namaMekanik.value,status:statusMekanik.value};daftarMekanik.push(m);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));hideModal('modalMekanik');namaMekanik.value='';loadDaftarMekanik();}
 function hapusMekanik(id){if(confirm('Yakin hapus?')){daftarMekanik=daftarMekanik.filter(m=>m.id!=id);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));loadDaftarMekanik();}}
-function loadDaftarMekanik(){
-  let html='';daftarMekanik.forEach(m=>{
-    let sc=m.status=='sibuk'?'status-sibuk':'status-free';let st=m.status=='sibuk'?'Sibuk':'Ready';
-    html+=`<div class="d-flex justify-content-between align-items-center mb-3"><div class="d-flex"><div class="avatar me-2">${m.nama.charAt(0)}</div><div><b>${m.nama}</b><br><small><span class="status-dot ${sc}"></span>${st}</small></div></div><button class="btn btn-sm btn-outline-danger" onclick="hapusMekanik(${m.id})">Hapus</button></div>`
-  });document.getElementById('listMekanik').innerHTML=html;
-}
-
-// KENDARAAN
-function simpanKendaraan(){
-  if(plat.value==''){alert('No plat wajib');return}
-  let k={plat:plat.value,tipe:tipe.value}
-  daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));
-  hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();
-}
-function pilihKendaraan(el){document.querySelectorAll('.kendaraan-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
-function loadDaftarKendaraan(){
-  let html='';daftarKendaraan.forEach(k=>{
-    html+=`<div class="col-6"><div class="card p-2 text-center kendaraan-tab" onclick="pilihKendaraan(this)"><small>${k.plat}</small><br><b>${k.tipe}</b></div></div>`
-  });document.getElementById('listKendaraan').innerHTML=html;
-}
-
-// SETTING
-function previewLogo(event){let reader=new FileReader();reader.onload=function(e){document.getElementById('previewLogo').src=e.target.result;document.getElementById('previewLogo').style.display='block';localStorage.setItem('logoBengkel',e.target.result)};reader.readAsDataURL(event.target.files[0]);}
-function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Bengkel Tersimpan');loadDataBengkel();}
-function simpanFooter(){localStorage.setItem('footerStruk',footerStruk.value);alert('Footer Tersimpan');}
-function loadDataBengkel(){
-  document.getElementById('namaDashboard').innerText=localStorage.getItem('namaBengkel')||'OTOPOS';
-  document.getElementById('alamatDashboard').innerText=localStorage.getItem('alamatBengkel')||'';
-  let logo=localStorage.getItem('logoBengkel');if(logo){document.getElementById('logoDashboard').src=logo;document.getElementById('logoDashboard').style.display='block';}
-  namaBengkel.value=localStorage.getItem('namaBengkel')||'OTOPOS Bengkel';
-  alamatBengkel.value=localStorage.getItem('alamatBengkel')||'';
-  footerStruk.value=localStorage.getItem('footerStruk')||'Terima Kasih Telah Service di OTOPOS';
-}
+function loadDaftarMekanik(){let html='';daftarMekanik.forEach(m=>{let sc=m.status=='sibuk'?'status-sibuk':'status-free';let st=m.status=='sibuk'?'Sibuk':'Ready';html+=`<div class="d-flex justify-content-between align-items-center mb-3"><div class="d-flex"><div class="avatar me-2">${m.nama.charAt(0)}</div><div><b>${m.nama}</b><br><small><span class="status-dot ${sc}"></span>${st}</small></div></div><button class="btn btn-sm btn-outline-danger" onclick="hapusMekanik(${m.id})">Hapus</button></div>`});listMekanik.innerHTML=html;}
+function simpanKendaraan(){if(plat.value==''){alert('No plat wajib');return}let k={id:Date.now(),plat:plat.value,tipe:tipe.value};daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();}
+function loadDaftarKendaraan(){let html='';daftarKendaraan.forEach(k=>{html+=`<div class="col-6"><div class="card p-2 text-center kendaraan-tab" onclick="bukaDetailService(${k.id})"><small>${k.plat}</small><br><b>${k.tipe}</b></div></div>`});listKendaraan.innerHTML=html;}
+function previewLogo(event){let reader=new FileReader();reader.onload=function(e){previewLogo.src=e.target.result;previewLogo.style.display='block';localStorage.setItem('logoBengkel',e.target.result)};reader.readAsDataURL(event.target.files[0]);}
+function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Tersimpan');loadDataBengkel();}
+function loadDataBengkel(){namaDashboard.innerText=localStorage.getItem('namaBengkel')||'OTOPOS';alamatDashboard.innerText=localStorage.getItem('alamatBengkel')||'';let logo=localStorage.getItem('logoBengkel');if(logo){logoDashboard.src=logo;logoDashboard.style.display='block';}}
 
 // INIT
-loadDaftarPart();loadDaftarMekanik();loadDaftarKendaraan();loadDataBengkel();
+loadDaftarPart();loadDaftarMekanik();loadDaftarKendaraan();loadDataBengkel();loadRiwayat();loadDashboard();
 </script>
 </body>
 </html>
