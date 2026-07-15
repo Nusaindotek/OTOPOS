@@ -6,7 +6,7 @@
 <title>OTOPOS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  body{background:#f5f5f5}
+  body{background:#f5f5f5; padding-bottom:70px}
  .page{display:none}
  .page.active{display:block}
  .menu-card{border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,.05);padding:16px;margin-bottom:12px;background:#fff;cursor:pointer}
@@ -17,7 +17,8 @@
  .kendaraan-tab{border:2px solid #eee; cursor:pointer}
  .kendaraan-tab.active{border-color:#0d6efd; background:#e7f1ff}
  .badge-stok-aman{background:#d1e7dd;color:#0f5132}
-  #modalKendaraan, #modalMekanik{z-index:9999}
+ .modal-bg{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;}
+ .modal-box{background:#fff; width:90%; max-width:400px; margin:120px auto; padding:16px; border-radius:12px;}
 </style>
 </head>
 <body>
@@ -47,7 +48,7 @@
 <div id="page-kendaraan" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KENDARAAN</span>
-    <button class="btn btn-light btn-sm" onclick="showModalKendaraan()">+ Tambah</button></div></nav>
+    <button class="btn btn-light btn-sm" onclick="showModal('modalKendaraan')">+ Tambah</button></div></nav>
   <div class="container py-3">
     <div class="row g-2" id="listKendaraan"></div>
     <div class="card p-3 mt-3">
@@ -63,7 +64,7 @@
   <div class="container py-3">
     <div class="card p-3 mb-3"><b>B 1234 ABC</b><br><small>Honda Beat</small></div>
     <div class="card p-3 mb-3"><h6>Total: Rp 150.000</h6></div>
-    <button class="btn btn-success w-100" onclick="cetakBayar()">BAYAR & CETAK</button>
+    <button class="btn btn-success w-100" onclick="window.print()">BAYAR & CETAK</button>
   </div>
 </div>
 
@@ -97,7 +98,7 @@
 <div id="page-mekanik" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR MEKANIK</span>
-    <button class="btn btn-light btn-sm" onclick="showModalMekanik()">+ Tambah</button></div></nav>
+    <button class="btn btn-light btn-sm" onclick="showModal('modalMekanik')">+ Tambah</button></div></nav>
   <div class="container py-3"><div class="card p-3" id="listMekanik"></div></div>
 </div>
 
@@ -115,7 +116,7 @@
   <div class="container py-3">
     <div class="card p-3 mb-3">
       <h6 class="fw-bold">Data Bengkel</h6>
-      <input id="namaBengkel" class="form-control mb-2" value="OTOPOS Bengkel">
+      <input id="namaBengkel" class="form-control mb-2" placeholder="Nama Bengkel">
       <input id="alamatBengkel" class="form-control mb-2" placeholder="Alamat Bengkel">
       <label>Logo Bengkel</label>
       <input id="logoBengkel" type="file" accept="image/*" class="form-control mb-2" onchange="previewLogo(event)">
@@ -124,38 +125,32 @@
     </div>
     <div class="card p-3 mb-3">
       <h6 class="fw-bold">Setting Struk</h6>
-      <textarea id="footerStruk" class="form-control mb-2" rows="3">Terima Kasih Telah Service di OTOPOS</textarea>
+      <textarea id="footerStruk" class="form-control mb-2" rows="3"></textarea>
       <button class="btn btn-primary w-100" onclick="simpanFooter()">SIMPAN FOOTER</button>
     </div>
-    <div class="card p-3 mb-3">
-      <h6 class="fw-bold">Printer Bluetooth</h6>
-      <button class="btn btn-outline-primary w-100 mb-2" onclick="cariPrinterBT()">🔍 Cari Printer</button>
-      <div id="daftarPrinter"></div>
-      <small class="text-muted">*Aktif setelah jadi APK</small>
-    </div>
-    <div class="card p-3"><button class="btn btn-outline-danger w-100" onclick="logout()">Logout</button></div>
+    <div class="card p-3"><button class="btn btn-outline-danger w-100" onclick="alert('Logout')">Logout</button></div>
   </div>
 </div>
 
 <!-- MODAL KENDARAAN -->
-<div id="modalKendaraan" style="display:none;" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center">
-  <div class="card p-3" style="width:90%">
-    <h6>Tambah Kendaraan Baru</h6>
+<div id="modalKendaraan" class="modal-bg">
+  <div class="modal-box">
+    <h6 class="fw-bold mb-3">Tambah Kendaraan Baru</h6>
     <input id="plat" class="form-control mb-2" placeholder="No Plat">
-    <input id="tipe" class="form-control mb-2" placeholder="Jenis Motor/Mobil">
+    <input id="tipe" class="form-control mb-3" placeholder="Jenis Motor/Mobil">
     <button class="btn btn-primary w-100 mb-2" onclick="simpanKendaraan()">SIMPAN</button>
-    <button class="btn btn-outline-secondary w-100" onclick="modalKendaraan.style.display='none'">BATAL</button>
+    <button class="btn btn-outline-secondary w-100" onclick="hideModal('modalKendaraan')">BATAL</button>
   </div>
 </div>
 
 <!-- MODAL MEKANIK -->
-<div id="modalMekanik" style="display:none;" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center">
-  <div class="card p-3" style="width:90%">
-    <h6>Tambah Mekanik Baru</h6>
+<div id="modalMekanik" class="modal-bg">
+  <div class="modal-box">
+    <h6 class="fw-bold mb-3">Tambah Mekanik Baru</h6>
     <input id="namaMekanik" class="form-control mb-2" placeholder="Nama Mekanik">
     <select id="statusMekanik" class="form-control mb-3"><option value="free">Ready</option><option value="sibuk">Sibuk</option></select>
     <button class="btn btn-primary w-100 mb-2" onclick="simpanMekanik()">SIMPAN</button>
-    <button class="btn btn-outline-secondary w-100" onclick="modalMekanik.style.display='none'">BATAL</button>
+    <button class="btn btn-outline-secondary w-100" onclick="hideModal('modalMekanik')">BATAL</button>
   </div>
 </div>
 
@@ -171,6 +166,8 @@
 <script>
 // NAVIGASI
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showModal(id){document.getElementById(id).style.display='block';}
+function hideModal(id){document.getElementById(id).style.display='none';}
 
 // DATA GLOBAL
 let daftarPart = JSON.parse(localStorage.getItem('daftarPart')) || [{kode:'OLI001',nama:'Oli MPX 1',stok:15,harga:55000}];
@@ -179,6 +176,7 @@ let daftarKendaraan = JSON.parse(localStorage.getItem('daftarKendaraan')) || [{p
 
 // PART
 function simpanPart(){
+  if(namaPart.value==''){alert('Nama Part wajib');return}
   let partBaru={kode:kodePart.value,nama:namaPart.value,stok:stokPart.value,harga:hargaPart.value}
   daftarPart.push(partBaru);localStorage.setItem('daftarPart',JSON.stringify(daftarPart));
   alert('Part berhasil disimpan');kodePart.value='';namaPart.value='';stokPart.value='0';hargaPart.value='';
@@ -186,52 +184,49 @@ function simpanPart(){
 }
 function loadDaftarPart(){
   let html='';daftarPart.forEach(p=>{html+=`<tr><td>${p.nama}</td><td><span class="badge badge-stok-aman">${p.stok}</span></td><td>Rp ${parseInt(p.harga).toLocaleString('id-ID')}</td></tr>`});
-  tabelPart.innerHTML=html;
+  document.getElementById('tabelPart').innerHTML=html;
 }
 
 // MEKANIK
-function showModalMekanik(){modalMekanik.style.display='flex';}
 function simpanMekanik(){
+  if(namaMekanik.value == ''){ alert('Nama mekanik wajib diisi'); return; }
   let m={id:Date.now(),nama:namaMekanik.value,status:statusMekanik.value}
   daftarMekanik.push(m);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));
-  modalMekanik.style.display='none';namaMekanik.value='';loadDaftarMekanik();
+  hideModal('modalMekanik');namaMekanik.value='';loadDaftarMekanik();
 }
 function hapusMekanik(id){if(confirm('Yakin hapus?')){daftarMekanik=daftarMekanik.filter(m=>m.id!=id);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));loadDaftarMekanik();}}
 function loadDaftarMekanik(){
   let html='';daftarMekanik.forEach(m=>{
     let sc=m.status=='sibuk'?'status-sibuk':'status-free';let st=m.status=='sibuk'?'Sibuk':'Ready';
     html+=`<div class="d-flex justify-content-between align-items-center mb-3"><div class="d-flex"><div class="avatar me-2">${m.nama.charAt(0)}</div><div><b>${m.nama}</b><br><small><span class="status-dot ${sc}"></span>${st}</small></div></div><button class="btn btn-sm btn-outline-danger" onclick="hapusMekanik(${m.id})">Hapus</button></div>`
-  });listMekanik.innerHTML=html;
+  });document.getElementById('listMekanik').innerHTML=html;
 }
 
 // KENDARAAN
-function showModalKendaraan(){modalKendaraan.style.display='flex';}
 function simpanKendaraan(){
+  if(plat.value==''){alert('No plat wajib');return}
   let k={plat:plat.value,tipe:tipe.value}
   daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));
-  modalKendaraan.style.display='none';plat.value='';tipe.value='';loadDaftarKendaraan();
+  hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();
 }
 function pilihKendaraan(el){document.querySelectorAll('.kendaraan-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
 function loadDaftarKendaraan(){
   let html='';daftarKendaraan.forEach(k=>{
     html+=`<div class="col-6"><div class="card p-2 text-center kendaraan-tab" onclick="pilihKendaraan(this)"><small>${k.plat}</small><br><b>${k.tipe}</b></div></div>`
-  });listKendaraan.innerHTML=html;
+  });document.getElementById('listKendaraan').innerHTML=html;
 }
 
 // SETTING
-function previewLogo(event){let reader=new FileReader();reader.onload=function(){previewLogo.src=reader.result;previewLogo.style.display='block';localStorage.setItem('logoBengkel',reader.result)};reader.readAsDataURL(event.target.files[0]);}
+function previewLogo(event){let reader=new FileReader();reader.onload=function(e){document.getElementById('previewLogo').src=e.target.result;document.getElementById('previewLogo').style.display='block';localStorage.setItem('logoBengkel',e.target.result)};reader.readAsDataURL(event.target.files[0]);}
 function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Bengkel Tersimpan');loadDataBengkel();}
 function simpanFooter(){localStorage.setItem('footerStruk',footerStruk.value);alert('Footer Tersimpan');}
-function cariPrinterBT(){daftarPrinter.innerHTML='<span class="text-danger">Aktif setelah install APK</span>';}
-function logout(){alert('Logout');}
-function cetakBayar(){window.print();}
 function loadDataBengkel(){
-  namaDashboard.innerText=localStorage.getItem('namaBengkel')||'OTOPOS';
-  alamatDashboard.innerText=localStorage.getItem('alamatBengkel')||'';
-  let logo=localStorage.getItem('logoBengkel');if(logo){logoDashboard.src=logo;logoDashboard.style.display='block';}
+  document.getElementById('namaDashboard').innerText=localStorage.getItem('namaBengkel')||'OTOPOS';
+  document.getElementById('alamatDashboard').innerText=localStorage.getItem('alamatBengkel')||'';
+  let logo=localStorage.getItem('logoBengkel');if(logo){document.getElementById('logoDashboard').src=logo;document.getElementById('logoDashboard').style.display='block';}
   namaBengkel.value=localStorage.getItem('namaBengkel')||'OTOPOS Bengkel';
   alamatBengkel.value=localStorage.getItem('alamatBengkel')||'';
-  footerStruk.value=localStorage.getItem('footerStruk')||'Terima Kasih';
+  footerStruk.value=localStorage.getItem('footerStruk')||'Terima Kasih Telah Service di OTOPOS';
 }
 
 // INIT
