@@ -1,428 +1,1004 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OTOPOS</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-  body{background:#f5f5f5; padding-bottom:70px}
-.page{display:none}.page.active{display:block}
-.menu-card{border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,.05);padding:16px;margin-bottom:12px;background:#fff;cursor:pointer; display:flex; align-items:center}
-.menu-card:hover{background:#e7f1ff}
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
-.status-free{background:#28a745}.status-sibuk{background:#dc3545}
-.avatar{width:40px;height:40px;border-radius:50%;background:#0d6efd;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold}
-.kendaraan-tab{border:2px solid #eee; cursor:pointer}
-.badge-stok-aman{background:#d1e7dd;color:#0f5132}.badge-stok-tipis{background:#fff3cd;color:#664d03}
-.modal-bg{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;}
-.modal-box{background:#fff; width:90%; max-width:400px; margin:120px auto; padding:16px; border-radius:12px;}
-.list-item{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #eee}
-.header-bengkel{background:linear-gradient(135deg, #0d6efd, #0a58ca); color:#fff; padding:20px; border-radius:0 0 20px 20px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTOPOS - Bengkel System</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f7f9fa; color: #333; padding-bottom: 70px; }
+        
+        /* Header Navigation */
+        .header { background-color: #0066ff; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+        .header h2 { flex-grow: 1; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-back { background: none; border: none; color: white; font-size: 20px; cursor: pointer; display: none; }
+        .btn-add-top { background: white; color: #0066ff; border: none; padding: 5px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
+
+        /* Banner Bengkel */
+        .banner { background-color: #0056d6; color: white; text-align: center; padding: 15px; margin-bottom: 15px; border-radius: 0 0 15px 15px; }
+        .banner h3 { margin-bottom: 5px; font-size: 20px; }
+        .banner p { font-size: 12px; opacity: 0.9; }
+
+        /* Content Area */
+        .container { padding: 12px; max-width: 600px; margin: 0 auto; }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Card Component */
+        .card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .card-title { font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #444; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        
+        /* Stats Dashboard */
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .stat-box { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; text-align: center; }
+        .stat-box.full { grid-column: span 2; background: #fffde7; }
+        .stat-box span { font-size: 11px; color: #666; display: block; }
+        .stat-box h2 { font-size: 20px; color: #27ae60; margin-top: 4px; font-weight: bold; }
+        .stat-box h3 { font-size: 18px; color: #f39c12; margin-top: 4px; }
+
+        /* Menus List */
+        .menu-item { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
+        .menu-item:active { background: #f0f0f0; }
+        .menu-icon { font-size: 24px; margin-right: 15px; }
+        .menu-text h4 { font-size: 14px; margin-bottom: 2px; }
+        .menu-text p { font-size: 11px; color: #888; }
+
+        /* Forms & Inputs */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #555; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .btn-block { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; text-align: center; display: block; }
+        .btn-primary { background-color: #0066ff; color: white; }
+        .btn-success { background-color: #27ae60; color: white; }
+        .btn-outline { background-color: transparent; border: 1px solid #0066ff; color: #0066ff; }
+        
+        /* Toggle Switch Group */
+        .toggle-group { display: flex; background: #eee; border-radius: 6px; padding: 3px; margin-bottom: 15px; }
+        .toggle-btn { flex: 1; text-align: center; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 4px; border: none; cursor: pointer; background: transparent; color: #666; }
+        .toggle-btn.active { background: white; color: #0066ff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* List Items */
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e0e0e0; }
+        .list-row:last-child { border-bottom: none; }
+        .btn-danger-sm { background: none; border: 1px solid #e74c3c; color: #e74c3c; padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+        
+        /* Stock Adjuster */
+        .stock-control { display: flex; align-items: center; gap: 8px; }
+        .btn-circle { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ccff; background: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-circle.minus { border-color: #e74c3c; color: #e74c3c; }
+        .btn-circle.plus { border-color: #27ae60; color: #27ae60; }
+
+        /* Bottom Navbar */
+        .navbar { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e0e0e0; display: flex; height: 60px; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { text-align: center; color: #888; cursor: pointer; flex: 1; padding: 8px; font-size: 11px; text-decoration: none; }
+        .nav-item.active { color: #0066ff; font-weight: bold; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* Utilities */
+        .text-green { color: #27ae60; font-weight: bold; }
+        .text-bold { font-weight: bold; }
+        .badge { background: #e8f4fd; color: #0066ff; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-<!-- 1. DASHBOARD UPGRADE -->
-<div id="page-dashboard" class="page active">
-  <div class="header-bengkel text-center mb-3">
-    <img id="logoDashboard" src="" style="width:60px; display:none;" class="mb-2 rounded-circle border border-3 border-white">
-    <h5 id="namaDashboard" class="fw-bold mb-0">OTOPOS</h5>
-    <small id="alamatDashboard"></small>
-  </div>
+    <div class="header">
+        <button class="btn-back" id="btnBack" onclick="navBack()">←</button>
+        <h2 id="pageTitle">OTOPOS</h2>
+        <button class="btn-add-top" id="btnAddTop" style="display:none;">+ Tambah</button>
+    </div>
 
-  <div class="container">
-    <!-- KARTU STATISTIK -->
-    <div class="row g-2 mb-3">
-      <div class="col-6">
-        <div class="card text-center p-3 border-0 shadow-sm">
-          <h4 class="text-primary fw-bold mb-0" id="omsetHariIni">Rp 0</h4>
-          <small class="text-muted">Omset Hari Ini</small>
+    <div class="container">
+
+        <div id="page-home" class="page active">
+            <div class="banner">
+                <h3 id="lblNamaBengkel">Nama Bengkel</h3>
+                <p id="lblTelpBengkel">No. Telepon</p>
+            </div>
+            
+            <div class="grid-stats">
+                <div class="stat-box">
+                    <span>Omset Hari Ini</span>
+                    <h2 id="statOmset">Rp 0</h2>
+                </div>
+                <div class="stat-box">
+                    <span>Service Selesai</span>
+                    <h2 id="statSelesai" style="color:#0066ff;">0</h2>
+                </div>
+                <div class="stat-box full">
+                    <span>Kendaraan Dikerjakan</span>
+                    <h3 id="statProses">0 Kendaraan</h3>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="openSubPage('kendaraan', 'Kendaraan Ditangani')">
+                <span class="menu-icon">🏍️</span>
+                <div class="menu-text">
+                    <h4>Kendaraan Ditangani</h4>
+                    <p>Tambah & Proses Service Lapangan</p>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openSubPage('riwayat', 'Riwayat Service & Penjualan')">
+                <span class="menu-icon">📜</span>
+                <div class="menu-text">
+                    <h4>Riwayat Transaksi</h4>
+                    <p>Lihat data transaksi yang sudah disimpan</p>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openSubPage('parts', 'Daftar Part / Stok')">
+                <span class="menu-icon">📦</span>
+                <div class="menu-text">
+                    <h4>Daftar Part</h4>
+                    <p>Stok & Harga Suku Cadang Terintegrasi</p>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openSubPage('mekanik', 'Daftar Mekanik')">
+                <span class="menu-icon">👨‍🔧</span>
+                <div class="menu-text">
+                    <h4>Daftar Mekanik</h4>
+                    <p>Kelola data montir aktif</p>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openSubPage('setting', 'Setting Bengkel')">
+                <span class="menu-icon">⚙️</span>
+                <div class="menu-text">
+                    <h4>Setting Bengkel</h4>
+                    <p>Ubah profil nama dan nomor telepon toko</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-6">
-        <div class="card text-center p-3 border-0 shadow-sm">
-          <h4 class="text-success fw-bold mb-0" id="jumlahService">0</h4>
-          <small class="text-muted">Service Selesai</small>
+
+        <div id="page-kasir" class="page">
+            <div class="toggle-group">
+                <button class="toggle-btn active" id="modeServisBtn" onclick="setKasirMode('servis')">Servis Kendaraan</button>
+                <button class="toggle-btn" id="modePartBtn" onclick="setKasirMode('part')">Penjualan Part Langsung</button>
+            </div>
+
+            <div id="formKasirServis">
+                <div class="form-group">
+                    <label>Pilih Kendaraan Aktif Yang Selesai</label>
+                    <select class="form-control" id="optKendaraanServis" onchange="loadActiveServiceToKasir()"></select>
+                </div>
+            </div>
+
+            <div id="formKasirPartDirect" style="display:none;">
+                <div class="card" style="padding:10px; background:#f0f5ff;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Pilih Produk & Tambah ke Keranjang</label>
+                        <div style="display:flex; gap:8px;">
+                            <select class="form-control" id="optPilihPartDirect"></select>
+                            <button class="btn-primary" style="padding:0 15px; border-radius:6px; border:none; font-weight:bold;" onclick="addPartDirectToCart()">+ Item</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Rincian Item / Biaya</div>
+                <div id="kasirItemsList">
+                    <p style="text-align:center; color:#888; font-size:12px; padding:10px;">Belum ada item terpilih</p>
+                </div>
+                <div style="margin-top:15px; border-top:2px solid #333; padding-top:10px; display:flex; justify-content:between; align-items:center;">
+                    <span class="text-bold" style="font-size:16px;">TOTAL BAYAR:</span>
+                    <span id="lblTotalBayar" class="text-green" style="font-size:20px; font-weight:bold; margin-left:auto;">Rp 0</span>
+                </div>
+            </div>
+
+            <button class="btn-block btn-success" style="margin-bottom:10px;" onclick="prosesSimpanTransaksi()">SELESAI & SIMPAN</button>
+            <button class="btn-block btn-outline" onclick="alert('Fitur Cetak Struk Bluetooth thermal printer siap dikembangkan!')">CETAK STRUK</button>
         </div>
-      </div>
-      <div class="col-12">
-        <div class="card text-center p-3 border-0 shadow-sm bg-warning-subtle">
-          <h4 class="text-warning fw-bold mb-0" id="jumlahKendaraan">0</h4>
-          <small class="text-muted">Kendaraan Dikerjakan</small>
+
+        <div id="page-laporan" class="page">
+            <div class="card" style="text-align: center;">
+                <span style="color: #666; font-size: 14px;">Total Omset</span>
+                <h1 id="lapTotalOmset" style="color: #27ae60; margin: 8px 0; font-size: 28px; font-weight: bold;">Rp 0</h1>
+                <span id="lapJumlahServis" style="color: #333; font-size: 14px; font-weight: 500;">Jumlah Transaksi: 0</span>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Pendapatan Kerja Mekanik</div>
+                <div id="lapMekanikList">
+                    </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Ringkasan Produk Terjual</div>
+                <div id="lapProdukTerjualList">
+                    </div>
+            </div>
         </div>
-      </div>
+
+        <div id="page-sub-kendaraan" class="page">
+            <div class="card" id="formTambahKendaraan" style="display:none; background:#f9f9f9;">
+                <div class="card-title">Tambah Kendaraan Baru Masuk</div>
+                <div class="form-group">
+                    <label>Nama Kendaraan / Motor</label>
+                    <input type="text" class="form-control" id="txtNamaMotor" placeholder="Contoh: Supra X 125 / Beat">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Polisi (No. Plat)</label>
+                    <input type="text" class="form-control" id="txtNopol" placeholder="Contoh: B 1234 ABC">
+                </div>
+                <button class="btn-block btn-primary" onclick="simpanKendaraanBaru()">Masuk Antrean Bengkel</button>
+            </div>
+
+            <div id="daftarKendaraanAktifList"></div>
+        </div>
+
+        <div id="page-sub-detail-servis" class="page">
+            <div class="card" style="background: #fffde7;">
+                <h4 id="detNopol" class="text-bold">Nopol</h4>
+                <p id="detMotor" style="font-size:13px; color:#555;">Motor</p>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label>1. Diagnosis Masalah / Keluhan</label>
+                    <textarea class="form-control" id="txtDetDiagnosis" rows="2" placeholder="Contoh: Turun mesin, ganti oli rutin"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>2. Pilih Mekanik Yang Menangani</label>
+                    <select class="form-control" id="optDetMekanik"></select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>3. Penggunaan Sparepart</span>
+                    <button class="btn-add-top" style="background:#0066ff; color:white;" onclick="tambahPartKeServis()">+ Tambah</button>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="optDetPart"></select>
+                </div>
+                <div id="detPartTerpilihList"></div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label>4. Biaya Jasa Mekanik / Servis (Rp)</label>
+                    <input type="number" class="form-control" id="numDetJasa" value="0">
+                </div>
+            </div>
+
+            <button class="btn-block btn-success" onclick="simpanDetailServisAktif()">Simpan Progress Pengerjaan</button>
+        </div>
+
+        <div id="page-sub-parts" class="page">
+            <div class="card" id="formTambahPart" style="display:none; background:#f9f9f9;">
+                <div class="card-title">Tambah Produk / Part Baru</div>
+                <div class="form-group">
+                    <label>Nama Suku Cadang</label>
+                    <input type="text" class="form-control" id="txtPartNama" placeholder="Contoh: Oli MPX 1">
+                </div>
+                <div class="form-group">
+                    <label>Kode Part</label>
+                    <input type="text" class="form-control" id="txtPartKode" placeholder="Contoh: OLI001">
+                </div>
+                <div class="form-group">
+                    <label>Harga Jual (Rp)</label>
+                    <input type="number" class="form-control" id="numPartHarga" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Stok Awal</label>
+                    <input type="number" class="form-control" id="numPartStok" value="0">
+                </div>
+                <button class="btn-block btn-primary" onclick="simpanPartBaru()">Simpan Item Produk</button>
+            </div>
+
+            <div id="daftarPartsList"></div>
+        </div>
+
+        <div id="page-sub-mekanik" class="page">
+            <div class="card" id="formTambahMekanik" style="display:none; background:#f9f9f9;">
+                <div class="card-title">Tambah Mekanik Baru</div>
+                <div class="form-group">
+                    <label>Nama Mekanik</label>
+                    <input type="text" class="form-control" id="txtMekanikNama" placeholder="Nama montir">
+                </div>
+                <button class="btn-block btn-primary" onclick="simpanMekanikBaru()">Simpan Mekanik</button>
+            </div>
+            <div id="daftarMekanikList"></div>
+        </div>
+
+        <div id="page-sub-riwayat" class="page">
+            <div id="daftarRiwayatList"></div>
+        </div>
+
+        <div id="page-sub-setting" class="page">
+            <div class="card">
+                <div class="card-title">Data Profil Bengkel</div>
+                <div class="form-group">
+                    <label>Nama Bengkel</label>
+                    <input type="text" class="form-control" id="cfgNamaBengkel">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Telepon Kontak</label>
+                    <input type="text" class="form-control" id="cfgTelpBengkel">
+                </div>
+                <button class="btn-block btn-primary" onclick="simpanSettingBengkel()">SIMPAN DATA BENGKEL</button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- MENU CEPAT -->
-    <h6 class="fw-bold mb-2">Menu Utama</h6>
-    <div class="menu-card" onclick="showPage('page-kendaraan')">
-      <div class="me-3 fs-4">🏍️</div>
-      <div><b>Kendaraan Ditangani</b><br><small class="text-muted">Tambah & Proses Service</small></div>
+    <div class="navbar">
+        <div class="nav-item active" id="nav-home" onclick="switchMainTab('home')">
+            <span class="nav-icon">🏠</span>Home
+        </div>
+        <div class="nav-item" id="nav-kasir" onclick="switchMainTab('kasir')">
+            <span class="nav-icon">💵</span>Kasir
+        </div>
+        <div class="nav-item" id="nav-laporan" onclick="switchMainTab('laporan')">
+            <span class="nav-icon">📊</span>Laporan
+        </div>
     </div>
-    <div class="menu-card" onclick="showPage('page-riwayat')">
-      <div class="me-3 fs-4">📜</div>
-      <div><b>Riwayat Service</b><br><small class="text-muted">Lihat Data Lama</small></div>
-    </div>
-    <div class="menu-card" onclick="showPage('page-part')">
-      <div class="me-3 fs-4">📦</div>
-      <div><b>Daftar Part</b><br><small class="text-muted">Stok & Harga Part</small></div>
-    </div>
-    <div class="menu-card" onclick="showPage('page-laporan')">
-      <div class="me-3 fs-4">📊</div>
-      <div><b>Laporan</b><br><small class="text-muted">Omset & Part Terlaris</small></div>
-    </div>
-    <div class="menu-card" onclick="showPage('page-mekanik')">
-      <div class="me-3 fs-4">👨‍🔧</div>
-      <div><b>Daftar Mekanik</b></div>
-    </div>
-    <div class="menu-card" onclick="showPage('page-setting')">
-      <div class="me-3 fs-4">⚙️</div>
-      <div><b>Setting Bengkel</b></div>
-    </div>
-  </div>
-</div>
 
-<!-- KENDARAAN -->
-<div id="page-kendaraan" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KENDARAAN</span>
-    <button class="btn btn-light btn-sm" onclick="showModal('modalKendaraan')">+ Tambah</button></div></nav>
-  <div class="container py-3"><div class="row g-2" id="listKendaraan"></div></div>
-</div>
+    <script>
+        // --- SEEDING / INITIAL APP DATABASE STATE ---
+        let db = {
+            setting: { nama: "bengkel maju motor", telp: "88885225629" },
+            mekanik: [
+                { nama: "udin", status: "Ready" },
+                { nama: "wowo", status: "Ready" },
+                { nama: "mail", status: "Ready" },
+                { nama: "reso", status: "Ready" }
+            ],
+            parts: [
+                { id: "p1", nama: "Oli MPX 1", kode: "OLI001", harga: 55000, stok: 13 },
+                { id: "p2", nama: "enduro", kode: "oli", harga: 65000, stok: 99 },
+                { id: "p3", nama: "dispad", kode: "rem", harga: 15000, stok: 101 }
+            ],
+            servisAktif: [
+                { id: "s1", motor: "moo", nopol: "d123uyg", diagnosis: "ganti oli rutin", mekanik: "wowo", parts: [{ id: "p1", qty: 1 }], jasa: 35000 },
+                { id: "s2", motor: "supra", nopol: "d7665ytt", diagnosis: "", mekanik: "", parts: [], jasa: 0 }
+            ],
+            riwayat: [
+                { id: "T1", type: "servis", nopol: "D123trw", tanggal: "15/7/2026, 12.31.18", mekanik: "wowo", parts: [{ nama: "enduro", qty: 1, harga: 65000 }], jasa: 25000, total: 90000 },
+                { id: "T2", type: "servis", nopol: "D1234tre", tanggal: "15/7/2026, 11.56.27", mekanik: "udin", parts: [{ nama: "enduro", qty: 2, harga: 65000 }, { nama: "dispad", qty: 5, harga: 15000 }], jasa: 0, total: 205000 },
+                { id: "T3", type: "servis", nopol: "B 1234 ABC", tanggal: "15/7/2026, 11.54.30", mekanik: "udin", parts: [{ nama: "Oli MPX 1", qty: 1, harga: 55000 }], jasa: 35000, total: 90000 }
+            ]
+        };
 
-<!-- DETAIL SERVICE -->
-<div id="page-detail-service" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-kendaraan')">←</a><span class="navbar-brand mx-auto fw-bold">DETAIL SERVICE</span></div></nav>
-  <div class="container py-3">
-    <div class="card p-3 mb-3"><h6 id="detailPlat" class="fw-bold"></h6><small id="detailTipe"></small></div>
-    <div class="card p-3 mb-3"><h6 class="fw-bold">1. Diagnosis</h6><textarea id="diagnosis" class="form-control" rows="2" oninput="saveForm()"></textarea></div>
-    <div class="card p-3 mb-3"><h6 class="fw-bold">2. Pilih Mekanik</h6><select id="selectMekanik" class="form-control" onchange="saveForm()"></select></div>
-    <div class="card p-3 mb-3">
-      <div class="d-flex justify-content-between mb-2"><h6 class="fw-bold">3. Part</h6><button class="btn btn-sm btn-primary" onclick="showModal('modalTambahPart')">+ Tambah</button></div>
-      <div id="listPartDipakai"></div><h6 class="text-end mt-2">Subtotal: Rp <span id="subtotalPart">0</span></h6>
-    </div>
-    <div class="card p-3 mb-3"><h6 class="fw-bold">4. Jasa</h6><input id="biayaJasa" type="number" class="form-control" value="50000" oninput="saveForm()"></div>
-    <h5 class="text-end fw-bold">TOTAL: Rp <span id="totalAkhir">0</span></h5>
-    <button class="btn btn-success w-100 mt-2" onclick="lanjutKasir()">LANJUT KE KASIR</button>
-  </div>
-</div>
+        // Load data from LocalStorage if it already exists
+        if (localStorage.getItem("OTOPOS_DB")) {
+            db = JSON.parse(localStorage.getItem("OTOPOS_DB"));
+        } else {
+            saveDB();
+        }
 
-<!-- KASIR -->
-<div id="page-kasir" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
-  <div class="container py-3">
-    <div class="card p-3 mb-3"><b id="kasirPlat">Belum ada service</b><br><small id="kasirTipe">-</small></div>
-    <div class="card p-3 mb-3" id="kasirDetail"></div>
-    <h5 class="text-end fw-bold">TOTAL BAYAR: Rp <span id="kasirTotal">0</span></h5>
-    <button class="btn btn-success w-100 mb-2" onclick="selesaikanService()">SELESAI & SIMPAN</button>
-    <button class="btn btn-outline-primary w-100" onclick="window.print()">CETAK STRUK</button>
-  </div>
-</div>
+        // Global State variables for current UI interaction
+        let activeView = "home";
+        let subPageStack = [];
+        let currentKasirMode = "servis"; // options: 'servis' or 'part'
+        let selectedServisId = "";
+        let directCart = []; // format: [{id, qty}]
+        let activeDetailServisId = ""; 
 
-<!-- RIWAYAT -->
-<div id="page-riwayat" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">RIWAYAT</span></div></nav>
-  <div class="container py-3">
-    <input type="date" id="filterTanggal" class="form-control mb-3" onchange="loadRiwayat()">
-    <div id="listRiwayat"></div>
-  </div>
-</div>
+        function saveDB() {
+            localStorage.setItem("OTOPOS_DB", JSON.stringify(db));
+        }
 
-<!-- LAPORAN -->
-<div id="page-laporan" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">LAPORAN</span></div></nav>
-  <div class="container py-3">
-    <select id="filterLaporan" class="form-control mb-3" onchange="loadLaporan()">
-      <option value="harian">Harian</option><option value="mingguan">Mingguan</option><option value="bulanan">Bulanan</option>
-    </select>
-    <div class="card p-3 mb-3 text-center">
-      <small>Total Omset</small><h3 class="text-success fw-bold" id="totalOmsetLaporan">Rp 0</h3>
-      <small>Jumlah Service: <span id="totalServiceLaporan">0</span></small>
-    </div>
-    <h6 class="fw-bold">Part Terlaris</h6><div id="partTerlaris"></div>
-  </div>
-</div>
+        function formatRupiah(num) {
+            return "Rp " + num.toLocaleString('id-ID');
+        }
 
-<!-- DAFTAR PART -->
-<div id="page-part" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR PART</span>
-    <button class="btn btn-light btn-sm" onclick="showPage('page-input-part')">+ Tambah</button></div></nav>
-  <div class="container py-3" id="listPartCard"></div>
-</div>
+        // --- CORE NAVIGATION (SPA SYSTEM) ---
+        function switchMainTab(tabName) {
+            subPageStack = [];
+            document.getElementById("btnBack").style.display = "none";
+            document.getElementById("btnAddTop").style.display = "none";
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`page-${tabName}`).classList.add('active');
+            document.getElementById(`nav-${tabName}`).classList.add('active');
+            
+            activeView = tabName;
+            document.getElementById("pageTitle").innerText = tabName.toUpperCase();
+            
+            // Refresh target view contexts
+            if (tabName === "home") initDashboard();
+            if (tabName === "kasir") initKasirPage();
+            if (tabName === "laporan") renderLaporanPage();
+        }
 
-<!-- INPUT PART -->
-<div id="page-input-part" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-part')">←</a><span class="navbar-brand mx-auto fw-bold">INPUT PART</span></div></nav>
-  <div class="container py-3">
-    <div class="card p-3">
-      <input id="kodePart" class="form-control mb-2" placeholder="Kode Part">
-      <input id="namaPart" class="form-control mb-2" placeholder="Nama Part">
-      <input id="stokPart" type="number" class="form-control mb-2" placeholder="Stok" value="0">
-      <input id="hargaPart" type="number" class="form-control mb-3" placeholder="Harga Jual">
-      <button class="btn btn-primary w-100" onclick="simpanPart()">SIMPAN</button>
-    </div>
-  </div>
-</div>
+        function openSubPage(subName, titleText) {
+            subPageStack.push(activeView);
+            document.getElementById("btnBack").style.display = "block";
+            
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById(`page-sub-${subName}`);
+            if(targetPage) targetPage.classList.add('active');
+            
+            document.getElementById("pageTitle").innerText = titleText;
+            
+            // Context header customizer button
+            const btnAdd = document.getElementById("btnAddTop");
+            btnAdd.style.display = "none"; 
+            btnAdd.onclick = null;
 
-<!-- MEKANIK -->
-<div id="page-mekanik" class="page">
-  <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">MEKANIK</span>
-    <button class="btn btn-light btn-sm" onclick="showModal('modalMekanik')">+ Tambah</button></div></nav>
-  <div class="container py-3"><div class="card p-3" id="listMekanik"></div></div>
-</div>
+            if (subName === "parts") {
+                btnAdd.style.display = "block";
+                btnAdd.onclick = () => toggleFormVisibility("formTambahPart");
+                renderPartsSubPage();
+            } else if (subName === "mekanik") {
+                btnAdd.style.display = "block";
+                btnAdd.onclick = () => toggleFormVisibility("formTambahMekanik");
+                renderMekanikSubPage();
+            } else if (subName === "kendaraan") {
+                btnAdd.style.display = "block";
+                btnAdd.onclick = () => toggleFormVisibility("formTambahKendaraan");
+                renderKendaraanSubPage();
+            } else if (subName === "riwayat") {
+                renderRiwayatSubPage();
+            }
+        }
 
-<!-- SETTING -->
-<div id="page-setting" class="page"><nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">SETTING</span></div></nav>
-  <div class="container py-3">
-    <div class="card p-3 mb-3">
-      <h6 class="fw-bold">Data Bengkel</h6>
-      <input id="namaBengkel" class="form-control mb-2">
-      <input id="alamatBengkel" class="form-control mb-2">
-      <input id="logoBengkel" type="file" accept="image/*" class="form-control mb-2" onchange="previewLogo(event)">
-      <img id="previewLogo" src="" style="width:80px; display:none;" class="mb-2 rounded">
-      <button class="btn btn-primary w-100" onclick="simpanDataBengkel()">SIMPAN DATA</button>
-    </div>
-  </div>
-</div>
+        function navBack() {
+            if (subPageStack.length > 0) {
+                let previousPage = subPageStack.pop();
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                
+                if (previousPage.startsWith("sub-")) {
+                    // It's a nested subpage
+                } else {
+                    document.getElementById(`page-${previousPage}`).classList.add('active');
+                    document.getElementById("pageTitle").innerText = previousPage.toUpperCase();
+                    if(previousPage === "home") initDashboard();
+                    if(subPageStack.length === 0) document.getElementById("btnBack").style.display = "none";
+                }
+                document.getElementById("btnAddTop").style.display = "none";
+            }
+        }
 
-<!-- MODAL -->
-<div id="modalKendaraan" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Kendaraan</h6><input id="plat" class="form-control mb-2"><input id="tipe" class="form-control mb-3"><button class="btn btn-primary w-100 mb-2" onclick="simpanKendaraan()">SIMPAN</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalKendaraan')">BATAL</button></div></div>
-<div id="modalMekanik" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Mekanik</h6><input id="namaMekanik" class="form-control mb-2"><select id="statusMekanik" class="form-control mb-3"><option value="free">Ready</option><option value="sibuk">Sibuk</option></select><button class="btn btn-primary w-100 mb-2" onclick="simpanMekanik()">SIMPAN</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalMekanik')">BATAL</button></div></div>
-<div id="modalTambahPart" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Part</h6><select id="selectPart" class="form-control mb-2"></select><input id="qtyPart" type="number" value="1" class="form-control mb-3"><button class="btn btn-primary w-100 mb-2" onclick="tambahPartKeService()">TAMBAH</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalTambahPart')">BATAL</button></div></div>
+        function toggleFormVisibility(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
 
-<!-- FOOTER NAV -->
-<nav class="navbar fixed-bottom bg-white border-top">
-  <div class="container-fluid justify-content-around">
-    <a class="text-center text-dark" onclick="showPage('page-dashboard')"><div>🏠</div><small>Home</small></a>
-    <a class="text-center text-dark" onclick="showPage('page-kasir')"><div>📄</div><small>Kasir</small></a>
-    <a class="text-center text-dark" onclick="showPage('page-laporan')"><div>📊</div><small>Laporan</small></a>
-  </div>
-</nav>
+        // --- 1. DASHBOARD & PROFILE LOGIC ---
+        function initDashboard() {
+            document.getElementById("lblNamaBengkel").innerText = db.setting.nama;
+            document.getElementById("lblTelpBengkel").innerText = db.setting.telp;
+            
+            // Hitung statistik hari ini
+            let totalOmset = db.riwayat.reduce((sum, item) => sum + item.total, 0);
+            document.getElementById("statOmset").innerText = formatRupiah(totalOmset);
+            document.getElementById("statSelesai").innerText = db.riwayat.length;
+            document.getElementById("statProses").innerText = db.servisAktif.length + " Kendaraan";
+        }
 
-<script>
-let currentService = {id:0, plat:'', tipe:'', diagnosis:'', mekanik:'', parts:[], jasa:50000, total:0, tanggal:new Date().toLocaleString('id-ID')};
+        function simpanSettingBengkel() {
+            db.setting.nama = document.getElementById("cfgNamaBengkel").value;
+            db.setting.telp = document.getElementById("cfgTelpBengkel").value;
+            saveDB();
+            alert("Setting profil bengkel berhasil disimpan!");
+            switchMainTab("home");
+        }
 
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(id=='page-laporan')loadLaporan();
-  if(id=='page-dashboard')loadDashboard();
-  if(id=='page-kasir')updateKasirView();
-}
-function showModal(id){document.getElementById(id).style.display='block';}
-function hideModal(id){document.getElementById(id).style.display='none';}
+        // --- 2. KASIR WORKFLOW (UNIFIED & INTERCONNECTED) ---
+        function setKasirMode(mode) {
+            currentKasirMode = mode;
+            document.getElementById("modeServisBtn").classList.toggle("active", mode === 'servis');
+            document.getElementById("modePartBtn").classList.toggle("active", mode === 'part');
+            
+            document.getElementById("formKasirServis").style.display = mode === 'servis' ? "block" : "none";
+            document.getElementById("formKasirPartDirect").style.display = mode === 'part' ? "block" : "none";
+            
+            // Clear or reset temp status
+            selectedServisId = "";
+            directCart = [];
+            hitungUlangTotalKasir();
+        }
 
-let daftarPart = JSON.parse(localStorage.getItem('daftarPart')) || [];
-let daftarMekanik = JSON.parse(localStorage.getItem('daftarMekanik')) || [];
-let daftarKendaraan = JSON.parse(localStorage.getItem('daftarKendaraan')) || [];
-let riwayatService = JSON.parse(localStorage.getItem('riwayatService')) || [];
+        function initKasirPage() {
+            // Setup Profile Setting Bindings
+            document.getElementById("cfgNamaBengkel").value = db.setting.nama;
+            document.getElementById("cfgTelpBengkel").value = db.setting.telp;
 
-// Fungsi pembantu untuk menyimpan draft pengerjaan secara realtime
-function updateDraft() {
-  if (!currentService || currentService.id === 0) return;
-  let k = daftarKendaraan.find(x => x.id == currentService.id);
-  if (k) {
-    k.serviceDraft = currentService;
-    localStorage.setItem('daftarKendaraan', JSON.stringify(daftarKendaraan));
-  }
-}
+            // Load Opsi dropdown Kendaraan Aktif
+            const selServis = document.getElementById("optKendaraanServis");
+            selServis.innerHTML = `<option value="">-- Pilih Antrean Selesai --</option>`;
+            db.servisAktif.forEach(s => {
+                if(s.diagnosis && s.mekanik) { // Hanya yang sudah dikerjakan/di-diagnosis
+                    selServis.innerHTML += `<option value="${s.id}">${s.motor.toUpperCase()} [${s.nopol.toUpperCase()}] - Mekanik: ${s.mekanik}</option>`;
+                }
+            });
 
-function saveForm(){
-  currentService.diagnosis=diagnosis.value;
-  currentService.mekanik=selectMekanik.value;
-  currentService.jasa=parseInt(biayaJasa.value)||0;
-  hitungTotal();
-  updateDraft(); // Simpan draft ketikan
-}
+            // Load Opsi dropdown part untuk Penjualan Langsung
+            const selPartDirect = document.getElementById("optPilihPartDirect");
+            selPartDirect.innerHTML = "";
+            db.parts.forEach(p => {
+                selPartDirect.innerHTML += `<option value="${p.id}">${p.nama} (${formatRupiah(p.harga)}) [Stok: ${p.stok}]</option>`;
+            });
 
-function bukaDetailService(id){
-  let k=daftarKendaraan.find(x=>x.id==id);
-  if(!k) return;
-  
-  // Jika kendaraan belum punya draft, buat draft baru
-  if(!k.serviceDraft){
-    k.serviceDraft = {
-      id: id,
-      plat: k.plat,
-      tipe: k.tipe,
-      diagnosis: '',
-      mekanik: '',
-      parts: [],
-      jasa: 50000,
-      total: 0,
-      tanggal: new Date().toLocaleString('id-ID')
-    };
-  }
-  
-  // Hubungkan currentService ke draft kendaraan ini
-  currentService = k.serviceDraft;
-  
-  detailPlat.innerText=k.plat;
-  detailTipe.innerText=k.tipe;
-  loadSelectMekanik();
-  loadSelectPart();
-  loadForm();
-  loadListPartDipakai();
-  hitungTotal();
-  showPage('page-detail-service');
-}
+            setKasirMode(currentKasirMode);
+        }
 
-function loadForm(){
-  diagnosis.value=currentService.diagnosis;
-  selectMekanik.value=currentService.mekanik;
-  biayaJasa.value=currentService.jasa;
-}
+        function loadActiveServiceToKasir() {
+            const selectVal = document.getElementById("optKendaraanServis").value;
+            selectedServisId = selectVal;
+            hitungUlangTotalKasir();
+        }
 
-function hapusPart(index){
-  currentService.parts.splice(index,1);
-  loadListPartDipakai();
-  hitungTotal();
-  updateDraft(); // Simpan draft setelah hapus part
-}
+        function addPartDirectToCart() {
+            const partId = document.getElementById("optPilihPartDirect").value;
+            if(!partId) return;
+            
+            const selectedPart = db.parts.find(p => p.id === partId);
+            if(selectedPart.stok <= 0) {
+                alert("Stok barang habis!");
+                return;
+            }
 
-function loadDaftarPart(){let html='';daftarPart.forEach(p=>{let badge=p.stok<5?'badge-stok-tipis':'badge-stok-aman';html+=`<div class="card p-3 mb-2"><div class="d-flex justify-content-between"><div><b>${p.nama}</b><br><small>${p.kode}</small></div><div class="text-end"><b>Rp ${parseInt(p.harga).toLocaleString('id-ID')}</b></div></div><div class="d-flex justify-content-between align-items-center mt-2"><span class="badge ${badge}">Stok: ${p.stok}</span><div><button class="btn btn-sm btn-outline-danger" onclick="kurangStok('${p.kode}')">-</button> <button class="btn btn-sm btn-outline-success" onclick="tambahStok('${p.kode}')">+</button></div></div></div>`});listPartCard.innerHTML=html||'<div class="text-center text-muted">Belum ada part</div>';}
-function tambahStok(kode){let part=daftarPart.find(p=>p.kode==kode);part.stok=parseInt(part.stok)+1;localStorage.setItem('daftarPart',JSON.stringify(daftarPart));loadDaftarPart();}
-function kurangStok(kode){let part=daftarPart.find(p=>p.kode==kode);if(part.stok>0){part.stok=parseInt(part.stok)-1;localStorage.setItem('daftarPart',JSON.stringify(daftarPart));loadDaftarPart();}}
-function loadSelectPart(){let html='';daftarPart.forEach(p=>{html+=`<option value="${p.kode}">${p.nama} - Stok:${p.stok}</option>`});selectPart.innerHTML=html;}
+            const existing = directCart.find(item => item.id === partId);
+            if(existing) {
+                if(existing.qty >= selectedPart.stok) {
+                    alert("Jumlah melebihi stok tersedia!");
+                    return;
+                }
+                existing.qty++;
+            } else {
+                directCart.push({ id: partId, qty: 1 });
+            }
+            hitungUlangTotalKasir();
+        }
 
-function tambahPartKeService(){
-  let kode=selectPart.value;
-  let part=daftarPart.find(p=>p.kode==kode);
-  let qty=parseInt(qtyPart.value);
-  currentService.parts.push({nama:part.nama,harga:part.harga,qty:qty});
-  hideModal('modalTambahPart');
-  loadForm();
-  loadListPartDipakai();
-  hitungTotal();
-  updateDraft(); // Simpan draft setelah tambah part
-}
+        function updateDirectCartQty(partId, amount) {
+            const item = directCart.find(i => i.id === partId);
+            const part = db.parts.find(p => p.id === partId);
+            if(item) {
+                item.qty += amount;
+                if(item.qty > part.stok) {
+                    alert("Stok tidak mencukupi!");
+                    item.qty = part.stok;
+                }
+                if(item.qty <= 0) {
+                    directCart = directCart.filter(i => i.id !== partId);
+                }
+            }
+            hitungUlangTotalKasir();
+        }
 
-function loadListPartDipakai(){let html='';let subtotal=0;currentService.parts.forEach((p,i)=>{let total=p.harga*p.qty;subtotal+=total;html+=`<div class="list-item"><div>${p.nama} x${p.qty}</div><div><b>Rp ${total.toLocaleString('id-ID')}</b> <button class="btn btn-sm btn-danger" onclick="hapusPart(${i})">x</button></div></div>`});listPartDipakai.innerHTML=html||'<small class="text-muted">Belum ada part</small>';subtotalPart.innerText=subtotal.toLocaleString('id-ID');}
+        function hitungUlangTotalKasir() {
+            const listContainer = document.getElementById("kasirItemsList");
+            listContainer.innerHTML = "";
+            let grandTotal = 0;
 
-function loadSelectMekanik(){
-  let html='<option value="">-- Pilih Mekanik --</option>'; // Menambah opsi default kosong
-  daftarMekanik.forEach(m=>{html+=`<option value="${m.nama}">${m.nama}</option>`});
-  selectMekanik.innerHTML=html;
-}
+            if (currentKasirMode === "servis" && selectedServisId) {
+                const servis = db.servisAktif.find(s => s.id === selectedServisId);
+                if(servis) {
+                    // List Jasa
+                    listContainer.innerHTML += `
+                        <div class="list-row">
+                            <div><span class="text-bold">Biaya Jasa Servis</span><br><small>Mekanik: ${servis.mekanik}</small></div>
+                            <span class="text-bold">${formatRupiah(servis.jasa)}</span>
+                        </div>`;
+                    grandTotal += servis.jasa;
 
-function hitungTotal(){
-  let subtotalPart=currentService.parts.reduce((a,b)=>a+(b.harga*b.qty),0);
-  currentService.total=subtotalPart+currentService.jasa;
-  totalAkhir.innerText=currentService.total.toLocaleString('id-ID');
-}
+                    // List Spareparts terpakai
+                    servis.parts.forEach(pRef => {
+                        const partMeta = db.parts.find(p => p.id === pRef.id);
+                        if(partMeta) {
+                            let subPart = partMeta.harga * pRef.qty;
+                            grandTotal += subPart;
+                            listContainer.innerHTML += `
+                                <div class="list-row">
+                                    <div><span class="text-bold">${partMeta.nama}</span><br><small>${pRef.qty} pcs x ${formatRupiah(partMeta.harga)}</small></div>
+                                    <span class="text-bold">${formatRupiah(subPart)}</span>
+                                </div>`;
+                        }
+                    });
+                }
+            } else if (currentKasirMode === "part") {
+                directCart.forEach(item => {
+                    const partMeta = db.parts.find(p => p.id === item.id);
+                    if(partMeta) {
+                        let subPart = partMeta.harga * item.qty;
+                        grandTotal += subPart;
+                        listContainer.innerHTML += `
+                            <div class="list-row">
+                                <div>
+                                    <span class="text-bold">${partMeta.nama}</span><br>
+                                    <small>${formatRupiah(partMeta.harga)}</small>
+                                </div>
+                                <div class="stock-control">
+                                    <button class="btn-circle minus" onclick="updateDirectCartQty('${item.id}', -1)">-</button>
+                                    <span class="text-bold">${item.qty}</span>
+                                    <button class="btn-circle plus" onclick="updateDirectCartQty('${item.id}', 1)">+</button>
+                                </div>
+                                <span class="text-bold" style="min-width:80px; text-align:right;">${formatRupiah(subPart)}</span>
+                            </div>`;
+                    }
+                });
+            }
 
-function updateKasirView(){
-  let kPlat = document.getElementById('kasirPlat');
-  let kTipe = document.getElementById('kasirTipe');
-  let kTotal = document.getElementById('kasirTotal');
-  let kDetail = document.getElementById('kasirDetail');
-  
-  if(currentService && currentService.plat !== ''){
-    kPlat.innerText = currentService.plat;
-    kTipe.innerText = currentService.tipe;
-    kTotal.innerText = currentService.total.toLocaleString('id-ID');
-    let html = `<b>Diagnosis:</b> ${currentService.diagnosis}<br><b>Mekanik:</b> ${currentService.mekanik || '-'}<br><hr>`;
-    currentService.parts.forEach(p=>{html+=`${p.nama} x${p.qty} = Rp ${(p.harga*p.qty).toLocaleString('id-ID')}<br>`});
-    html += `<hr>Jasa: Rp ${currentService.jasa.toLocaleString('id-ID')}`;
-    kDetail.innerHTML = html;
-  } else {
-    kPlat.innerText = "Belum ada service";
-    kTipe.innerText = "-";
-    kDetail.innerHTML = '<div class="text-center text-muted my-3">Silakan pilih kendaraan di menu utama terlebih dahulu.</div>';
-    kTotal.innerText = "0";
-  }
-}
+            if(listContainer.innerHTML === "") {
+                listContainer.innerHTML = `<p style="text-align:center; color:#888; font-size:12px; padding:10px;">Belum ada item terpilih</p>`;
+            }
 
-function lanjutKasir(){saveForm();showPage('page-kasir');}
+            document.getElementById("lblTotalBayar").innerText = formatRupiah(grandTotal);
+        }
 
-function selesaikanService(){
-  if(currentService.plat===''){alert('Tidak ada data service untuk disimpan');return;}
-  riwayatService.push(currentService);
-  localStorage.setItem('riwayatService',JSON.stringify(riwayatService));
-  currentService.parts.forEach(pDipakai=>{let part=daftarPart.find(x=>x.nama==pDipakai.nama);if(part) part.stok=parseInt(part.stok)-parseInt(pDipakai.qty);});
-  localStorage.setItem('daftarPart',JSON.stringify(daftarPart));
-  
-  // Hapus kendaraan dan draftnya karena pengerjaan sudah selesai
-  daftarKendaraan=daftarKendaraan.filter(k=>k.id!=currentService.id);
-  localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));
-  
-  alert('Service Selesai & Tersimpan');
-  currentService={id:0,plat:'',tipe:'',diagnosis:'',mekanik:'',parts:[],jasa:50000,total:0,tanggal:new Date().toLocaleString('id-ID')};
-  loadDaftarKendaraan();
-  loadDaftarPart();
-  loadRiwayat();
-  loadDashboard();
-  showPage('page-dashboard');
-}
+        function prosesSimpanTransaksi() {
+            let nowStr = new Date().toLocaleString('id-ID').replace(/\./g, ':');
+            let trx = { id: "T" + Date.now(), tanggal: nowStr, parts: [], total: 0 };
 
-function loadRiwayat(){let tgl=filterTanggal.value;let data=riwayatService;if(tgl){data=riwayatService.filter(r=>r.tanggal.includes(tgl.split('-').reverse().join('/')));}let html='';data.slice().reverse().forEach(r=>{html+=`<div class="card p-3 mb-2"><b>${r.plat}</b> <small>${r.tanggal}</small><br>Mekanik: ${r.mekanik}<br><b>Total: Rp ${r.total.toLocaleString('id-ID')}</b></div>`});listRiwayat.innerHTML=html||'<div class="text-center text-muted">Belum ada riwayat</div>';}
+            if (currentKasirMode === "servis") {
+                if(!selectedServisId) return alert("Pilih antrean servis terlebih dahulu!");
+                const servis = db.servisAktif.find(s => s.id === selectedServisId);
+                
+                trx.type = "servis";
+                trx.nopol = servis.nopol.toUpperCase();
+                trx.mekanik = servis.mekanik;
+                trx.jasa = servis.jasa;
+                
+                // Kurangi stok part di inventory utama & pasang ke riwayat nota
+                for(let pRef of servis.parts) {
+                    const part = db.parts.find(p => p.id === pRef.id);
+                    if(part) {
+                        part.stok -= pRef.qty; // POTONG STOK
+                        trx.parts.push({ nama: part.nama, qty: pRef.qty, harga: part.harga });
+                        trx.total += (part.harga * pRef.qty);
+                    }
+                }
+                trx.total += servis.jasa;
 
-function loadLaporan(){
-  let filter=filterLaporan.value; let data=riwayatService; let sekarang=new Date();
-  if(filter=='harian'){data=riwayatService.filter(r=>r.tanggal.includes(sekarang.toLocaleDateString('id-ID')));}
-  if(filter=='mingguan'){let t7=new Date();t7.setDate(sekarang.getDate()-7);data=riwayatService.filter(r=>new Date(r.tanggal.split(',')[0].split('/').reverse().join('-'))>=t7);}
-  if(filter=='bulanan'){data=riwayatService.filter(r=>r.tanggal.includes((sekarang.getMonth()+1)+'/'+sekarang.getFullYear()));}
-  let omset=data.reduce((a,b)=>a+b.total,0);
-  totalOmsetLaporan.innerText='Rp '+omset.toLocaleString('id-ID');
-  totalServiceLaporan.innerText=data.length;
-  let count={}; data.forEach(r=>r.parts.forEach(p=>{count[p.nama]=(count[p.nama]||0)+p.qty}));
-  let sorted=Object.entries(count).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  let html=''; sorted.forEach(([nama,qty])=>{html+=`<div class="list-item"><div>${nama}</div><div><b>${qty} pcs</b></div></div>`});
-  partTerlaris.innerHTML=html||'<small class="text-muted">Belum ada data</small>';
-}
+                // Hapus dari daftar antrean aktif
+                db.servisAktif = db.servisAktif.filter(s => s.id !== selectedServisId);
 
-function loadDashboard(){
-  let hariIni=new Date().toLocaleDateString('id-ID');
-  let serviceHariIni=riwayatService.filter(r=>r.tanggal.includes(hariIni));
-  let omset=serviceHariIni.reduce((a,b)=>a+b.total,0);
-  omsetHariIni.innerText='Rp '+omset.toLocaleString('id-ID');
-  jumlahService.innerText=serviceHariIni.length;
-  jumlahKendaraan.innerText=daftarKendaraan.length;
-}
+            } else {
+                if(directCart.length === 0) return alert("Keranjang penjualan langsung masih kosong!");
+                
+                trx.type = "part_langsung";
+                trx.nopol = "PENJUALAN LANGSUNG";
+                trx.mekanik = "-";
+                trx.jasa = 0;
 
-function simpanPart(){if(namaPart.value==''){alert('Nama Part wajib');return}let partBaru={kode:kodePart.value,nama:namaPart.value,stok:stokPart.value,harga:hargaPart.value};daftarPart.push(partBaru);localStorage.setItem('daftarPart',JSON.stringify(daftarPart));alert('Part berhasil disimpan');showPage('page-part');loadDaftarPart();}
-function simpanMekanik(){if(namaMekanik.value==''){alert('Nama wajib');return}let m={id:Date.now(),nama:namaMekanik.value,status:statusMekanik.value};daftarMekanik.push(m);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));hideModal('modalMekanik');namaMekanik.value='';loadDaftarMekanik();}
-function hapusMekanik(id){if(confirm('Yakin hapus?')){daftarMekanik=daftarMekanik.filter(m=>m.id!=id);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));loadDaftarMekanik();}}
-function loadDaftarMekanik(){let html='';daftarMekanik.forEach(m=>{let sc=m.status=='sibuk'?'status-sibuk':'status-free';let st=m.status=='sibuk'?'Sibuk':'Ready';html+=`<div class="d-flex justify-content-between align-items-center mb-3"><div class="d-flex"><div class="avatar me-2">${m.nama.charAt(0)}</div><div><b>${m.nama}</b><br><small><span class="status-dot ${sc}"></span>${st}</small></div></div><button class="btn btn-sm btn-outline-danger" onclick="hapusMekanik(${m.id})">Hapus</button></div>`});listMekanik.innerHTML=html;}
-function simpanKendaraan(){if(plat.value==''){alert('No plat wajib');return}let k={id:Date.now(),plat:plat.value,tipe:tipe.value};daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();loadDashboard();} 
-function loadDaftarKendaraan(){let html='';daftarKendaraan.forEach(k=>{html+=`<div class="col-6"><div class="card p-2 text-center kendaraan-tab" onclick="bukaDetailService(${k.id})"><small>${k.plat}</small><br><b>${k.tipe}</b></div></div>`});listKendaraan.innerHTML=html;}
+                for(let item of directCart) {
+                    const part = db.parts.find(p => p.id === item.id);
+                    if(part) {
+                        part.stok -= item.qty; // POTONG STOK YANG SAMA
+                        trx.parts.push({ nama: part.nama, qty: item.qty, harga: part.harga });
+                        trx.total += (part.harga * item.qty);
+                    }
+                }
+            }
 
-function previewLogo(event){
-  let reader=new FileReader();
-  reader.onload=function(e){
-    document.getElementById('previewLogo').src=e.target.result;
-    document.getElementById('previewLogo').style.display='block';
-    localStorage.setItem('logoBengkel',e.target.result);
-  };
-  reader.readAsDataURL(event.target.files[0]);
-}
-function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Tersimpan');loadDataBengkel();loadDashboard();}
-function loadDataBengkel(){
-  document.getElementById('namaDashboard').innerText=localStorage.getItem('namaBengkel')||'OTOPOS';
-  document.getElementById('alamatDashboard').innerText=localStorage.getItem('alamatBengkel')||'';
-  let logo=localStorage.getItem('logoBengkel');
-  if(logo){
-    let lDash = document.getElementById('logoDashboard');
-    lDash.src=logo;
-    lDash.style.display='inline-block';
-    let pLogo = document.getElementById('previewLogo');
-    if(pLogo) { pLogo.src=logo; pLogo.style.display='block'; }
-  }
-  namaBengkel.value=localStorage.getItem('namaBengkel')||'';
-  alamatBengkel.value=localStorage.getItem('alamatBengkel')||'';
-}
+            db.riwayat.unshift(trx); // Masukkan ke riwayat urutan paling depan
+            saveDB();
+            alert("Transaksi Berhasil Disimpan & Stok Diperbarui!");
+            
+            // Reset Kasir View
+            selectedServisId = "";
+            directCart = [];
+            switchMainTab("home");
+        }
 
-// INIT
-loadDaftarPart();loadDaftarMekanik();loadDaftarKendaraan();loadDataBengkel();loadRiwayat();loadDashboard();
-</script>
+        // --- 3. DAFTAR PART & STOK MANAGEMENT ---
+        function renderPartsSubPage() {
+            const container = document.getElementById("daftarPartsList");
+            container.innerHTML = "";
+            db.parts.forEach(p => {
+                container.innerHTML += `
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <h4 class="text-bold" style="font-size:16px;">${p.nama}</h4>
+                                <small style="color:#777;">Kode: ${p.kode}</small><br>
+                                <span class="badge" style="margin-top:5px; display:inline-block;">Stok: ${p.stok}</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <span class="text-bold" style="color:#333; font-size:16px;">${formatRupiah(p.harga)}</span>
+                                <div class="stock-control" style="margin-top:8px;">
+                                    <button class="btn-circle minus" onclick="ubahManualStok('${p.id}', -1)">-</button>
+                                    <button class="btn-circle plus" onclick="ubahManualStok('${p.id}', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function ubahManualStok(partId, val) {
+            const part = db.parts.find(p => p.id === partId);
+            if(part) {
+                part.stok += val;
+                if(part.stok < 0) part.stok = 0;
+                saveDB();
+                renderPartsSubPage();
+            }
+        }
+
+        function simpanPartBaru() {
+            const nama = document.getElementById("txtPartNama").value;
+            const kode = document.getElementById("txtPartKode").value;
+            const harga = parseInt(document.getElementById("numPartHarga").value) || 0;
+            const stok = parseInt(document.getElementById("numPartStok").value) || 0;
+
+            if(!nama) return alert("Nama part tidak boleh kosong!");
+            
+            db.parts.push({ id: "p" + Date.now(), nama, kode, harga, stok });
+            saveDB();
+            
+            // Clear input
+            document.getElementById("txtPartNama").value = "";
+            document.getElementById("txtPartKode").value = "";
+            document.getElementById("numPartHarga").value = "0";
+            document.getElementById("numPartStok").value = "0";
+            
+            toggleFormVisibility("formTambahPart");
+            renderPartsSubPage();
+        }
+
+        // --- 4. LAPORAN CALCULATOR (DURABLE & DYNAMIC) ---
+        function renderLaporanPage() {
+            // A. Hitung total omset global hari ini dari data riwayat
+            let totalOmset = 0;
+            let totalTransaksi = db.riwayat.length;
+
+            // Instansiasi penampung hitungan baru
+            let akumulasiMekanik = {};
+            let akumulasiProduk = {};
+
+            // Inisialisasi awal seluruh mekanik terdaftar dengan Rp 0
+            db.mekanik.forEach(m => {
+                akumulasiMekanik[m.nama.toLowerCase()] = 0;
+            });
+
+            // Olah transaksi dari database riwayat
+            db.riwayat.forEach(nota => {
+                totalOmset += nota.total;
+
+                // 1. Akumulasi hitungan kerja mekanik (berdasarkan Jasa Servis)
+                if(nota.mekanik && nota.mekanik !== "-") {
+                    let namaMek = nota.mekanik.toLowerCase();
+                    // Jika mekanik lama tidak ada di list master, buat baru di penampung laporan
+                    if(akumulasiMekanik[namaMek] === undefined) {
+                        akumulasiMekanik[namaMek] = 0;
+                    }
+                    // Tambahkan nominal total transaksi atau nominal jasanya
+                    akumulasiMekanik[namaMek] += nota.total; 
+                }
+
+                // 2. Akumulasi hitungan kuantitas seluruh produk terjual
+                nota.parts.forEach(pItem => {
+                    let namaProd = pItem.nama;
+                    if(!akumulasiProduk[namaProd]) {
+                        akumulasiProduk[namaProd] = { qty: 0, harga: pItem.harga };
+                    }
+                    akumulasiProduk[namaProd].qty += pItem.qty;
+                });
+            });
+
+            // Tampilkan Data Ke Komponen Utama
+            document.getElementById("lapTotalOmset").innerText = formatRupiah(totalOmset);
+            document.getElementById("lapJumlahServis").innerText = `Jumlah Transaksi: ${totalTransaksi}`;
+
+            // B. RENDER COMPONENT PENDAPATAN MEKANIK
+            const boxMekanik = document.getElementById("lapMekanikList");
+            boxMekanik.innerHTML = "";
+            
+            Object.keys(akumulasiMekanik).forEach(namaMek => {
+                boxMekanik.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e0e0e0;">
+                        <span style="color: #333; text-transform: capitalize;">${namaMek}</span>
+                        <span style="font-weight: bold; color: #27ae60;">${formatRupiah(akumulasiMekanik[namaMek])}</span>
+                    </div>`;
+            });
+            if(boxMekanik.innerHTML === "") boxMekanik.innerHTML = "<p style='color:#888; font-size:12px;'>Belum ada data mekanik.</p>";
+
+            // C. RENDER COMPONENT RINGKASAN PRODUK TERJUAL
+            const boxProduk = document.getElementById("lapProdukTerjualList");
+            boxProduk.innerHTML = "";
+
+            // Sorting agar produk terlaris (kuantitas paling banyak) muncul di atas
+            let sortedProduk = Object.keys(akumulasiProduk).sort((a,b) => akumulasiProduk[b].qty - akumulasiProduk[a].qty);
+
+            sortedProduk.forEach(namaProd => {
+                let meta = akumulasiProduk[namaProd];
+                let subTotalJual = meta.qty * meta.harga;
+                boxProduk.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e0e0e0;">
+                        <div>
+                            <span style="display: block; font-weight: 500; color: #333;">${namaProd}</span>
+                            <small style="color: #888;">${meta.qty} pcs x ${formatRupiah(meta.harga)}</small>
+                        </div>
+                        <span style="font-weight: bold; color: #333; align-self: center;">${formatRupiah(subTotalJual)}</span>
+                    </div>`;
+            });
+            if(boxProduk.innerHTML === "") boxProduk.innerHTML = "<p style='color:#888; font-size:12px; padding:10px; text-align:center;'>Belum ada produk terjual hari ini.</p>";
+        }
+
+        // --- 5. MANAGEMENT KENDARAAN MASUK & PROGRESS SERVIS ---
+        function renderKendaraanSubPage() {
+            const container = document.getElementById("daftarKendaraanAktifList");
+            container.innerHTML = "";
+            db.servisAktif.forEach(s => {
+                let statusLabel = (s.diagnosis && s.mekanik) ? `<span class="badge" style="background:#e6f4ea; color:#27ae60;">Dikerjakan</span>` : `<span class="badge" style="background:#fff3cd; color:#856404;">Antre</span>`;
+                container.innerHTML += `
+                    <div class="card" onclick="bukaProgressDetailServis('${s.id}')">
+                        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                            <div>
+                                <h4 class="text-bold" style="font-size:17px; color:#0066ff;">${s.nopol.toUpperCase()}</h4>
+                                <p style="font-size:13px; color:#555; font-weight:500;">Motor: ${s.motor}</p>
+                                <small style="color:#888;">Keluhan: ${s.diagnosis || '-'}</small>
+                            </div>
+                            <div style="text-align:right;">
+                                ${statusLabel}
+                                <p style="font-size:11px; color:#666; margin-top:5px;">Mekanik: <b>${s.mekanik || '-'}</b></p>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            if(db.servisAktif.length === 0) container.innerHTML = "<p style='text-align:center; padding:30px; color:#888;'>Tidak ada antrean kendaraan aktif.</p>";
+        }
+
+        function simpanKendaraanBaru() {
+            const motor = document.getElementById("txtNamaMotor").value;
+            const nopol = document.getElementById("txtNopol").value;
+            if(!motor || !nopol) return alert("Data kendaraan belum lengkap!");
+
+            db.servisAktif.push({
+                id: "s" + Date.now(), motor, nopol: nopol.toUpperCase(), diagnosis: "", mekanik: "", parts: [], jasa: 0
+            });
+            saveDB();
+            
+            document.getElementById("txtNamaMotor").value = "";
+            document.getElementById("txtNopol").value = "";
+            toggleFormVisibility("formTambahKendaraan");
+            renderKendaraanSubPage();
+        }
+
+        function bukaProgressDetailServis(servisId) {
+            activeDetailServisId = servisId;
+            const servis = db.servisAktif.find(s => s.id === servisId);
+            
+            // Pindah View
+            openSubPage("detail-servis", "DETAIL SERVICE");
+            
+            document.getElementById("detNopol").innerText = servis.nopol.toUpperCase();
+            document.getElementById("detMotor").innerText = "Jenis Motor: " + servis.motor;
+            document.getElementById("txtDetDiagnosis").value = servis.diagnosis;
+            document.getElementById("numDetJasa").value = servis.jasa;
+
+            // Dropdown Mekanik
+            const optMek = document.getElementById("optDetMekanik");
+            optMek.innerHTML = "<option value=''>-- Pilih Mekanik --</option>";
+            db.mekanik.forEach(m => {
+                optMek.innerHTML += `<option value="${m.name || m.nama}" ${servis.mekanik === m.nama ? 'selected':''}>${m.nama}</option>`;
+            });
+
+            // Dropdown Part Pilihan
+            const optPart = document.getElementById("optDetPart");
+            optPart.innerHTML = "<option value=''>-- Pilih Tambah Suku Cadang --</option>";
+            db.parts.forEach(p => {
+                optPart.innerHTML += `<option value="${p.id}">${p.nama} (${formatRupiah(p.harga)})</option>`;
+            });
+
+            renderPartTerpilihServis();
+        }
+
+        function tambahPartKeServis() {
+            const partId = document.getElementById("optDetPart").value;
+            if(!partId) return;
+
+            const servis = db.servisAktif.find(s => s.id === activeDetailServisId);
+            const partMeta = db.parts.find(p => p.id === partId);
+
+            if(partMeta.stok <= 0) return alert("Stok barang habis!");
+
+            const existing = servis.parts.find(p => p.id === partId);
+            if(existing) {
+                existing.qty++;
+            } else {
+                servis.parts.push({ id: partId, qty: 1 });
+            }
+            renderPartTerpilihServis();
+        }
+
+        function hapusPartDariServis(partId) {
+            const servis = db.servisAktif.find(s => s.id === activeDetailServisId);
+            servis.parts = servis.parts.filter(p => p.id !== partId);
+            renderPartTerpilihServis();
+        }
+
+        function renderPartTerpilihServis() {
+            const container = document.getElementById("detPartTerpilihList");
+            container.innerHTML = "";
+            const servis = db.servisAktif.find(s => s.id === activeDetailServisId);
+            
+            servis.parts.forEach(pRef => {
+                const part = db.parts.find(p => p.id === pRef.id);
+                if(part) {
+                    container.innerHTML += `
+                        <div class="list-row">
+                            <div><span>${part.nama}</span> <small>(${pRef.qty} pcs)</small></div>
+                            <button class="btn-danger-sm" onclick="hapusPartDariServis('${pRef.id}')">Hapus</button>
+                        </div>`;
+                }
+            });
+        }
+
+        function simpanDetailServisAktif() {
+            const servis = db.servisAktif.find(s => s.id === activeDetailServisId);
+            servis.diagnosis = document.getElementById("txtDetDiagnosis").value;
+            servis.mekanik = document.getElementById("optDetMekanik").value;
+            servis.jasa = parseInt(document.getElementById("numDetJasa").value) || 0;
+
+            if(!servis.mekanik) return alert("Mohon pilih mekanik yang menangani terlebih dahulu!");
+
+            saveDB();
+            alert("Progress penanganan motor berhasil disimpan!");
+            navBack();
+            renderKendaraanSubPage();
+        }
+
+        // --- 6. SUB-PAGE: MEKANIK & RIWAYAT ---
+        function renderMekanikSubPage() {
+            const list = document.getElementById("daftarMekanikList");
+            list.innerHTML = "";
+            db.mekanik.forEach((m, index) => {
+                list.innerHTML += `
+                    <div class="card" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:36px; height:36px; border-radius:50%; background:#0066ff; color:white; font-weight:bold; display:flex; align-items:center; justify-content:center; text-transform:uppercase;">${m.nama[0]}</div>
+                            <div>
+                                <b style="text-transform:capitalize;">${m.nama}</b><br>
+                                <small style="color:#27ae60;">● ${m.status}</small>
+                            </div>
+                        </div>
+                        <button class="btn-danger-sm" onclick="hapusMekanik(${index})">Hapus</button>
+                    </div>`;
+            });
+        }
+
+        function simpanMekanikBaru() {
+            const nama = document.getElementById("txtMekanikNama").value;
+            if(!nama) return alert("Nama mekanik harus diisi!");
+            db.mekanik.push({ nama: nama.toLowerCase(), status: "Ready" });
+            saveDB();
+            document.getElementById("txtMekanikNama").value = "";
+            toggleFormVisibility("formTambahMekanik");
+            renderMekanikSubPage();
+        }
+
+        function hapusMekanik(idx) {
+            if(confirm("Hapus mekanik ini?")) {
+                db.mekanik.splice(idx, 1);
+                saveDB();
+                renderMekanikSubPage();
+            }
+        }
+
+        function renderRiwayatSubPage() {
+            const list = document.getElementById("daftarRiwayatList");
+            list.innerHTML = "";
+            db.riwayat.forEach(r => {
+                let badgeType = r.type === 'servis' ? `<span class="badge">Servis</span>` : `<span class="badge" style="background:#e2fbe8; color:#107c41;">Direct Part</span>`;
+                list.innerHTML += `
+                    <div class="card">
+                        <div style="display:flex; justify-content:between; margin-bottom:6px;">
+                            <b>Nopol: ${r.nopol}</b>
+                            <span style="margin-left:auto; font-size:11px; color:#888;">${r.tanggal}</span>
+                        </div>
+                        <div style="font-size:12px; color:#555; margin-bottom:8px;">
+                            <span>Mekanik: <b style="text-transform:capitalize;">${r.mekanik}</b></span> ${badgeType}
+                        </div>
+                        <div style="border-top:1px solid #eee; padding-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:13px; font-weight:bold;">Total Transaksi:</span>
+                            <span class="text-green" style="font-size:15px;">${formatRupiah(r.total)}</span>
+                        </div>
+                    </div>`;
+            });
+            if(db.riwayat.length === 0) list.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>Belum ada riwayat transaksi.</p>";
+        }
+
+        // --- FIRST BOOT APPLICATION RUNNER ---
+        window.onload = function() {
+            initDashboard();
+        };
+    </script>
 </body>
 </html>
