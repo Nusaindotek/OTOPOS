@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14B3B5">
+  <title>OTOPOS - Aplikasi Bengkel</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root { --bs-primary: #14B3B5; }
+    .btn-primary, .bg-primary { background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
+    .card { border-radius: 15px; border: none; }
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
+    .kendaraan-tab.active { border: 2px solid var(--bs-primary); background: #e0f7f7; }
+    .avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--bs-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    .status-sibuk { background: #ffc107; } .status-free { background: #198754; }
+    .badge-stok-habis { background: #dc3545; } .badge-stok-sedikit { background: #ffc107; color: #000; } .badge-stok-aman { background: #198754; }
+    .logo { width: 80px; height: 80px; background: var(--bs-primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; }
+  </style>
+</head>
+<body class="bg-light pb-5">
+
+  <!-- HAL 1: LOGIN -->
+  <div id="page-login" class="page active">
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+        <div class="text-center mb-3"><div class="logo mx-auto">OT</div></div>
+        <h3 class="text-center fw-bold text-primary mb-3">OTOPOS</h3>
+        <input id="user" type="text" class="form-control mb-2" placeholder="Username" value="admin">
+        <input id="pass" type="password" class="form-control mb-3" placeholder="Password" value="123">
+        <button class="btn btn-primary w-100" onclick="login()">LOGIN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAL 2: DASHBOARD -->
+  <div id="page-dashboard" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid"><span class="navbar-brand mx-auto fw-bold">DASHBOARD</span></div></nav>
+    <div class="container py-3">
+      <div class="row g-2 mb-3">
+        <div class="col-6"><div class="card p-3 text-center"><h5 class="text-primary">Rp 3.4 Jt</h5><small>Omset Hari Ini</small></div></div>
+        <div class="col-6"><div class="card p-3 text-center"><h5 class="text-primary">12</h5><small>Service Hari Ini</small></div></div>
+      </div>
+      <div class="card p-3 mb-2" onclick="showPage('page-kasir')"><b>Kendaraan Ditangani</b></div>
+      <div class="card p-3 mb-2" onclick="showPage('page-part')"><b>Daftar Part</b></div>
+      <div class="card p-3 mb-2" onclick="showPage('page-input-part')"><b>Input Part</b></div>
+      <div class="card p-3 mb-2" onclick="showPage('page-mekanik')"><b>Daftar Mekanik</b></div>
+      <div class="card p-3 mb-2" onclick="showPage('page-laporan')"><b>Laporan</b></div>
+      <div class="card p-3 mb-2" onclick="showPage('page-setting')"><b>Setting</b></div>
+    </div>
+  </div>
+
+  <!-- HAL 3: KASIR -->
+  <div id="page-kasir" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
+    <div class="container py-3">
+      <h6 class="fw-bold">Kendaraan Ditangani</h6>
+      <div class="row g-2 mb-3">
+        <div class="col-6"><div class="card p-2 text-center kendaraan-tab active"><small>B 1234 ABC</small><br><b>Honda Beat</b></div></div>
+        <div class="col-6"><div class="card p-2 text-center kendaraan-tab"><small>D 5678 XYZ</small><br><b>Avanza</b></div></div>
+      </div>
+      <div class="card p-3 mb-3"><h5 class="text-end text-primary">Total: Rp 80.000</h5></div>
+      <button class="btn btn-primary w-100 btn-lg">CETAK & BAYAR</button>
+    </div>
+  </div>
+
+  <!-- HAL 4: DAFTAR PART -->
+  <div id="page-part" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR PART</span>
+      <button class="btn btn-light btn-sm" onclick="showPage('page-input-part')">+ Tambah</button></div></nav>
+    <div class="container py-3">
+      <input type="text" class="form-control mb-3" placeholder="🔍 Cari part...">
+      <div class="card p-3">
+        <table class="table table-sm"><tr><td>Oli MPX 1</td><td><span class="badge badge-stok-aman">15</span></td><td>Rp 55.000</td></tr></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAL 5: INPUT PART -->
+  <div id="page-input-part" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-part')">←</a><span class="navbar-brand mx-auto fw-bold">INPUT PART</span></div></nav>
+    <div class="container py-3">
+      <div class="card p-3">
+        <label>Kode Part</label><input class="form-control mb-2">
+        <label>Nama Part</label><input class="form-control mb-2">
+        <label>Harga Jual</label><input type="number" class="form-control mb-3">
+        <button class="btn btn-primary w-100" onclick="showPage('page-part')">SIMPAN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAL 6: MEKANIK -->
+  <div id="page-mekanik" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR MEKANIK</span></div></nav>
+    <div class="container py-3">
+      <div class="card p-3">
+        <div class="d-flex mb-3"><div class="avatar me-2">A</div><div><b>Asep</b><br><small><span class="status-dot status-sibuk"></span>Sibuk</small></div></div>
+        <div class="d-flex"><div class="avatar me-2">C</div><div><b>Cecep</b><br><small><span class="status-dot status-free"></span>Ready</small></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAL 7: LAPORAN -->
+  <div id="page-laporan" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">LAPORAN</span></div></nav>
+    <div class="container py-3">
+      <div class="card p-3 mb-3"><h6>Omset: Rp 3.450.000</h6></div>
+      <div class="card p-3"><canvas id="grafikLaporan"></canvas></div>
+    </div>
+  </div>
+
+  <!-- HAL 8: SETTING -->
+  <div id="page-setting" class="page">
+    <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
+      <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">SETTING</span></div></nav>
+    <div class="container py-3">
+      <div class="card p-3 mb-3">
+        <h6 class="fw-bold">Data Bengkel</h6>
+        <input class="form-control mb-2" value="OTOPOS Bengkel">
+        <button class="btn btn-primary w-100">SIMPAN DATA</button>
+      </div>
+      <div class="card p-3 mb-3">
+        <h6 class="fw-bold mb-3">Butuh Bantuan?</h6>
+        <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-success w-100 mb-2">💬 Bantuan via WhatsApp</a>
+        <a href="mailto:support@otopos.com" class="btn btn-outline-primary w-100">📧 Bantuan via Email</a>
+      </div>
+      <div class="card p-3"><button class="btn btn-outline-danger w-100" onclick="logout()">Logout</button></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav d-flex justify-content-around py-2">
+    <button class="btn btn-sm" onclick="showPage('page-dashboard')">🏠<br><small>Home</small></button>
+    <button class="btn btn-sm" onclick="showPage('page-kasir')">🧾<br><small>Kasir</small></button>
+    <button class="btn btn-sm" onclick="showPage('page-laporan')">📊<br><small>Laporan</small></button>
+  </div>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0,0);
+    }
+    function login(){ showPage('page-dashboard') }
+    function logout(){ showPage('page-login') }
+    
+    // Daftarkan SW
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+
+    // Grafik
+    const ctx = document.getElementById('grafikLaporan');
+    if(ctx){ new Chart(ctx, { type: 'bar', data: { labels: ['01','02','03','04','05','06','07'], datasets: [{ data: [450,380,520,480,600,550,470], backgroundColor: '#14B3B5' }] } }); }
+  </script>
+</body>
+</html>
