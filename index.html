@@ -23,7 +23,6 @@
 </head>
 <body>
 
-<!-- 1. DASHBOARD UPGRADE -->
 <div id="page-dashboard" class="page active">
   <div class="header-bengkel text-center mb-3">
     <img id="logoDashboard" src="" style="width:60px; display:none;" class="mb-2 rounded-circle border border-3 border-white">
@@ -32,7 +31,6 @@
   </div>
 
   <div class="container">
-    <!-- KARTU STATISTIK -->
     <div class="row g-2 mb-3">
       <div class="col-6">
         <div class="card text-center p-3 border-0 shadow-sm">
@@ -46,7 +44,7 @@
           <small class="text-muted">Service Selesai</small>
         </div>
       </div>
-      <div class="col-12"> <!-- BARU -->
+      <div class="col-12">
         <div class="card text-center p-3 border-0 shadow-sm bg-warning-subtle">
           <h4 class="text-warning fw-bold mb-0" id="jumlahKendaraan">0</h4>
           <small class="text-muted">Kendaraan Dikerjakan</small>
@@ -54,7 +52,6 @@
       </div>
     </div>
 
-    <!-- MENU CEPAT -->
     <h6 class="fw-bold mb-2">Menu Utama</h6>
     <div class="menu-card" onclick="showPage('page-kendaraan')">
       <div class="me-3 fs-4">🏍️</div>
@@ -83,8 +80,6 @@
   </div>
 </div>
 
-<!-- SISA HALAMAN SAMA KAYAK v4.3 -->
-<!-- KENDARAAN -->
 <div id="page-kendaraan" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KENDARAAN</span>
@@ -92,7 +87,6 @@
   <div class="container py-3"><div class="row g-2" id="listKendaraan"></div></div>
 </div>
 
-<!-- DETAIL SERVICE -->
 <div id="page-detail-service" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-kendaraan')">←</a><span class="navbar-brand mx-auto fw-bold">DETAIL SERVICE</span></div></nav>
@@ -110,12 +104,11 @@
   </div>
 </div>
 
-<!-- KASIR -->
 <div id="page-kasir" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
-    <a class="navbar-brand" onclick="showPage('page-detail-service')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
+    <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">KASIR</span></div></nav>
   <div class="container py-3">
-    <div class="card p-3 mb-3"><b id="kasirPlat"></b><br><small id="kasirTipe"></small></div>
+    <div class="card p-3 mb-3"><b id="kasirPlat">Belum ada service</b><br><small id="kasirTipe">-</small></div>
     <div class="card p-3 mb-3" id="kasirDetail"></div>
     <h5 class="text-end fw-bold">TOTAL BAYAR: Rp <span id="kasirTotal">0</span></h5>
     <button class="btn btn-success w-100 mb-2" onclick="selesaikanService()">SELESAI & SIMPAN</button>
@@ -123,7 +116,6 @@
   </div>
 </div>
 
-<!-- RIWAYAT -->
 <div id="page-riwayat" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">RIWAYAT</span></div></nav>
@@ -133,7 +125,6 @@
   </div>
 </div>
 
-<!-- LAPORAN -->
 <div id="page-laporan" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">LAPORAN</span></div></nav>
@@ -149,7 +140,6 @@
   </div>
 </div>
 
-<!-- DAFTAR PART -->
 <div id="page-part" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">DAFTAR PART</span>
@@ -157,7 +147,6 @@
   <div class="container py-3" id="listPartCard"></div>
 </div>
 
-<!-- INPUT PART -->
 <div id="page-input-part" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-part')">←</a><span class="navbar-brand mx-auto fw-bold">INPUT PART</span></div></nav>
@@ -172,7 +161,6 @@
   </div>
 </div>
 
-<!-- MEKANIK -->
 <div id="page-mekanik" class="page">
   <nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">MEKANIK</span>
@@ -180,7 +168,6 @@
   <div class="container py-3"><div class="card p-3" id="listMekanik"></div></div>
 </div>
 
-<!-- SETTING -->
 <div id="page-setting" class="page"><nav class="navbar navbar-dark bg-primary sticky-top"><div class="container-fluid">
     <a class="navbar-brand" onclick="showPage('page-dashboard')">←</a><span class="navbar-brand mx-auto fw-bold">SETTING</span></div></nav>
   <div class="container py-3">
@@ -195,12 +182,10 @@
   </div>
 </div>
 
-<!-- MODAL -->
 <div id="modalKendaraan" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Kendaraan</h6><input id="plat" class="form-control mb-2"><input id="tipe" class="form-control mb-3"><button class="btn btn-primary w-100 mb-2" onclick="simpanKendaraan()">SIMPAN</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalKendaraan')">BATAL</button></div></div>
 <div id="modalMekanik" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Mekanik</h6><input id="namaMekanik" class="form-control mb-2"><select id="statusMekanik" class="form-control mb-3"><option value="free">Ready</option><option value="sibuk">Sibuk</option></select><button class="btn btn-primary w-100 mb-2" onclick="simpanMekanik()">SIMPAN</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalMekanik')">BATAL</button></div></div>
 <div id="modalTambahPart" class="modal-bg"><div class="modal-box"><h6 class="fw-bold mb-3">Tambah Part</h6><select id="selectPart" class="form-control mb-2"></select><input id="qtyPart" type="number" value="1" class="form-control mb-3"><button class="btn btn-primary w-100 mb-2" onclick="tambahPartKeService()">TAMBAH</button><button class="btn btn-outline-secondary w-100" onclick="hideModal('modalTambahPart')">BATAL</button></div></div>
 
-<!-- FOOTER NAV -->
 <nav class="navbar fixed-bottom bg-white border-top">
   <div class="container-fluid justify-content-around">
     <a class="text-center text-dark" onclick="showPage('page-dashboard')"><div>🏠</div><small>Home</small></a>
@@ -212,7 +197,13 @@
 <script>
 let currentService = {id:0, plat:'', tipe:'', diagnosis:'', mekanik:'', parts:[], jasa:50000, total:0, tanggal:new Date().toLocaleString('id-ID')};
 
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');if(id=='page-laporan')loadLaporan();if(id=='page-dashboard')loadDashboard();}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id=='page-laporan')loadLaporan();
+  if(id=='page-dashboard')loadDashboard();
+  if(id=='page-kasir')updateKasirView();
+}
 function showModal(id){document.getElementById(id).style.display='block';}
 function hideModal(id){document.getElementById(id).style.display='none';}
 
@@ -235,8 +226,30 @@ function loadListPartDipakai(){let html='';let subtotal=0;currentService.parts.f
 function loadSelectMekanik(){let html='';daftarMekanik.forEach(m=>{html+=`<option value="${m.nama}">${m.nama}</option>`});selectMekanik.innerHTML=html;}
 function hitungTotal(){let subtotalPart=currentService.parts.reduce((a,b)=>a+(b.harga*b.qty),0);currentService.total=subtotalPart+currentService.jasa;totalAkhir.innerText=currentService.total.toLocaleString('id-ID');}
 
-function lanjutKasir(){saveForm();kasirPlat.innerText=currentService.plat;kasirTipe.innerText=currentService.tipe;kasirTotal.innerText=currentService.total.toLocaleString('id-ID');let html=`<b>Diagnosis:</b> ${currentService.diagnosis}<br><b>Mekanik:</b> ${currentService.mekanik}<br><hr>`;currentService.parts.forEach(p=>{html+=`${p.nama} x${p.qty} = Rp ${(p.harga*p.qty).toLocaleString('id-ID')}<br>`});html+=`<hr>Jasa: Rp ${currentService.jasa.toLocaleString('id-ID')}`;kasirDetail.innerHTML=html;showPage('page-kasir');}
-function selesaikanService(){riwayatService.push(currentService);localStorage.setItem('riwayatService',JSON.stringify(riwayatService));currentService.parts.forEach(pDipakai=>{let part=daftarPart.find(x=>x.nama==pDipakai.nama);if(part) part.stok=parseInt(part.stok)-parseInt(pDipakai.qty);});localStorage.setItem('daftarPart',JSON.stringify(daftarPart));daftarKendaraan=daftarKendaraan.filter(k=>k.id!=currentService.id);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));alert('Service Selesai & Tersimpan');loadDaftarKendaraan();loadDaftarPart();loadRiwayat();loadDashboard();showPage('page-dashboard');}
+function updateKasirView(){
+  let kPlat = document.getElementById('kasirPlat');
+  let kTipe = document.getElementById('kasirTipe');
+  let kTotal = document.getElementById('kasirTotal');
+  let kDetail = document.getElementById('kasirDetail');
+  
+  if(currentService && currentService.plat !== ''){
+    kPlat.innerText = currentService.plat;
+    kTipe.innerText = currentService.tipe;
+    kTotal.innerText = currentService.total.toLocaleString('id-ID');
+    let html = `<b>Diagnosis:</b> ${currentService.diagnosis}<br><b>Mekanik:</b> ${currentService.mekanik}<br><hr>`;
+    currentService.parts.forEach(p=>{html+=`${p.nama} x${p.qty} = Rp ${(p.harga*p.qty).toLocaleString('id-ID')}<br>`});
+    html += `<hr>Jasa: Rp ${currentService.jasa.toLocaleString('id-ID')}`;
+    kDetail.innerHTML = html;
+  } else {
+    kPlat.innerText = "Belum ada service";
+    kTipe.innerText = "-";
+    kDetail.innerHTML = '<div class="text-center text-muted my-3">Silakan pilih kendaraan di menu utama terlebih dahulu.</div>';
+    kTotal.innerText = "0";
+  }
+}
+
+function lanjutKasir(){saveForm();showPage('page-kasir');}
+function selesaikanService(){if(currentService.plat===''){alert('Tidak ada data service untuk disimpan');return;}riwayatService.push(currentService);localStorage.setItem('riwayatService',JSON.stringify(riwayatService));currentService.parts.forEach(pDipakai=>{let part=daftarPart.find(x=>x.nama==pDipakai.nama);if(part) part.stok=parseInt(part.stok)-parseInt(pDipakai.qty);});localStorage.setItem('daftarPart',JSON.stringify(daftarPart));daftarKendaraan=daftarKendaraan.filter(k=>k.id!=currentService.id);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));alert('Service Selesai & Tersimpan');currentService={id:0,plat:'',tipe:'',diagnosis:'',mekanik:'',parts:[],jasa:50000,total:0,tanggal:new Date().toLocaleString('id-ID')};loadDaftarKendaraan();loadDaftarPart();loadRiwayat();loadDashboard();showPage('page-dashboard');}
 
 function loadRiwayat(){let tgl=filterTanggal.value;let data=riwayatService;if(tgl){data=riwayatService.filter(r=>r.tanggal.includes(tgl.split('-').reverse().join('/')));}let html='';data.slice().reverse().forEach(r=>{html+=`<div class="card p-3 mb-2"><b>${r.plat}</b> <small>${r.tanggal}</small><br>Mekanik: ${r.mekanik}<br><b>Total: Rp ${r.total.toLocaleString('id-ID')}</b></div>`});listRiwayat.innerHTML=html||'<div class="text-center text-muted">Belum ada riwayat</div>';}
 
@@ -254,25 +267,46 @@ function loadLaporan(){
   partTerlaris.innerHTML=html||'<small class="text-muted">Belum ada data</small>';
 }
 
-// DASHBOARD FIX - INI KUNCINYA
 function loadDashboard(){
   let hariIni=new Date().toLocaleDateString('id-ID');
   let serviceHariIni=riwayatService.filter(r=>r.tanggal.includes(hariIni));
   let omset=serviceHariIni.reduce((a,b)=>a+b.total,0);
   omsetHariIni.innerText='Rp '+omset.toLocaleString('id-ID');
   jumlahService.innerText=serviceHariIni.length;
-  jumlahKendaraan.innerText=daftarKendaraan.length; // BARU
+  jumlahKendaraan.innerText=daftarKendaraan.length;
 }
 
 function simpanPart(){if(namaPart.value==''){alert('Nama Part wajib');return}let partBaru={kode:kodePart.value,nama:namaPart.value,stok:stokPart.value,harga:hargaPart.value};daftarPart.push(partBaru);localStorage.setItem('daftarPart',JSON.stringify(daftarPart));alert('Part berhasil disimpan');showPage('page-part');loadDaftarPart();}
 function simpanMekanik(){if(namaMekanik.value==''){alert('Nama wajib');return}let m={id:Date.now(),nama:namaMekanik.value,status:statusMekanik.value};daftarMekanik.push(m);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));hideModal('modalMekanik');namaMekanik.value='';loadDaftarMekanik();}
 function hapusMekanik(id){if(confirm('Yakin hapus?')){daftarMekanik=daftarMekanik.filter(m=>m.id!=id);localStorage.setItem('daftarMekanik',JSON.stringify(daftarMekanik));loadDaftarMekanik();}}
 function loadDaftarMekanik(){let html='';daftarMekanik.forEach(m=>{let sc=m.status=='sibuk'?'status-sibuk':'status-free';let st=m.status=='sibuk'?'Sibuk':'Ready';html+=`<div class="d-flex justify-content-between align-items-center mb-3"><div class="d-flex"><div class="avatar me-2">${m.nama.charAt(0)}</div><div><b>${m.nama}</b><br><small><span class="status-dot ${sc}"></span>${st}</small></div></div><button class="btn btn-sm btn-outline-danger" onclick="hapusMekanik(${m.id})">Hapus</button></div>`});listMekanik.innerHTML=html;}
-function simpanKendaraan(){if(plat.value==''){alert('No plat wajib');return}let k={id:Date.now(),plat:plat.value,tipe:tipe.value};daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();loadDashboard();} // reload dashboard
+function simpanKendaraan(){if(plat.value==''){alert('No plat wajib');return}let k={id:Date.now(),plat:plat.value,tipe:tipe.value};daftarKendaraan.push(k);localStorage.setItem('daftarKendaraan',JSON.stringify(daftarKendaraan));hideModal('modalKendaraan');plat.value='';tipe.value='';loadDaftarKendaraan();loadDashboard();} 
 function loadDaftarKendaraan(){let html='';daftarKendaraan.forEach(k=>{html+=`<div class="col-6"><div class="card p-2 text-center kendaraan-tab" onclick="bukaDetailService(${k.id})"><small>${k.plat}</small><br><b>${k.tipe}</b></div></div>`});listKendaraan.innerHTML=html;}
-function previewLogo(event){let reader=new FileReader();reader.onload=function(e){previewLogo.src=e.target.result;previewLogo.style.display='block';localStorage.setItem('logoBengkel',e.target.result)};reader.readAsDataURL(event.target.files[0]);}
-function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Tersimpan');loadDataBengkel();}
-function loadDataBengkel(){namaDashboard.innerText=localStorage.getItem('namaBengkel')||'OTOPOS';alamatDashboard.innerText=localStorage.getItem('alamatBengkel')||'';let logo=localStorage.getItem('logoBengkel');if(logo){logoDashboard.src=logo;logoDashboard.style.display='block';}namaBengkel.value=localStorage.getItem('namaBengkel')||'';alamatBengkel.value=localStorage.getItem('alamatBengkel')||'';}
+
+function previewLogo(event){
+  let reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('previewLogo').src=e.target.result;
+    document.getElementById('previewLogo').style.display='block';
+    localStorage.setItem('logoBengkel',e.target.result);
+  };
+  reader.readAsDataURL(event.target.files[0]);
+}
+function simpanDataBengkel(){localStorage.setItem('namaBengkel',namaBengkel.value);localStorage.setItem('alamatBengkel',alamatBengkel.value);alert('Data Tersimpan');loadDataBengkel();loadDashboard();}
+function loadDataBengkel(){
+  document.getElementById('namaDashboard').innerText=localStorage.getItem('namaBengkel')||'OTOPOS';
+  document.getElementById('alamatDashboard').innerText=localStorage.getItem('alamatBengkel')||'';
+  let logo=localStorage.getItem('logoBengkel');
+  if(logo){
+    let lDash = document.getElementById('logoDashboard');
+    lDash.src=logo;
+    lDash.style.display='inline-block';
+    let pLogo = document.getElementById('previewLogo');
+    if(pLogo) { pLogo.src=logo; pLogo.style.display='block'; }
+  }
+  namaBengkel.value=localStorage.getItem('namaBengkel')||'';
+  alamatBengkel.value=localStorage.getItem('alamatBengkel')||'';
+}
 
 // INIT
 loadDaftarPart();loadDaftarMekanik();loadDaftarKendaraan();loadDataBengkel();loadRiwayat();loadDashboard();
