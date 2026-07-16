@@ -14,16 +14,26 @@
 
     <div class="app-content">
         <div id="page-home" class="page-container">
-            <div class="profile-card">
-                <h2 id="display-nama-bengkel">Bengkel Maju Motor</h2>
-            </div>
+            <div class="profile-card"><h2 id="display-nama-bengkel">Bengkel Maju Motor</h2></div>
             <div class="stats-grid">
                 <div class="stat-box"><span class="stat-label">Omset</span><h2 id="stat-omset">Rp 0</h2></div>
                 <div class="stat-box"><span class="stat-label">Selesai</span><h2 id="stat-selesai">0</h2></div>
             </div>
             <div class="menu-list">
+                <div class="menu-item" onclick="navigateTo('kasir')"><span>💰</span> Kasir</div>
                 <div class="menu-item" onclick="navigateTo('mekanik')"><span>👨‍🔧</span> Daftar Mekanik</div>
                 <div class="menu-item" onclick="navigateTo('setting')"><span>⚙️</span> Pengaturan</div>
+            </div>
+        </div>
+
+        <div id="page-kasir" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <div class="card">
+                <h3>Transaksi Baru</h3>
+                <div class="form-group"><label>Nama Pelanggan/Kendaraan</label><input type="text" id="kasir-nama"></div>
+                <div class="form-group"><label>Pilih Mekanik</label><select id="kasir-mekanik"></select></div>
+                <div class="form-group"><label>Biaya (Rp)</label><input type="number" id="kasir-biaya"></div>
+                <button class="btn btn-primary" onclick="prosesTransaksi()">Proses & Simpan Transaksi</button>
             </div>
         </div>
 
@@ -42,33 +52,23 @@
 
         <div id="page-setting" class="page-container">
             <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
-            
             <div class="card">
                 <h3>Identitas Bengkel</h3>
                 <div class="form-group"><label>Nama Bengkel</label><input type="text" id="set-nama-bengkel"></div>
-                <div class="form-group"><label>URL Logo</label><input type="text" id="set-logo" placeholder="Masukkan link URL gambar"></div>
+                <div class="form-group"><label>URL Logo</label><input type="text" id="set-logo"></div>
                 <div class="form-group"><label>Footer Struk</label><input type="text" id="set-footer"></div>
                 <button class="btn btn-primary" onclick="simpanPengaturan()">Simpan Pengaturan</button>
             </div>
-
             <div class="card">
                 <h3>Koneksi Perangkat</h3>
-                <div class="form-group">
-                    <label>Printer Thermal (Bluetooth)</label>
-                    <button class="btn btn-secondary" onclick="alert('Mencari perangkat Bluetooth...')">Scan Printer BT</button>
-                </div>
+                <button class="btn btn-secondary" onclick="alert('Mencari printer BT...')">Scan Printer BT</button>
             </div>
-
             <div class="card">
                 <h3>Status & Bantuan</h3>
-                <div class="form-group">
-                    <div style="padding: 10px; background: #dcfce7; border-radius: 6px; margin-bottom: 10px;">✅ Mode Offline Aktif</div>
-                    <button class="btn btn-secondary" onclick="hubungiCS()">📧 Hubungi CS (NusaIndo Teknologi)</button>
-                </div>
+                <button class="btn btn-secondary" onclick="hubungiCS()">📧 Hubungi CS (NusaIndo Teknologi)</button>
             </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
