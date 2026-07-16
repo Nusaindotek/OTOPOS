@@ -13,11 +13,11 @@
         <div id="page-home" class="page-container">
             <div class="profile-card"><h2 id="display-nama-bengkel">Bengkel Maju Motor</h2></div>
             <div class="menu-list">
-                <div class="menu-item" onclick="navigateTo('kasir')"><span>💰</span> Kasir</div>
-                <div class="menu-item" onclick="navigateTo('stok')"><span>📦</span> Daftar Part</div>
-                <div class="menu-item" onclick="navigateTo('riwayat')"><span>📜</span> Riwayat</div>
-                <div class="menu-item" onclick="navigateTo('mekanik')"><span>👨‍🔧</span> Mekanik</div>
-                <div class="menu-item" onclick="navigateTo('setting')"><span>⚙️</span> Pengaturan</div>
+                <div class="menu-item" onclick="navigateTo('kasir')">💰 Kasir</div>
+                <div class="menu-item" onclick="navigateTo('stok')">📦 Daftar Part</div>
+                <div class="menu-item" onclick="navigateTo('riwayat')">📜 Riwayat</div>
+                <div class="menu-item" onclick="navigateTo('mekanik')">👨‍🔧 Mekanik</div>
+                <div class="menu-item" onclick="navigateTo('setting')">⚙️ Pengaturan</div>
             </div>
         </div>
 
@@ -29,28 +29,24 @@
                     <button class="btn btn-primary" onclick="setJenis('Perbaikan')" id="btn-perbaikan">🔧 Perbaikan</button>
                     <button class="btn btn-secondary" onclick="setJenis('Part')" id="btn-part">📦 Beli Part</button>
                 </div>
-                <div class="form-group"><label>Nama Pelanggan/Kendaraan</label><input type="text" id="kasir-nama"></div>
+                <div class="form-group"><label>Nama Pelanggan</label><input type="text" id="kasir-nama"></div>
                 <div class="form-group" id="group-mekanik"><label>Pilih Mekanik</label><select id="kasir-mekanik"></select></div>
-                <div class="form-group"><label>Biaya (Rp)</label><input type="number" id="kasir-biaya" placeholder="Masukkan nominal harga..."></div>
+                
+                <!-- Input biaya ini akan disembunyikan jika pilih Beli Part -->
+                <div class="form-group" id="group-biaya">
+                    <label id="label-biaya">Ongkos Mekanik (Rp)</label>
+                    <input type="number" id="kasir-biaya">
+                </div>
+                
                 <button class="btn btn-primary" style="width:100%" onclick="prosesTransaksi()">Simpan Transaksi</button>
             </div>
         </div>
 
-        <!-- STOK & LAINNYA (Ringkas) -->
-        <div id="page-stok" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button>
-            <div class="card">
-                <h3>Tambah Part</h3>
-                <input type="text" id="input-nama-part" placeholder="Nama Barang">
-                <input type="number" id="input-harga-part" placeholder="Harga Jual">
-                <button class="btn btn-primary" onclick="tambahPart()">Tambah</button>
-            </div>
-            <div id="list-stok"></div>
-        </div>
-        
+        <!-- STOK, RIWAYAT, MEKANIK, SETTING -->
+        <div id="page-stok" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><div id="list-stok"></div></div>
         <div id="page-riwayat" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><div id="list-riwayat"></div></div>
         <div id="page-mekanik" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><div id="list-mekanik"></div></div>
-        <div id="page-setting" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><input type="text" id="set-nama-bengkel" placeholder="Nama Bengkel"><button class="btn btn-primary" onclick="simpanPengaturan()">Simpan</button></div>
+        <div id="page-setting" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><input type="text" id="set-nama-bengkel"><button class="btn btn-primary" onclick="simpanPengaturan()">Simpan</button></div>
     </div>
     <script src="script.js"></script>
 </body>
