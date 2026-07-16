@@ -1,54 +1,76 @@
-// 1. FUNGSI LOAD DATA (Jika belum ada, gunakan data awal)
+// 1. Inisialisasi Data dari LocalStorage (Offline Persistence)
 function loadData() {
     const savedData = localStorage.getItem('otopos_data');
     if (savedData) {
         return JSON.parse(savedData);
     } else {
-        // Data default jika aplikasi baru pertama kali dibuka
         return {
             omsetHariIni: 0,
-            saldoAktif: 0,
             servisSelesai: 0,
             kendaraanDiproses: 0,
-            antreanLapangan: []
+            antreanLapangan: [],
+            daftarMekanik: []
         };
     }
 }
 
-// Inisialisasi variabel global
 let dataBengkel = loadData();
 
-// 2. FUNGSI SAVE DATA (Dipanggil setiap ada perubahan data)
+// 2. Fungsi Simpan Data
 function saveData() {
     localStorage.setItem('otopos_data', JSON.stringify(dataBengkel));
 }
 
-// 3. UPDATE FUNGSI REFRESH (Ditambahkan saveData di dalamnya)
+// 3. Fungsi Refresh UI
 function refreshTampilanDashboard() {
-    document.getElementById('stat-omset').innerText = ubahKeFormatRupiah(dataBengkel.omsetHariIni);
-    document.getElementById('stat-selesai').innerText = dataBengkel.servisSelesai;
-    document.getElementById('stat-proses').innerText = `${dataBengkel.kendaraanDiproses} Kendaraan`;
+    const elOmset = document.getElementById('stat-omset');
+    const elSelesai = document.getElementById('stat-selesai');
     
-    // Sinkronisasi ke bagian Laporan jika ada
-    const lapOmset = document.getElementById('laporan-total-omset');
-    if (lapOmset) lapOmset.innerText = ubahKeFormatRupiah(dataBengkel.omsetHariIni);
+    if (elOmset) elOmset.innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(dataBengkel.omsetHariIni).replace(/,00$/, '');
+    if (elSelesai) elSelesai.innerText = dataBengkel.servisSelesai;
     
-    const lapSaldo = document.getElementById('laporan-saldo-aktif');
-    if (lapSaldo) lapSaldo.innerText = ubahKeFormatRupiah(dataBengkel.saldoAktif);
-    
-    // Pastikan data tersimpan di browser setiap kali tampilan di-refresh
-    saveData(); 
+    saveData();
 }
 
-// Contoh implementasi di fungsi transaksi:
-function prosesPembayaran() {
-    // ... (kode sebelumnya) ...
+// 4. Navigasi
+function navigateTo(pageName) {
+    document.body.className = `view-${pageName}`;
+    document.getElementById('header-title').innerText = pageName.toUpperCase();
     
-    dataBengkel.omsetHariIni += totalBayar;
-    dataBengkel.saldoAktif += totalBayar;
-    
-    // Setelah semua perubahan data:
-    saveData(); 
-    refreshTampilanDashboard();
-    // ...
+    if (pageName === 'mekanik') renderMekanik();
 }
+
+// 5. Fitur Mekanik
+function tambahMekanik() {
+    const input = document.getElementById('input-nama-mekanik');
+    if (!input.value) return alert("Masukkan nama mekanik!");
+    
+    dataBengkel.daftarMekanik.push({
+        id: Date.now(),
+        nama: input.value,
+        totalServis: 0
+    });
+    
+    input.value = '';
+    saveData();
+    renderMekanik();
+}
+
+function renderMekanik() {
+    const container = document.getElementById('list-mekanik');
+    container.innerHTML = '';
+    dataBengkel.daftarMekanik.forEach(m => {
+        container.innerHTML += `<div class="card">${m.nama} <small>(${m.totalServis} servis)</small></div>`;
+    });
+}
+
+// 6. Fitur CS
+function hubungiCS() {
+    window.location.href = "mailto:nusaindoteknologi@gmail.com?subject=Dukungan Teknis OTOPOS";
+}
+
+// Inisialisasi saat aplikasi dibuka
+document.addEventListener('DOMContentLoaded', () => {
+    refreshTampilanDashboard();
+    renderMekanik();
+});
