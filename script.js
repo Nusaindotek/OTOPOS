@@ -2,8 +2,11 @@ let dataBengkel = JSON.parse(localStorage.getItem('otopos_data')) || {
     omsetHariIni: 0,
     servisSelesai: 0,
     daftarMekanik: [],
+    riwayat: [],
     config: { namaBengkel: "Bengkel Maju Motor", logoUrl: "", footerStruk: "Terima Kasih" }
 };
+
+let currentJenis = 'Perbaikan';
 
 function saveData() { localStorage.setItem('otopos_data', JSON.stringify(dataBengkel)); }
 
@@ -17,10 +20,17 @@ function navigateTo(pageName) {
     document.getElementById('header-title').innerText = pageName.toUpperCase();
     if (pageName === 'setting') loadPengaturanKeForm();
     if (pageName === 'mekanik') renderMekanik();
-    if (pageName === 'kasir') updateDropdownMekanik();
+    if (pageName === 'kasir') { updateDropdownMekanik(); setJenis('Perbaikan'); }
 }
 
 // FUNGSI KASIR
+function setJenis(jenis) {
+    currentJenis = jenis;
+    document.getElementById('btn-perbaikan').className = (jenis === 'Perbaikan') ? 'btn btn-primary' : 'btn btn-secondary';
+    document.getElementById('btn-part').className = (jenis === 'Part') ? 'btn btn-primary' : 'btn btn-secondary';
+    document.getElementById('group-mekanik').style.display = (jenis === 'Perbaikan') ? 'block' : 'none';
+}
+
 function updateDropdownMekanik() {
     const select = document.getElementById('kasir-mekanik');
     select.innerHTML = dataBengkel.daftarMekanik.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('');
@@ -29,13 +39,16 @@ function updateDropdownMekanik() {
 function prosesTransaksi() {
     const nama = document.getElementById('kasir-nama').value;
     const biaya = parseInt(document.getElementById('kasir-biaya').value);
-    const mekanik = document.getElementById('kasir-mekanik').value;
-    if (!nama || !biaya || !mekanik) return alert("Lengkapi data transaksi!");
+    const mekanik = (currentJenis === 'Perbaikan') ? document.getElementById('kasir-mekanik').value : 'Tanpa Mekanik';
+    
+    if (!nama || !biaya) return alert("Lengkapi data transaksi!");
     
     dataBengkel.omsetHariIni += biaya;
     dataBengkel.servisSelesai += 1;
+    dataBengkel.riwayat.push({ nama, biaya, mekanik, jenis: currentJenis, tanggal: new Date().toLocaleDateString() });
+    
     saveData();
-    alert("Transaksi Berhasil!");
+    alert(`Transaksi ${currentJenis} Berhasil!`);
     document.getElementById('kasir-nama').value = '';
     document.getElementById('kasir-biaya').value = '';
     refreshDashboard();
