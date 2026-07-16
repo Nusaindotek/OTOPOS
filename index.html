@@ -3,44 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS - Offline POS Bengkel</title>
+    <title>OTOPOS - Offline POS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="view-home">
-
-    <div class="app-header-bar">
-        <h2 id="header-title" class="centered-title">HOME</h2>
-    </div>
-
+    <div class="app-header-bar"><h2 id="header-title" class="centered-title">HOME</h2></div>
     <div class="app-content">
-        <!-- PAGE HOME -->
+        <!-- HOME -->
         <div id="page-home" class="page-container">
             <div class="profile-card"><h2 id="display-nama-bengkel">Bengkel Maju Motor</h2></div>
-            <div class="stats-grid">
-                <div class="stat-box"><span class="stat-label">Omset</span><h2 id="stat-omset">Rp 0</h2></div>
-                <div class="stat-box"><span class="stat-label">Selesai</span><h2 id="stat-selesai">0</h2></div>
-            </div>
             <div class="menu-list">
                 <div class="menu-item" onclick="navigateTo('kasir')"><span>💰</span> Kasir</div>
-                <div class="menu-item" onclick="navigateTo('riwayat')"><span>📜</span> Riwayat Transaksi</div>
-                <div class="menu-item" onclick="navigateTo('mekanik')"><span>👨‍🔧</span> Daftar Mekanik</div>
+                <div class="menu-item" onclick="navigateTo('stok')"><span>📦</span> Daftar Part</div>
+                <div class="menu-item" onclick="navigateTo('riwayat')"><span>📜</span> Riwayat</div>
+                <div class="menu-item" onclick="navigateTo('mekanik')"><span>👨‍🔧</span> Mekanik</div>
                 <div class="menu-item" onclick="navigateTo('setting')"><span>⚙️</span> Pengaturan</div>
             </div>
         </div>
 
-        <!-- PAGE KASIR & LAINNYA (Sama seperti sebelumnya) -->
-        <!-- [TIDAK ADA PERUBAHAN DI SINI] -->
-
-        <!-- PAGE RIWAYAT -->
-        <div id="page-riwayat" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+        <!-- KASIR -->
+        <div id="page-kasir" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button>
             <div class="card">
-                <h3>Daftar Transaksi</h3>
-                <div id="list-riwayat"></div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn btn-primary" onclick="setJenis('Perbaikan')" id="btn-perbaikan">🔧 Perbaikan</button>
+                    <button class="btn btn-secondary" onclick="setJenis('Part')" id="btn-part">📦 Beli Part</button>
+                </div>
+                <div class="form-group"><label>Nama Pelanggan/Kendaraan</label><input type="text" id="kasir-nama"></div>
+                <div class="form-group" id="group-mekanik"><label>Pilih Mekanik</label><select id="kasir-mekanik"></select></div>
+                <div class="form-group"><label>Biaya (Rp)</label><input type="number" id="kasir-biaya" placeholder="Masukkan nominal harga..."></div>
+                <button class="btn btn-primary" style="width:100%" onclick="prosesTransaksi()">Simpan Transaksi</button>
             </div>
         </div>
+
+        <!-- STOK & LAINNYA (Ringkas) -->
+        <div id="page-stok" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button>
+            <div class="card">
+                <h3>Tambah Part</h3>
+                <input type="text" id="input-nama-part" placeholder="Nama Barang">
+                <input type="number" id="input-harga-part" placeholder="Harga Jual">
+                <button class="btn btn-primary" onclick="tambahPart()">Tambah</button>
+            </div>
+            <div id="list-stok"></div>
+        </div>
         
-        <!-- Tambahkan sisa halaman lainnya di sini -->
+        <div id="page-riwayat" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><div id="list-riwayat"></div></div>
+        <div id="page-mekanik" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><div id="list-mekanik"></div></div>
+        <div id="page-setting" class="page-container"><button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button><input type="text" id="set-nama-bengkel" placeholder="Nama Bengkel"><button class="btn btn-primary" onclick="simpanPengaturan()">Simpan</button></div>
     </div>
     <script src="script.js"></script>
 </body>
