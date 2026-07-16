@@ -1,14 +1,15 @@
 /* =====================================================
-   OTOPOS SETTING MENU
+   OTOPOS SETTING MENU CONTROL
    File : setting.js
-   Fungsi : menu pengaturan aplikasi
+   Fungsi : navigasi menu pengaturan
 ===================================================== */
 
 
 
 // ======================================
-// BUKA MENU SETTING
+// MENU SETTING
 // ======================================
+
 
 function bukaMenu(menu){
 
@@ -16,9 +17,9 @@ function bukaMenu(menu){
     // tutup dropdown
 
     const dropdown =
-        document.getElementById(
-            "settingMenu"
-        );
+    document.getElementById(
+        "settingMenu"
+    );
 
 
     if(dropdown){
@@ -31,12 +32,14 @@ function bukaMenu(menu){
 
 
 
+
+
     switch(menu){
 
 
         case "mekanik":
 
-            bukaDataMekanik();
+            modalMekanik();
 
             break;
 
@@ -44,7 +47,7 @@ function bukaMenu(menu){
 
         case "part":
 
-            bukaDataPart();
+            modalPart();
 
             break;
 
@@ -52,7 +55,7 @@ function bukaMenu(menu){
 
         case "supplier":
 
-            bukaDataSupplier();
+            modalSupplier();
 
             break;
 
@@ -60,7 +63,7 @@ function bukaMenu(menu){
 
         case "motor":
 
-            bukaDataMotor();
+            modalMotor();
 
             break;
 
@@ -68,7 +71,7 @@ function bukaMenu(menu){
 
         case "tarif":
 
-            bukaDataTarif();
+            modalTarif();
 
             break;
 
@@ -76,7 +79,7 @@ function bukaMenu(menu){
 
         case "user":
 
-            bukaDataUser();
+            modalUser();
 
             break;
 
@@ -84,7 +87,7 @@ function bukaMenu(menu){
 
         case "system":
 
-            bukaPengaturanSystem();
+            modalSystem();
 
             break;
 
@@ -93,8 +96,9 @@ function bukaMenu(menu){
         default:
 
             pesan(
-                "Menu tidak tersedia"
+                "Menu belum tersedia"
             );
+
 
     }
 
@@ -107,21 +111,139 @@ function bukaMenu(menu){
 
 
 
+
+
 // ======================================
-// MENU DATA MEKANIK
+// MODAL SUPPLIER
 // ======================================
 
-function bukaDataMekanik(){
 
-    pesan(
-        "Membuka Data Mekanik"
-    );
+function modalSupplier(){
 
 
-    /*
-       Nanti akan diganti
-       dengan modal tabel mekanik
-    */
+tampilModal(`
+
+
+<div class="modal-bg">
+
+
+<div class="modal-box">
+
+
+<div class="flex justify-between mb-4">
+
+<h2 class="font-bold text-lg">
+🏭 Supplier
+</h2>
+
+
+<button onclick="tutupSemuaModal()">
+❌
+</button>
+
+
+</div>
+
+
+
+<input id="sp-nama"
+class="form-input mb-2"
+placeholder="Nama Supplier">
+
+
+<input id="sp-kontak"
+class="form-input mb-2"
+placeholder="Kontak">
+
+
+<input id="sp-alamat"
+class="form-input mb-3"
+placeholder="Alamat">
+
+
+
+<button onclick="simpanSupplier()"
+class="bg-blue-600 text-white px-4 py-2 rounded">
+
+Simpan
+
+</button>
+
+
+<hr class="my-4">
+
+
+<div id="list-supplier"></div>
+
+
+</div>
+
+
+</div>
+
+
+`);
+
+
+
+renderSupplier();
+
+
+}
+
+
+
+
+
+function renderSupplier(){
+
+
+const box =
+document.getElementById(
+"list-supplier"
+);
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+dataSupplier.forEach(item=>{
+
+
+box.innerHTML += `
+
+<div class="border rounded p-3 mb-2">
+
+<b>
+${item.nama}
+</b>
+
+<br>
+
+${item.kontak}
+
+
+<button
+onclick="hapusSupplier(${item.id})"
+class="float-right text-red-600">
+
+Hapus
+
+</button>
+
+
+</div>
+
+`;
+
+
+});
+
 
 }
 
@@ -130,37 +252,39 @@ function bukaDataMekanik(){
 
 
 
-// ======================================
-// MENU MASTER PART
-// ======================================
+function simpanSupplier(){
 
-function bukaDataPart(){
 
-    pesan(
-        "Membuka Master Part"
-    );
+tambahSupplier({
+
+nama:
+document.getElementById(
+"sp-nama"
+).value,
+
+
+kontak:
+document.getElementById(
+"sp-kontak"
+).value,
+
+
+alamat:
+document.getElementById(
+"sp-alamat"
+).value
+
+
+});
+
+
+
+renderSupplier();
 
 
 }
 
 
-
-
-
-
-
-// ======================================
-// MENU SUPPLIER
-// ======================================
-
-function bukaDataSupplier(){
-
-    pesan(
-        "Membuka Data Supplier"
-    );
-
-
-}
 
 
 
@@ -172,14 +296,109 @@ function bukaDataSupplier(){
 // DATA MOTOR
 // ======================================
 
-function bukaDataMotor(){
 
-    pesan(
-        "Membuka Data Motor Pelanggan"
-    );
+function modalMotor(){
+
+
+tampilModal(`
+
+
+<div class="modal-bg">
+
+<div class="modal-box">
+
+
+<div class="flex justify-between">
+
+<h2 class="font-bold text-lg">
+🚲 Data Motor
+</h2>
+
+
+<button onclick="tutupSemuaModal()">
+❌
+</button>
+
+</div>
+
+
+
+<p class="mt-4 text-gray-500">
+
+Data motor pelanggan
+
+</p>
+
+
+
+<div id="list-motor"
+class="mt-3">
+
+</div>
+
+
+</div>
+
+</div>
+
+
+`);
+
+
+
+renderMotor();
 
 
 }
+
+
+
+
+function renderMotor(){
+
+
+const box =
+document.getElementById(
+"list-motor"
+);
+
+
+if(!box)return;
+
+
+box.innerHTML="";
+
+
+dataMotor.forEach(item=>{
+
+
+box.innerHTML += `
+
+<div class="border p-3 rounded mb-2">
+
+
+<b>${item.nama}</b>
+
+<br>
+
+${item.motor}
+
+<br>
+
+${item.nopol}
+
+
+</div>
+
+`;
+
+
+});
+
+
+}
+
+
 
 
 
@@ -191,14 +410,92 @@ function bukaDataMotor(){
 // TARIF JASA
 // ======================================
 
-function bukaDataTarif(){
 
-    pesan(
-        "Membuka Tarif Jasa"
-    );
+function modalTarif(){
+
+
+tampilModal(`
+
+<div class="modal-bg">
+
+<div class="modal-box">
+
+
+<h2 class="font-bold text-lg">
+💰 Tarif Jasa
+</h2>
+
+
+<div id="list-tarif"
+class="mt-4">
+
+</div>
+
+
+</div>
+
+</div>
+
+`);
+
+
+renderTarif();
 
 
 }
+
+
+
+
+
+
+function renderTarif(){
+
+
+const box =
+document.getElementById(
+"list-tarif"
+);
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+dataTarif.forEach(item=>{
+
+
+box.innerHTML += `
+
+<div class="border p-3 rounded mb-2">
+
+
+<b>
+${item.jasa}
+</b>
+
+
+<br>
+
+${formatRupiah(item.harga)}
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+}
+
 
 
 
@@ -210,11 +507,87 @@ function bukaDataTarif(){
 // USER
 // ======================================
 
-function bukaDataUser(){
 
-    pesan(
-        "Membuka Data Pengguna"
-    );
+function modalUser(){
+
+
+tampilModal(`
+
+
+<div class="modal-bg">
+
+<div class="modal-box">
+
+
+<h2 class="font-bold text-lg">
+👤 Pengguna
+</h2>
+
+
+
+<div id="list-user"
+class="mt-4">
+
+</div>
+
+
+</div>
+
+</div>
+
+
+`);
+
+
+
+renderUser();
+
+
+}
+
+
+
+
+
+function renderUser(){
+
+
+const box =
+document.getElementById(
+"list-user"
+);
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+dataUser.forEach(item=>{
+
+
+box.innerHTML += `
+
+<div class="border p-3 rounded mb-2">
+
+<b>
+${item.nama}
+</b>
+
+<br>
+
+${item.level}
+
+</div>
+
+`;
+
+
+
+});
 
 
 }
@@ -225,16 +598,64 @@ function bukaDataUser(){
 
 
 
+
 // ======================================
-// PENGATURAN SISTEM
+// SYSTEM
 // ======================================
 
-function bukaPengaturanSystem(){
 
-    pesan(
-        "Membuka Pengaturan Sistem"
-    );
+function modalSystem(){
+
+
+tampilModal(`
+
+
+<div class="modal-bg">
+
+<div class="modal-box">
+
+
+<h2 class="font-bold text-lg">
+⚙️ Pengaturan Sistem
+</h2>
+
+
+<label class="form-label mt-4">
+Nama Bengkel
+</label>
+
+
+<input 
+class="form-input"
+value="${settingSystem.namaBengkel}">
+
+
+
+<label class="form-label mt-3">
+Alamat
+</label>
+
+
+<input 
+class="form-input"
+value="${settingSystem.alamat}">
+
+
+
+<button
+class="bg-blue-600 text-white mt-4 px-4 py-2 rounded">
+
+Simpan
+
+</button>
+
+
+</div>
+
+</div>
+
+
+`);
 
 
 }
-
