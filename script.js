@@ -1,13 +1,9 @@
 let db = {
-    setting: { nama: "Bengkel Maju Motor", telp: "08123456789", logo: "" },
-    mekanik: [{ nama: "Udin", status: "Ready" }, { nama: "Wowo", status: "Ready" }],
-    parts: [{ id: "p1", nama: "Oli MPX 1", kode: "OLI001", harga: 55000, stok: 13 }, { id: "p2", nama: "Enduro", kode: "OLI002", harga: 65000, stok: 99 }, { id: "p3", nama: "Dispad", kode: "REM001", harga: 15000, stok: 101 }],
+    setting: { nama: "Bengkel Saya", telp: "08123456789", logo: "" },
+    mekanik: [{ nama: "Udin", status: "Ready" }],
+    parts: [{ id: "p1", nama: "Oli", kode: "OLI001", harga: 50000, stok: 10 }],
     servisAktif: [],
-    riwayat: [
-        { id: "T1", type: "servis", nopol: "D123TRW", diagnosis: "Ganti Oli Mesin", tanggal: "15/7/2026, 12.31", mekanik: "Wowo", parts: [{ nama: "Enduro", qty: 1, harga: 65000 }], jasa: 25000, total: 90000, isGajianPaid: false },
-        { id: "T2", type: "servis", nopol: "D1234TRE", diagnosis: "Servis Ringan + Rem", tanggal: "15/7/2026, 11.56", mekanik: "Udin", parts: [{ nama: "Enduro", qty: 2, harga: 65000 }, { nama: "Dispad", qty: 5, harga: 15000 }], jasa: 35000, total: 205000, isGajianPaid: false },
-        { id: "T3", type: "servis", nopol: "B 1234 ABC", diagnosis: "Ganti Oli", tanggal: "15/7/2026, 11.54", mekanik: "Udin", parts: [{ nama: "Oli MPX 1", qty: 1, harga: 55000 }], jasa: 35000, total: 90000, isGajianPaid: false }
-    ]
+    riwayat: []
 };
 if (localStorage.getItem("OTOPOS_DB")) db = JSON.parse(localStorage.getItem("OTOPOS_DB"));
 
@@ -49,6 +45,11 @@ function initDashboard() {
 }
 
 function switchMainTab(tab) {
+    // Auto save dulu kalau lagi di detail servis
+    if(document.getElementById('page-sub-detail-servis').classList.contains('active')){
+        simpanDetailServisAktif(false);
+    }
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(`page-${tab}`).classList.add('active');
@@ -62,9 +63,14 @@ function switchMainTab(tab) {
 }
 
 function openSubPage(sub) {
+    // Auto save dulu kalau lagi di detail servis
+    if(document.getElementById('page-sub-detail-servis').classList.contains('active')){
+        simpanDetailServisAktif(false);
+    }
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-sub-${sub}`).classList.add('active');
-    document.getElementById("pageTitle").innerText = sub.replace('-',' ').toUpperCase();
+    document.getElementById("pageTitle").innerText = sub.toUpperCase();
     document.getElementById("btnBack").style.display = "block";
     if(['parts','mekanik','kendaraan'].includes(sub)) {
         document.getElementById("btnAddTop").style.display = "block";
@@ -132,39 +138,89 @@ function bukaDetailServis(id){
     document.getElementById("txtDetDiagnosis").value=s.diagnosis;
     document.getElementById("numDetJasa").value=s.jasa;
     document.getElementById("optDetMekanik").innerHTML='<option value="">Pilih</option>'+db.mekanik.map(m=>`<option ${s.mekanik===m.nama?'selected':''}>${m.nama}</option>`).join('');
-    document.getElementById("optDetPart").innerHTML='<option value="">Pilih Part</option>'+db.parts.map(p=>`<option value="${p.id}">${p.nama}</option>`).join('');
+    document.getElementById("optDetPart").innerHTML='<option value="">Pilih Part</option>'+db.parts.map(p=>`<option value="${p.id}">${p.nama} - Stok:${p.stok}</option>`).join('');
     renderPartServis();
 }
+
+// FIX 1: RENDER PART DENGAN TOMBOL +/-
 function renderPartServis(){
     const s=db.servisAktif.find(x=>x.id===activeDetailServisId);
     const box=document.getElementById("detPartTerpilihList");
     box.innerHTML="";
     s.parts.forEach(p=>{
         const meta=db.parts.find(x=>x.id===p.id);
-        box.innerHTML+=`<div class="list-row"><span>${meta.nama} x${p.qty}</span><button class="btn-danger-sm" onclick="hapusPartServis('${p.id}')">Hapus</button></div>`
+        box.innerHTML+=`
+        <div class="list-row">
+            <span>${meta.nama}</span>
+            <div class="stock-control">
+                <button class="btn-circle minus" onclick="updateQtyPartServis('${p.id}', -1)">-</button>
+                <span>${p.qty}</span>
+                <button class="btn-circle plus" onclick="updateQtyPartServis('${p.id}', 1)">+</button>
+            </div>
+            <button class="btn-danger-sm" onclick="hapusPartServis('${p.id}')">Hapus</button>
+        </div>`
     });
 }
+
+// FIX 2: FUNGSI UPDATE QTY
+function updateQtyPartServis(id, val){
+    const s=db.servisAktif.find(x=>x.id===activeDetailServisId);
+    const part = s.parts.find(p=>p.id===id);
+    const meta = db.parts.find(x=>x.id===id);
+    if(!part) return;
+
+    if(val === 1 && meta.stok <= 0) return alert("Stok habis!");
+
+    part.qty += val;
+    meta.stok -= val; // update stok global
+
+    if(part.qty <= 0){
+        s.parts = s.parts.filter(p=>p.id!==id);
+        meta.stok += 1; // balikin stok kalau dihapus
+    }
+
+    saveDB();
+    renderPartServis();
+    document.getElementById("optDetPart").innerHTML='<option value="">Pilih Part</option>'+db.parts.map(p=>`<option value="${p.id}">${p.nama} - Stok:${p.stok}</option>`).join('');
+}
+
 function tambahPartKeServis(){
     const id=document.getElementById("optDetPart").value;
     if(!id)return;
     const s=db.servisAktif.find(x=>x.id===activeDetailServisId);
+    const meta=db.parts.find(x=>x.id===id);
+    if(meta.stok <= 0) return alert("Stok habis!");
+
     const ex=s.parts.find(p=>p.id===id);
     if(ex)ex.qty++;
     else s.parts.push({id,qty:1});
+
+    meta.stok--; // kurangi stok
+    saveDB();
     renderPartServis();
+    document.getElementById("optDetPart").innerHTML='<option value="">Pilih Part</option>'+db.parts.map(p=>`<option value="${p.id}">${p.nama} - Stok:${p.stok}</option>`).join('');
 }
+
 function hapusPartServis(id){
     const s=db.servisAktif.find(x=>x.id===activeDetailServisId);
+    const part = s.parts.find(p=>p.id===id);
+    const meta = db.parts.find(x=>x.id===id);
+    meta.stok += part.qty; // balikin stok
     s.parts=s.parts.filter(p=>p.id!==id);
+    saveDB();
     renderPartServis();
+    document.getElementById("optDetPart").innerHTML='<option value="">Pilih Part</option>'+db.parts.map(p=>`<option value="${p.id}">${p.nama} - Stok:${p.stok}</option>`).join('');
 }
-function simpanDetailServisAktif(){
+
+// FIX 3: SIMPAN DENGAN PARAMETER ALERT
+function simpanDetailServisAktif(showAlert = true){
     const s=db.servisAktif.find(x=>x.id===activeDetailServisId);
+    if(!s) return;
     s.diagnosis=document.getElementById("txtDetDiagnosis").value;
     s.mekanik=document.getElementById("optDetMekanik").value;
     s.jasa=parseInt(document.getElementById("numDetJasa").value)||0;
     saveDB();
-    alert("Tersimpan");
+    if(showAlert) alert("Tersimpan");
     navBack();
     renderKendaraan();
 }
@@ -247,7 +303,7 @@ function hitungUlangTotalKasir() {
     if (currentKasirMode === "servis" && selectedServisId) {
         const servis = db.servisAktif.find(s => s.id === selectedServisId);
         if (servis) {
-            servis.parts.forEach(pRef =>{
+            servis.parts.forEach(pRef => {
                 const p=db.parts.find(x=>x.id===pRef.id);
                 grandTotal += (pRef.qty * p.harga);
                 listContainer.innerHTML += `<div class="list-row"><span>${p.nama} x ${pRef.qty}</span><span>${formatRupiah(pRef.qty * p.harga)}</span></div>`;
@@ -275,11 +331,10 @@ function prosesSimpanTransaksi() {
         let selesai = db.servisAktif.splice(index, 1)[0];
         selesai.total = total;
         selesai.tanggal = new Date().toLocaleString();
-        selesai.isGajianPaid = false;
         db.riwayat.push(selesai);
         alert("Servis Selesai!");
     } else {
-        db.riwayat.push({ type: "part", total: total, tanggal: new Date().toLocaleString(), isGajianPaid: true });
+        db.riwayat.push({ type: "part", total: total, tanggal: new Date().toLocaleString() });
         directCart = [];
         alert("Penjualan Berhasil!");
     }
@@ -297,75 +352,10 @@ function renderLaporan() {
     let totalOmset = db.riwayat.reduce((sum, item) => sum + item.total, 0);
     document.getElementById("lapTotalOmset").innerText = formatRupiah(totalOmset);
     document.getElementById("lapJumlahServis").innerText = "Jumlah Transaksi: " + db.riwayat.length;
-
-    const mekReport = {};
-    db.riwayat.forEach(r => {
-        if(r.mekanik && r.mekanik!== "-" &&!r.isGajianPaid) {
-            mekReport[r.mekanik] = (mekReport[r.mekanik] || 0) + r.jasa;
-        }
-    });
-
-    const mekList = document.getElementById("lapMekanikList");
-    mekList.innerHTML = "";
-    if(Object.keys(mekReport).length === 0) {
-        mekList.innerHTML = `<p style="text-align:center; color:#999;">Semua jasa mekanik sudah digaji</p>`;
-    } else {
-        for(let mName in mekReport) {
-            mekList.innerHTML += `
-                <div class="list-row" style="cursor:pointer;" onclick="openDetailMekanik('${mName}')">
-                    <span>🧑‍🔧 ${mName}</span>
-                    <span class="text-green">${formatRupiah(mekReport[mName])}</span>
-                </div>`;
-        }
-    }
-
-    const prodReport = {};
-    db.riwayat.forEach(r => {
-        r.parts?.forEach(p => { prodReport[p.nama] = (prodReport[p.nama] || 0) + p.qty; });
-    });
-    const prodList = document.getElementById("lapProdukTerjualList");
-    prodList.innerHTML = "";
-    for(let pName in prodReport) {
-        prodList.innerHTML += `<div class="list-row"><span>${pName}</span><span>${prodReport[pName]} pcs</span></div>`;
-    }
-}
-
-function openDetailMekanik(namaMekanik) {
-    openSubPage('detail-mekanik');
-    document.getElementById('detMekanikNama').innerText = namaMekanik;
-
-    const list = document.getElementById('detMekanikRiwayatList');
-    list.innerHTML = "";
-    let totalDetail = 0;
-
-    const historiKerja = db.riwayat.filter(r => r.mekanik === namaMekanik &&!r.isGajianPaid);
-
-    historiKerja.forEach(r => {
-        totalDetail += r.jasa;
-        list.innerHTML += `
-            <div class="card" style="font-size:13px;">
-                <div style="display:flex; justify-content:space-between;">
-                    <span><b>${r.nopol}</b></span>
-                    <span class="text-green">${formatRupiah(r.jasa)}</span>
-                </div>
-                <p style="color:#777; font-size:11px;">📅 ${r.tanggal}</p>
-                <p>🛠️ ${r.diagnosis || 'Servis Umum'}</p>
-            </div>
-        `;
-    });
-    document.getElementById('detMekanikTotal').innerText = formatRupiah(totalDetail);
-}
-
-function resetGajianMingguan() {
-    if(!confirm("Yakin mau reset pendapatan mekanik minggu ini? \nData transaksi tidak akan dihapus, hanya argo mekanik yg direset ke 0")) return;
-
-    db.riwayat.forEach(r => {
-        if (r.mekanik && r.mekanik!== "-") {
-            r.isGajianPaid = true;
-        }
-    });
-
-    saveDB();
-    renderLaporan();
-    alert("Pendapatan mekanik berhasil direset!");
+    let mek={};
+    db.riwayat.forEach(r=>{if(r.mekanik)mek[r.mekanik]=(mek[r.mekanik]||0)+r.jasa;});
+    document.getElementById("lapMekanikList").innerHTML=Object.keys(mek).length>0?Object.keys(mek).map(k=>`<div class="list-row"><span>${k}</span><span class="text-green">${formatRupiah(mek[k])}</span></div>`).join(''):"<p>Belum ada data</p>";
+    let prod={};
+    db.riwayat.forEach(r=>{r.parts?.forEach(p=>{prod[p.nama]=(prod[p.nama]||0)+p.qty;});
+    document.getElementById("lapProdukTerjualList").innerHTML=Object.keys(prod).length>0?Object.keys(prod).map(k=>`<div class="list-row"><span>${k}</span><span>${prod[k]} pcs</span></div>`).join(''):"<p>Belum ada data</p>";
 }
