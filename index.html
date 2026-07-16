@@ -2,70 +2,61 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS</title>
-    <style>
-        body { font-family: sans-serif; padding: 10px; background: #f4f4f4; }
-        .page-container { display: none; }
-        .view-home #page-home, .view-kasir #page-kasir, .view-stok #page-stok, .view-riwayat #page-riwayat, .view-mekanik #page-mekanik, .view-setting #page-setting { display: block; }
-        .card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .menu-item { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; text-align: center; font-weight: bold; }
-        .btn { padding: 10px; border: none; border-radius: 5px; cursor: pointer; color: white; width: 100%; margin-top: 5px; }
-        .btn-primary { background: #007bff; }
-        .btn-secondary { background: #6c757d; }
-        input, select { width: 100%; padding: 8px; margin: 5px 0 15px 0; box-sizing: border-box; }
-        .tag { display: inline-block; background: #eee; padding: 5px 10px; border-radius: 15px; margin-right: 5px; margin-bottom: 5px; }
-    </style>
+    <title>OTOPOS Bengkel</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="view-home">
-    <div id="page-home" class="page-container">
-        <h2>Menu Utama</h2>
-        <div class="menu-list">
-            <div class="menu-item" onclick="navigateTo('kasir')">💰 Kasir</div>
-            <div class="menu-item" onclick="navigateTo('stok')">📦 Daftar Part</div>
-            <div class="menu-item" onclick="navigateTo('riwayat')">📜 Riwayat</div>
-            <div class="menu-item" onclick="navigateTo('mekanik')">👨‍🔧 Mekanik</div>
-            <div class="menu-item" onclick="navigateTo('setting')">⚙️ Pengaturan</div>
-        </div>
+<body>
+
+    <div id="page-home" class="page active">
+        <h2>OTOPOS Bengkel</h2>
+        <button class="btn btn-main" onclick="navigateTo('page-kasir')">💰 Kasir</button>
+        <button class="btn btn-main" onclick="navigateTo('page-stok')">📦 Daftar Part</button>
+        <button class="btn btn-main" onclick="navigateTo('page-riwayat')">📜 Riwayat</button>
+        <button class="btn btn-main" onclick="navigateTo('page-mekanik')">👨‍🔧 Mekanik</button>
+        <button class="btn btn-main" onclick="navigateTo('page-setting')">⚙️ Pengaturan</button>
     </div>
 
-    <!-- KASIR -->
-    <div id="page-kasir" class="page-container">
-        <button class="btn btn-secondary" onclick="navigateTo('home')">⬅ Kembali</button>
-        <div class="card">
-            <div style="display: flex; gap: 5px;">
-                <button class="btn" id="btn-perbaikan" onclick="setJenis('Perbaikan')">Perbaikan</button>
-                <button class="btn" id="btn-part" onclick="setJenis('Part')">Beli Part</button>
+    <div id="page-kasir" class="page">
+        <button class="btn btn-back" onclick="navigateTo('page-home')">⬅ Kembali ke Menu</button>
+        <h3>Kasir</h3>
+        <div style="display: flex; gap: 5px;">
+            <button id="tab-perbaikan" class="btn btn-tab active-tab" onclick="setMode('Perbaikan')">🔧 Perbaikan</button>
+            <button id="tab-part" class="btn btn-tab" onclick="setMode('Part')">📦 Beli Part</button>
+        </div>
+        <div class="card" style="margin-top:10px;">
+            <label>Nama Pelanggan</label>
+            <input type="text" id="in-nama">
+            <div id="group-mekanik">
+                <label>Mekanik</label>
+                <select id="in-mekanik"><option>Mekanik A</option><option>Mekanik B</option></select>
             </div>
-            <hr>
-            <label>Nama Pelanggan/Kendaraan</label>
-            <input type="text" id="kasir-nama">
-            
-            <div id="div-mekanik">
-                <label>Pilih Mekanik</label>
-                <select id="kasir-mekanik"></select>
-            </div>
-
-            <label>Tambah Part</label>
-            <select id="select-part-list"></select>
-            <button class="btn btn-secondary" onclick="tambahPart()">+ Tambah Part</button>
-            
-            <div id="div-part-terpilih" style="margin: 10px 0; min-height: 20px;"></div>
-
-            <div id="div-biaya">
+            <div id="group-biaya">
                 <label>Ongkos Mekanik (Rp)</label>
-                <input type="number" id="kasir-biaya">
+                <input type="number" id="in-biaya">
             </div>
-            
-            <button class="btn btn-primary" onclick="simpanTransaksi()">Simpan Transaksi</button>
+            <button class="btn btn-main" onclick="simpanTransaksi()">Simpan Transaksi</button>
         </div>
     </div>
 
-    <!-- Halaman Lain -->
-    <div id="page-stok" class="page-container"><button class="btn" onclick="navigateTo('home')">Kembali</button><h3>Stok</h3><div id="list-stok"></div></div>
-    <div id="page-riwayat" class="page-container"><button class="btn" onclick="navigateTo('home')">Kembali</button><h3>Riwayat</h3><div id="list-riwayat"></div></div>
-    <div id="page-mekanik" class="page-container"><button class="btn" onclick="navigateTo('home')">Kembali</button><h3>Mekanik</h3><div id="list-mekanik"></div></div>
-    <div id="page-setting" class="page-container"><button class="btn" onclick="navigateTo('home')">Kembali</button><h3>Setting</h3><input type="text" id="set-nama"><button class="btn btn-primary" onclick="simpanSetting()">Simpan</button></div>
+    <div id="page-stok" class="page">
+        <button class="btn btn-back" onclick="navigateTo('page-home')">⬅ Kembali</button>
+        <h3>Daftar Part</h3>
+    </div>
+
+    <div id="page-riwayat" class="page">
+        <button class="btn btn-back" onclick="navigateTo('page-home')">⬅ Kembali</button>
+        <h3>Riwayat Transaksi</h3>
+    </div>
+
+    <div id="page-mekanik" class="page">
+        <button class="btn btn-back" onclick="navigateTo('page-home')">⬅ Kembali</button>
+        <h3>Daftar Mekanik</h3>
+    </div>
+
+    <div id="page-setting" class="page">
+        <button class="btn btn-back" onclick="navigateTo('page-home')">⬅ Kembali</button>
+        <h3>Pengaturan</h3>
+    </div>
 
     <script src="script.js"></script>
 </body>
