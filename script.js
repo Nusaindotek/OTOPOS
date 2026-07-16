@@ -1,4 +1,3 @@
-// Inisialisasi Data
 let dataBengkel = JSON.parse(localStorage.getItem('otopos_data')) || {
     omsetHariIni: 0,
     servisSelesai: 0,
@@ -8,15 +7,41 @@ let dataBengkel = JSON.parse(localStorage.getItem('otopos_data')) || {
 
 function saveData() { localStorage.setItem('otopos_data', JSON.stringify(dataBengkel)); }
 
-// Navigasi
+function refreshDashboard() {
+    document.getElementById('stat-omset').innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(dataBengkel.omsetHariIni).replace(/,00$/, '');
+    document.getElementById('stat-selesai').innerText = dataBengkel.servisSelesai;
+}
+
 function navigateTo(pageName) {
     document.body.className = `view-${pageName}`;
     document.getElementById('header-title').innerText = pageName.toUpperCase();
     if (pageName === 'setting') loadPengaturanKeForm();
     if (pageName === 'mekanik') renderMekanik();
+    if (pageName === 'kasir') updateDropdownMekanik();
 }
 
-// Fitur Pengaturan
+// FUNGSI KASIR
+function updateDropdownMekanik() {
+    const select = document.getElementById('kasir-mekanik');
+    select.innerHTML = dataBengkel.daftarMekanik.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('');
+}
+
+function prosesTransaksi() {
+    const nama = document.getElementById('kasir-nama').value;
+    const biaya = parseInt(document.getElementById('kasir-biaya').value);
+    const mekanik = document.getElementById('kasir-mekanik').value;
+    if (!nama || !biaya || !mekanik) return alert("Lengkapi data transaksi!");
+    
+    dataBengkel.omsetHariIni += biaya;
+    dataBengkel.servisSelesai += 1;
+    saveData();
+    alert("Transaksi Berhasil!");
+    document.getElementById('kasir-nama').value = '';
+    document.getElementById('kasir-biaya').value = '';
+    refreshDashboard();
+}
+
+// FUNGSI LAINNYA
 function simpanPengaturan() {
     dataBengkel.config = {
         namaBengkel: document.getElementById('set-nama-bengkel').value,
@@ -25,19 +50,18 @@ function simpanPengaturan() {
     };
     saveData();
     document.getElementById('display-nama-bengkel').innerText = dataBengkel.config.namaBengkel;
-    alert("Pengaturan berhasil disimpan!");
+    alert("Pengaturan tersimpan!");
 }
 
 function loadPengaturanKeForm() {
-    document.getElementById('set-nama-bengkel').value = dataBengkel.config.namaBengkel || "";
-    document.getElementById('set-logo').value = dataBengkel.config.logoUrl || "";
-    document.getElementById('set-footer').value = dataBengkel.config.footerStruk || "";
+    document.getElementById('set-nama-bengkel').value = dataBengkel.config.namaBengkel;
+    document.getElementById('set-logo').value = dataBengkel.config.logoUrl;
+    document.getElementById('set-footer').value = dataBengkel.config.footerStruk;
 }
 
-// Fitur Mekanik
 function tambahMekanik() {
     const input = document.getElementById('input-nama-mekanik');
-    if (!input.value) return alert("Isi nama mekanik!");
+    if (!input.value) return;
     dataBengkel.daftarMekanik.push({ id: Date.now(), nama: input.value });
     input.value = '';
     saveData();
@@ -51,8 +75,8 @@ function renderMekanik() {
 
 function hubungiCS() { window.location.href = "mailto:nusaindoteknologi@gmail.com?subject=Dukungan Teknis OTOPOS"; }
 
-// Init
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('display-nama-bengkel').innerText = dataBengkel.config.namaBengkel;
+    refreshDashboard();
     renderMekanik();
 });
