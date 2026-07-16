@@ -1,12 +1,13 @@
-// State internal database penampung data sementara aplikasi
+// State internal database penampung data
 let dataBengkel = {
     omsetHariIni: 330000,
+    saldoAktif: 330000,
     servisSelesai: 2,
     kendaraanDiproses: 0,
     antreanLapangan: []
 };
 
-// Fungsi memformat angka biasa menjadi format mata uang Rupiah yang teratur
+// Format Rupiah
 function ubahKeFormatRupiah(nominal) {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -15,41 +16,46 @@ function ubahKeFormatRupiah(nominal) {
     }).format(nominal).replace(/,00$/, '');
 }
 
-// Sinkronisasi data dari variabel state ke antarmuka DOM Dashboard
+// Sinkronisasi data ke tampilan
 function refreshTampilanDashboard() {
     document.getElementById('stat-omset').innerText = ubahKeFormatRupiah(dataBengkel.omsetHariIni);
     document.getElementById('stat-selesai').innerText = dataBengkel.servisSelesai;
     document.getElementById('stat-proses').innerText = `${dataBengkel.kendaraanDiproses} Kendaraan`;
     
-    // Perbarui halaman laporan juga agar sinkron
     const lapOmset = document.getElementById('laporan-total-omset');
     if (lapOmset) lapOmset.innerText = ubahKeFormatRupiah(dataBengkel.omsetHariIni);
+    
+    const lapSaldo = document.getElementById('laporan-saldo-aktif');
+    if (lapSaldo) lapSaldo.innerText = ubahKeFormatRupiah(dataBengkel.saldoAktif);
+
+    const lapJumlah = document.getElementById('laporan-jumlah-transaksi');
+    if (lapJumlah) lapJumlah.innerText = `Jumlah Transaksi: ${dataBengkel.servisSelesai}`;
 }
 
-// Logika sistem Single Page Application (SPA) untuk berpindah menu utama
+// Navigasi SPA
 function navigateTo(pageName) {
-    // Ubah kelas penanda pada body untuk trigger CSS
     document.body.className = `view-${pageName}`;
     
-    // Sinkronisasi teks judul pada Top Bar Header
     const titleNode = document.getElementById('header-title');
     if (pageName === 'home') titleNode.innerText = 'HOME';
     else if (pageName === 'kasir') titleNode.innerText = 'KASIR';
     else if (pageName === 'laporan') titleNode.innerText = 'LAPORAN';
     else if (pageName === 'servis') titleNode.innerText = 'SERVIS LAPANGAN';
+    else if (pageName === 'riwayat') titleNode.innerText = 'RIWAYAT TRANSAKSI';
+    else if (pageName === 'part') titleNode.innerText = 'SUKU CADANG';
+    else if (pageName === 'mekanik') titleNode.innerText = 'MEKANIK';
+    else if (pageName === 'setting') titleNode.innerText = 'PENGATURAN';
     
-    // Mengatur status highlight tombol aktif pada navigasi bawah
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     const currentNav = document.getElementById(`nav-${pageName}`);
     if (currentNav) currentNav.classList.add('active');
 
-    // Jika masuk ke halaman kasir, bangun ulang pilihan daftar antrean terupdate
     if (pageName === 'kasir') {
         sinkronisasiDropdownKasir();
     }
 }
 
-// Memasukkan entri unit servis baru dari lapangan ke sistem antrean
+// Tambah Antrean
 function prosesTambahKendaraan() {
     const nodeNopol = document.getElementById('input-nopol');
     const nodeMotor = document.getElementById('input-motor');
@@ -58,11 +64,10 @@ function prosesTambahKendaraan() {
     const motorValue = nodeMotor.value.trim();
     
     if (!nopolValue || !motorValue) {
-        alert('Gagal memproses! Pastikan Nomor Polisi dan Tipe Motor sudah terisi.');
+        alert('Pastikan Nomor Polisi dan Tipe Motor sudah terisi.');
         return;
     }
     
-    // Skema objek data kendaraan baru
     const dataUnit = {
         id: Date.now(),
         nopol: nopolValue.toUpperCase(),
@@ -73,7 +78,6 @@ function prosesTambahKendaraan() {
     dataBengkel.antreanLapangan.push(dataUnit);
     dataBengkel.kendaraanDiproses++;
     
-    // Pengosongan kolom input setelah sukses submit
     nodeNopol.value = '';
     nodeMotor.value = '';
     
@@ -82,7 +86,7 @@ function prosesTambahKendaraan() {
     alert(`Unit ${dataUnit.nopol} berhasil didaftarkan.`);
 }
 
-// Membangun ulang list elemen HTML daftar antrean di lapangan
+// Render Antrean Lapangan
 function renderDaftarAntreanLapangan() {
     const listContainer = document.getElementById('wrapper-antrean-lapangan');
     if (!listContainer) return;
@@ -109,7 +113,7 @@ function renderDaftarAntreanLapangan() {
     });
 }
 
-// Mengisi pilihan dropdown di halaman kasir berdasarkan kendaraan yang ada di lapangan
+// Dropdown Kasir
 function sinkronisasiDropdownKasir() {
     const dropdown = document.getElementById('kasir-pilih-antrean');
     if (!dropdown) return;
@@ -121,7 +125,30 @@ function sinkronisasiDropdownKasir() {
     });
 }
 
-// Simulasi tombol selesaikan pembayaran di kasir
+// Tarik Saldo Owner
+function tarikSaldoOwner() {
+    let inputNominal = prompt(`Total Saldo di Kasir: ${ubahKeFormatRupiah(dataBengkel.saldoAktif)}\n\nMasukkan nominal uang yang ingin ditarik (hanya angka):`);
+    
+    if (inputNominal !== null && inputNominal !== "") {
+        let nominalTarik = parseInt(inputNominal);
+        
+        if (isNaN(nominalTarik) || nominalTarik <= 0) {
+            alert("Nominal tidak valid! Harap masukkan angka yang benar.");
+            return;
+        }
+        
+        if (nominalTarik > dataBengkel.saldoAktif) {
+            alert("Gagal! Saldo di kasir tidak mencukupi untuk penarikan ini.");
+            return;
+        }
+        
+        dataBengkel.saldoAktif -= nominalTarik;
+        refreshTampilanDashboard();
+        alert(`Berhasil menarik uang sebesar ${ubahKeFormatRupiah(nominalTarik)} dari kasir.`);
+    }
+}
+
+// Proses Pembayaran Kasir
 function prosesPembayaran() {
     const dropdown = document.getElementById('kasir-pilih-antrean');
     const selectedId = dropdown.value;
@@ -131,23 +158,61 @@ function prosesPembayaran() {
         return;
     }
     
-    // Hapus kendaraan dari list antrean aktif
-    dataBengkel.antreanLapangan = dataBengkel.antreanLapangan.filter(unit => unit.id !== parseInt(selectedId));
+    const kendaraan = dataBengkel.antreanLapangan.find(unit => unit.id === parseInt(selectedId));
+    const totalBayar = 75000; // Simulasi harga
     
-    // Update data kalkulasi nominal
+    dataBengkel.antreanLapangan = dataBengkel.antreanLapangan.filter(unit => unit.id !== parseInt(selectedId));
     dataBengkel.kendaraanDiproses--;
     dataBengkel.servisSelesai++;
-    dataBengkel.omsetHariIni += 75000; // Asumsi simulasi penambahan nilai omset per transaksi masuk
+    dataBengkel.omsetHariIni += totalBayar;
+    dataBengkel.saldoAktif += totalBayar;
     
     refreshTampilanDashboard();
     renderDaftarAntreanLapangan();
     sinkronisasiDropdownKasir();
     
-    alert('Pembayaran sukses diproses. Struk transaksi berhasil disimpan ke sistem.');
+    cetakStruk(kendaraan, totalBayar);
     navigateTo('home');
 }
 
-// Pengaktifan fungsi utama saat struktur halaman web selesai dimuat penuh oleh peramban
+// Cetak Struk Thermal
+function cetakStruk(dataKendaraan, totalBayar) {
+    const areaStruk = document.getElementById('area-struk-print');
+    let tanggal = new Date().toLocaleString('id-ID');
+    
+    areaStruk.innerHTML = `
+        <div class="struk-header">
+            <h3>BENGKEL MAJU MOTOR</h3>
+            <p>Telp: 628886225629</p>
+            <p>${tanggal}</p>
+        </div>
+        <div class="struk-garis"></div>
+        <p>No. Polisi : ${dataKendaraan.nopol}</p>
+        <p>Kendaraan  : ${dataKendaraan.motor}</p>
+        <div class="struk-garis"></div>
+        <div class="struk-item">
+            <span>1x Jasa Servis Ringan</span>
+            <span>Rp 35.000</span>
+        </div>
+        <div class="struk-item">
+            <span>1x Oli Mesin Standar</span>
+            <span>Rp 40.000</span>
+        </div>
+        <div class="struk-garis"></div>
+        <div class="struk-total">
+            TOTAL: ${ubahKeFormatRupiah(totalBayar)}
+        </div>
+        <div class="struk-garis"></div>
+        <div class="struk-footer">
+            <p>Terima Kasih atas Kunjungan Anda!</p>
+            <p>Barang yang dibeli tidak dapat ditukar</p>
+        </div>
+    `;
+    
+    window.print();
+}
+
+// Inisialisasi Aplikasi
 document.addEventListener('DOMContentLoaded', () => {
     refreshTampilanDashboard();
     renderDaftarAntreanLapangan();
