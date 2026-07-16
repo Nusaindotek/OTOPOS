@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OtoPOS - Kasir Bengkel Motor</title>
-    <!-- Hubungkan ke CSS Eksternal -->
+    <title>OtoPOS - Aplikasi Kasir Bengkel</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,64 +11,67 @@
     <div class="app-container">
         <!-- HEADER / TOPBAR -->
         <header class="topbar">
-            <h1 id="bengkelName">OtoPOS</h1>
-            <div class="mode-indicator">
-                Mode Aktif: <span id="lblMode" class="badge badge-part">DIRECT PART (TANPA SERVIS)</span>
+            <div class="brand-wrapper">
+                <img src="gambarotopos192.png" alt="Logo" class="app-logo">
+                <h1 id="bengkelName">OTOPOS MOTOR</h1>
             </div>
+            
+            <!-- NAVIGASI UTAMA -->
+            <nav class="nav-tabs">
+                <button onclick="switchTab('kasir')" id="btnTabKasir" class="tab-btn active">KASIR</button>
+                <button onclick="switchTab('manajemen')" id="btnTabManajemen" class="tab-btn">KELOLA DATA</button>
+                <button onclick="switchTab('laporan')" id="btnTabLaporan" class="tab-btn">LAPORAN & OMSET</button>
+                <button onclick="switchTab('setting')" id="btnTabSetting" class="tab-btn">PENGATURAN</button>
+            </nav>
+
             <div class="action-buttons">
                 <button onclick="setModeKasir('part')" class="btn btn-secondary">Mode Jual Part</button>
                 <button onclick="setModeKasir('servis')" class="btn btn-primary">Mode Servis</button>
             </div>
         </header>
 
-        <!-- MAIN LAYOUT (SPLIT SCREEN PC) -->
-        <main class="main-content">
-            
-            <!-- KOLOM KIRI: Transaksi & Keranjang -->
+        <!-- ================= TAB 1: KASIR ================= -->
+        <main id="tabKasir" class="main-content tab-content">
+            <!-- KOLOM KIRI: Keranjang Belanja -->
             <section class="left-panel">
                 <div class="card">
-                    <h2>Keranjang Belanja / Detail Servis</h2>
+                    <div class="card-header">
+                        <h2>Detail Transaksi</h2>
+                        <span id="lblMode" class="badge badge-part">DIRECT PART</span>
+                    </div>
                     
-                    <!-- Form input data kendaraan (Hanya muncul jika mode Servis) -->
                     <div id="formKendaraan" class="form-group hidden">
                         <input type="text" id="txtPlat" placeholder="No. Plat Motor (Contoh: D 1234 AB)">
                         <input type="text" id="txtMotor" placeholder="Tipe Motor (Contoh: Vario 150)">
                         <select id="selMekanik">
                             <option value="">-- Pilih Mekanik --</option>
-                            <!-- Diisi dinamis via JS -->
                         </select>
                     </div>
 
-                    <!-- Tabel Item Keranjang -->
                     <table class="pos-table">
                         <thead>
                             <tr>
                                 <th>Item / Jasa</th>
-                                <th width="100">Harga</th>
-                                <th width="70">Qty</th>
-                                <th width="100">Subtotal</th>
+                                <th width="110">Harga (Editable)</th>
+                                <th width="80">Qty</th>
+                                <th width="110">Subtotal</th>
                                 <th width="50">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="cartItems">
-                            <!-- Diisi dinamis via JS -->
-                        </tbody>
+                        <tbody id="cartItems"></tbody>
                     </table>
+                    <button class="btn btn-danger" onclick="kosongkanKeranjang()" style="margin-top: 15px; align-self: flex-start;">Kosongkan Keranjang</button>
                 </div>
             </section>
 
-            <!-- KOLOM KANAN: Cari Item & Kalkulator Pembayaran -->
+            <!-- KOLOM KANAN: Pencarian & Pembayaran -->
             <section class="right-panel">
-                <!-- Cari Barang / Jasa -->
                 <div class="card">
                     <h2>Pencarian Item (F2)</h2>
-                    <input type="text" id="txtCari" placeholder="Ketik nama part, kode barcode, atau jasa..." onkeyup="cariItem()">
-                    <div id="searchResult" class="search-results-box">
-                        <!-- Hasil pencarian muncul di sini -->
-                    </div>
+                    <input type="text" id="txtCari" placeholder="Ketik nama part, barcode, atau jasa..." onkeyup="cariItem()">
+                    <div id="searchResult" class="search-results-box"></div>
                 </div>
 
-                <!-- Pembayaran -->
                 <div class="card payment-card">
                     <h2>Kalkulator Pembayaran (F12)</h2>
                     <div class="payment-row">
@@ -86,23 +88,163 @@
                     </div>
                     <div class="payment-row">
                         <span>Bayar (F12)</span>
-                        <input type="number" id="numBayar" placeholder="Masukkan jumlah uang" oninput="hitungKembalian()">
+                        <input type="number" id="numBayar" placeholder="Uang Bayar" oninput="hitungKembalian()">
                     </div>
                     <div class="payment-row kembalian-row">
                         <span>Kembalian</span>
                         <span id="lblKembalian">Rp0</span>
                     </div>
-                    
                     <button class="btn-checkout" onclick="prosesSimpanTransaksi()">PROSES & CETAK STRUK</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- ================= TAB 2: KELOLA DATA ================= -->
+        <main id="tabManajemen" class="main-content tab-content hidden" style="overflow-y: auto;">
+            <!-- SEKSI SPAREPART -->
+            <section class="left-panel">
+                <div class="card">
+                    <h2>Tambah / Edit Sparepart</h2>
+                    <div class="form-grid">
+                        <input type="hidden" id="editPartId">
+                        <input type="text" id="addPartBarcode" placeholder="Kode Barcode">
+                        <input type="text" id="addPartNama" placeholder="Nama Sparepart">
+                        <input type="number" id="addPartHarga" placeholder="Harga Jual (Rp)">
+                        <input type="number" id="addPartStok" placeholder="Jumlah Stok">
+                        <button onclick="simpanSparepart()" class="btn btn-primary" id="btnSimpanPart">Simpan Sparepart</button>
+                    </div>
+
+                    <h2 style="margin-top: 25px;">Daftar Stok Gudang</h2>
+                    <input type="text" id="txtCariGudang" placeholder="Cari di gudang..." onkeyup="filterGudang()" style="margin-bottom: 10px;">
+                    <table class="pos-table">
+                        <thead>
+                            <tr>
+                                <th>Barcode</th>
+                                <th>Nama Barang</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblStokGudang"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SEKSI MEKANIK & JASA -->
+            <section class="right-panel">
+                <div class="card" style="flex: none; margin-bottom: 15px;">
+                    <h2>Kelola Mekanik</h2>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="addMekanikNama" placeholder="Nama Mekanik Baru">
+                        <button onclick="tambahMekanik()" class="btn btn-primary">Tambah</button>
+                    </div>
+                    <ul id="listMekanik" class="simple-list" style="margin-top: 10px;"></ul>
+                </div>
+
+                <div class="card">
+                    <h2>Kelola Jasa Servis</h2>
+                    <div class="form-grid">
+                        <input type="text" id="addJasaNama" placeholder="Nama Jasa Servis">
+                        <input type="number" id="addJasaHarga" placeholder="Tarif Jasa (Rp)">
+                        <button onclick="tambahJasa()" class="btn btn-primary">Tambah Jasa</button>
+                    </div>
+                    <table class="pos-table" style="margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th>Nama Jasa</th>
+                                <th>Tarif</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblJasa"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- ================= TAB 3: LAPORAN & OMSET ================= -->
+        <main id="tabLaporan" class="main-content tab-content hidden" style="overflow-y: auto;">
+            <section class="left-panel">
+                <div class="card">
+                    <h2>Ringkasan Keuangan Bengkel</h2>
+                    <div class="dashboard-grid">
+                        <div class="dash-box">
+                            <h3>TOTAL OMSET</h3>
+                            <p id="dashOmset">Rp0</p>
+                        </div>
+                        <div class="dash-box">
+                            <h3>TRANSAKSI SELESAI</h3>
+                            <p id="dashTrxCount">0 Trx</p>
+                        </div>
+                    </div>
+
+                    <h2 style="margin-top: 25px;">Riwayat Transaksi</h2>
+                    <table class="pos-table">
+                        <thead>
+                            <tr>
+                                <th>ID Trx</th>
+                                <th>Tanggal</th>
+                                <th>Tipe</th>
+                                <th>Total</th>
+                                <th>Mekanik</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblRiwayatTrx"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="right-panel">
+                <div class="card">
+                    <h2>Pendapatan & Komisi Mekanik</h2>
+                    <table class="pos-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Mekanik</th>
+                                <th>Total Komisi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblKomisiMekanik"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- ================= TAB 4: PENGATURAN SYSTEM ================= -->
+        <main id="tabSetting" class="main-content tab-content hidden">
+            <section class="left-panel" style="max-width: 600px; margin: 0 auto;">
+                <div class="card">
+                    <h2>Pengaturan Bengkel</h2>
+                    <div class="form-group-vertical">
+                        <label>Nama Bengkel</label>
+                        <input type="text" id="setNamaBengkel">
+                        
+                        <label>Alamat Bengkel</label>
+                        <input type="text" id="setAlamat">
+                        
+                        <label>No. Telepon / WA</label>
+                        <input type="text" id="setTelp">
+
+                        <h2 style="margin-top: 20px;">Sistem Komisi Mekanik</h2>
+                        
+                        <label>Komisi Jasa Servis (%)</label>
+                        <input type="number" id="setKomisiJasa" min="0" max="100">
+                        <small>Mekanik mendapatkan X% dari nilai jasa servis yang dikerjakan.</small>
+
+                        <label style="margin-top: 10px;">Komisi Sparepart (%)</label>
+                        <input type="number" id="setKomisiPart" min="0" max="100">
+                        <small>Mekanik mendapatkan X% dari nilai sparepart yang dipasang (opsional).</small>
+                        
+                        <button onclick="simpanPengaturan()" class="btn btn-primary" style="margin-top: 20px; padding: 12px;">Simpan Pengaturan</button>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- IFRAME TERSEMBUNYI UNTUK CETAK STRUK SECARA SILENT -->
     <iframe id="printFrame" style="display: none;"></iframe>
-
-    <!-- Hubungkan ke JS Eksternal -->
     <script src="app.js"></script>
 </body>
 </html>
