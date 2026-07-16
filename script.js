@@ -1,4 +1,4 @@
-// Data Default
+// Inisialisasi Data
 let dataBengkel = JSON.parse(localStorage.getItem('otopos_data')) || {
     omsetHariIni: 0,
     servisSelesai: 0,
@@ -25,19 +25,19 @@ function simpanPengaturan() {
     };
     saveData();
     document.getElementById('display-nama-bengkel').innerText = dataBengkel.config.namaBengkel;
-    alert("Pengaturan tersimpan!");
+    alert("Pengaturan berhasil disimpan!");
 }
 
 function loadPengaturanKeForm() {
-    document.getElementById('set-nama-bengkel').value = dataBengkel.config.namaBengkel;
-    document.getElementById('set-logo').value = dataBengkel.config.logoUrl;
-    document.getElementById('set-footer').value = dataBengkel.config.footerStruk;
+    document.getElementById('set-nama-bengkel').value = dataBengkel.config.namaBengkel || "";
+    document.getElementById('set-logo').value = dataBengkel.config.logoUrl || "";
+    document.getElementById('set-footer').value = dataBengkel.config.footerStruk || "";
 }
 
 // Fitur Mekanik
 function tambahMekanik() {
     const input = document.getElementById('input-nama-mekanik');
-    if (!input.value) return;
+    if (!input.value) return alert("Isi nama mekanik!");
     dataBengkel.daftarMekanik.push({ id: Date.now(), nama: input.value });
     input.value = '';
     saveData();
