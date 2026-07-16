@@ -3,275 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS - PC Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-4 font-sans flex flex-col gap-4">
 
-    <!-- TOP BAR -->
-    <header class="bg-blue-600 text-white p-4 rounded-xl shadow-md flex justify-between items-center">
+    <title>OTOPOS - Bengkel System Desktop</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CSS Utama -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-100">
+
+<div id="app" class="min-h-screen flex flex-col">
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="bg-blue-700 text-white h-16 flex items-center justify-between px-6 shadow">
+
         <div class="flex items-center gap-3">
-            <span class="text-2xl">🛠️</span>
+            <span class="text-3xl">🛠️</span>
+
             <div>
-                <h1 class="text-lg font-black tracking-wider">OTOPOS</h1>
-                <p class="text-xs text-blue-200">Bengkel Maju Motor - Versi Desktop (PC)</p>
+                <h1 class="font-black text-xl tracking-wider">
+                    OTOPOS
+                </h1>
+
+                <p class="text-xs text-blue-200">
+                    Bengkel Maju Motor
+                </p>
             </div>
         </div>
-        <div class="flex items-center gap-4 text-sm font-bold">
-            <span class="bg-blue-700 px-3 py-1.5 rounded-lg">👤 Kasir: Admin</span>
-            <button onclick="alert('Membuka Pengaturan Bengkel')" class="hover:bg-blue-700 p-2 rounded-lg transition">⚙️ Setting</button>
+
+
+
+        <!-- MENU SETTING -->
+
+        <div class="relative">
+
+            <button 
+                onclick="toggleSettingMenu()"
+                class="hover:bg-blue-800 rounded-full p-3 text-xl">
+                ⚙️
+            </button>
+
+
+            <div id="settingMenu"
+                 class="hidden absolute right-0 mt-2 w-60 bg-white text-gray-700 rounded-xl shadow-xl border overflow-hidden z-50">
+
+
+                <button onclick="bukaMenu('mekanik')"
+                    class="menu-setting">
+                    👨‍🔧 Data Mekanik
+                </button>
+
+
+                <button onclick="bukaMenu('part')"
+                    class="menu-setting">
+                    📦 Master Part
+                </button>
+
+
+                <button onclick="bukaMenu('supplier')"
+                    class="menu-setting">
+                    🏭 Supplier
+                </button>
+
+
+                <button onclick="bukaMenu('motor')"
+                    class="menu-setting">
+                    🚲 Data Motor
+                </button>
+
+
+                <button onclick="bukaMenu('tarif')"
+                    class="menu-setting">
+                    💰 Tarif Jasa
+                </button>
+
+
+                <button onclick="bukaMenu('user')"
+                    class="menu-setting">
+                    👤 Pengguna
+                </button>
+
+
+                <button onclick="bukaMenu('system')"
+                    class="menu-setting">
+                    ⚙️ Pengaturan Sistem
+                </button>
+
+
+            </div>
+
         </div>
+
     </header>
 
-    <!-- WRAPPER UTAMA: SPLIT SCREEN (60% Kiri, 40% Kanan di Layar PC) -->
-    <div class="grid grid-cols-12 gap-4 flex-1">
-        
-        <!-- ================= SIDE KIRI: AREA OPERASIONAL (7/12 Kolom) ================= -->
-        <main class="col-span-12 lg:col-span-7 bg-white rounded-xl shadow-md border p-5 flex flex-col gap-5">
-            
-            <!-- TAB TOGGLE: SERVIS VS PART -->
-            <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl border">
-                <button id="tab-servis" onclick="setMode('servis')" class="py-2.5 rounded-lg font-black text-sm transition-all shadow bg-red-600 text-white">
-                    🔴 MODE SERVIS (DENGAN MEKANIK)
+
+
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+
+    <main class="flex-1 p-6">
+
+
+        <div class="grid grid-cols-3 gap-5">
+
+
+
+            <!-- PANEL SERVIS -->
+
+            <section class="panel">
+
+                <div class="panel-header bg-red-600">
+                    🔴 DATA SERVIS
+                </div>
+
+
+                <button onclick="bukaModalTambahServis()"
+                    class="btn-primary bg-red-500 hover:bg-red-600">
+
+                    ➕ Terima Motor
+
                 </button>
-                <button id="tab-part" onclick="setMode('part')" class="py-2.5 rounded-lg font-black text-sm transition-all text-gray-500 hover:text-gray-800">
-                    🟢 JUAL PART LANGSUNG (TANPA MEKANIK)
+
+
+                <div class="mt-4">
+
+                    <h3 class="judul-list">
+                        Antrean Servis
+                    </h3>
+
+
+                    <div id="antrean-container"
+                         class="space-y-2">
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+
+
+            <!-- PANEL KASIR -->
+
+
+            <section class="panel">
+
+                <div class="panel-header bg-emerald-600">
+                    🟢 KASIR
+                </div>
+
+
+                <button onclick="bukaModalJualLangsung()"
+                    class="btn-primary bg-emerald-500 hover:bg-emerald-600">
+
+                    ➕ Penjualan
+
                 </button>
-            </div>
 
-            <!-- FORM DYNAMIC CONTAINER -->
-            <div id="form-container" class="space-y-4">
-                <!-- Bagian Servis (Bisa disembunyikan lewat JS) -->
-                <div id="group-servis" class="grid grid-cols-2 gap-4 border-b pb-4">
-                    <div>
-                        <label class="block text-xs font-black text-gray-500 mb-1">NOMOR POLISI / NAMA KENDARAAN</label>
-                        <input type="text" id="input-nopol" placeholder="Contoh: D 1345 TRE (Mio)" class="w-full border border-gray-300 bg-red-50/30 rounded-lg p-2.5 text-sm uppercase font-mono focus:ring-2 focus:ring-red-500 outline-none">
+
+                <div class="mt-4">
+
+                    <h3 class="judul-list">
+                        Transaksi
+                    </h3>
+
+
+                    <div id="pesanan-container"
+                         class="space-y-2">
+
                     </div>
-                    <div>
-                        <label class="block text-xs font-black text-gray-500 mb-1">PILIH MEKANIK</label>
-                        <select id="input-mekanik" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none bg-white">
-                            <option value="Wowo">Wowo</option>
-                            <option value="Joko">Joko</option>
-                            <option value="Dani">Dani</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-black text-gray-500 mb-1">DIAGNOSIS / KELUHAN SERVIS</label>
-                        <input type="text" id="input-diagnosis" placeholder="Contoh: Service TB / Ganti Oli" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 outline-none">
-                    </div>
+
+
                 </div>
 
-                <!-- Bagian Pembeli Langsung (Selalu muncul di kedua mode) -->
-                <div class="grid grid-cols-3 gap-4">
-                    <div id="group-pembeli" class="col-span-3 hidden">
-                        <label class="block text-xs font-black text-gray-500 mb-1">NAMA PEMBELI (OPSIONAL)</label>
-                        <input type="text" id="input-pembeli" placeholder="Contoh: Pak Budi" class="w-full border border-gray-300 bg-emerald-50/30 rounded-lg p-2.5 text-sm outline-none">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-black text-gray-500 mb-1">PILIH PRODUK / SPAREPART</label>
-                        <select id="input-produk" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none bg-white">
-                            <option value="Oli MPX 1|55000">Oli MPX 1 (Rp 55.000)</option>
-                            <option value="Enduro|65000">Enduro (Rp 65.000)</option>
-                            <option value="Dispad|15000">Dispad (Rp 15.000)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-gray-500 mb-1">JUMLAH (QTY)</label>
-                        <input type="number" id="input-qty" value="1" min="1" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm text-center outline-none">
-                    </div>
-                    <div id="group-jasa" class="col-span-3">
-                        <label class="block text-xs font-black text-gray-500 mb-1">BIAYA JASA SERVIS (RP)</label>
-                        <input type="number" id="input-jasa" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm outline-none">
-                    </div>
+
+            </section>
+
+
+
+
+
+            <!-- PANEL INFO -->
+
+
+            <section class="panel">
+
+
+                <div class="panel-header bg-blue-600">
+                    📊 INFORMASI
                 </div>
 
-                <!-- ACTION BUTTON LEFT -->
-                <button id="btn-tambah" onclick="tambahKeBilling()" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-xl transition shadow-lg shadow-red-100 text-sm">
-                    ➕ TAMBAH KE KASIR PANEL
-                </button>
-            </div>
-        </main>
 
-        <!-- ================= SIDE KANAN: KASIR PANEL MANDIRI (5/12 Kolom) ================= -->
-        <aside class="col-span-12 lg:col-span-5 bg-slate-900 text-white rounded-xl shadow-md p-5 flex flex-col justify-between border border-slate-800">
-            <div>
-                <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
-                    <h2 class="font-black text-md tracking-wide text-emerald-400">🛒 RINGKASAN BILLING</h2>
-                    <span id="billing-type" class="text-[10px] bg-red-900/50 text-red-300 px-2.5 py-1 rounded-full border border-red-700 font-bold">MODE SERVIS</span>
+
+                <div class="stat-card">
+
+                    <span>
+                        Omset Hari Ini
+                    </span>
+
+
+                    <strong id="omset-text">
+                        Rp 0
+                    </strong>
+
                 </div>
 
-                <!-- DAFTAR ITEM DI KASIR -->
-                <div id="cart-items" class="space-y-3 min-h-[250px] max-h-[350px] overflow-y-auto pr-1">
-                    <!-- Item Kasir Masuk Ke Sini -->
-                    <div class="text-center text-slate-500 text-xs py-12">Belum ada item. Silakan pilih menu di kiri lalu tekan Tambah.</div>
-                </div>
-            </div>
 
-            <!-- TOTALAN & PEMBAYARAN -->
-            <div class="border-t border-slate-700 pt-4 mt-4 space-y-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm font-bold text-slate-400">TOTAL BELANJA:</span>
-                    <span id="cart-total" class="text-2xl font-black text-emerald-400">Rp 0</span>
-                </div>
 
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 mb-2">METODE PEMBAYARAN</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setPayment('Tunai')" class="btn-pay bg-slate-800 border border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg text-center">💵 Tunai</button>
-                        <button onclick="setPayment('QRIS')" class="btn-pay bg-slate-800 border border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg text-center hover:bg-slate-800">📱 QRIS</button>
-                        <button onclick="setPayment('Debit')" class="btn-pay bg-slate-800 border border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg text-center hover:bg-slate-800">💳 Debit</button>
-                    </div>
+                <div class="stat-card">
+
+                    <span>
+                        Motor Selesai
+                    </span>
+
+
+                    <strong id="selesai-count">
+                        0
+                    </strong>
+
                 </div>
 
-                <button onclick="prosesCheckout()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3.5 rounded-xl transition text-center text-sm shadow-xl shadow-emerald-950">
-                    🟩 SELESAI & CETAK STRUK
-                </button>
-            </div>
-        </aside>
+
+
+            </section>
+
+
+        </div>
+
+
+    </main>
+
+
+
+
+
+    <!-- ================= AREA MODAL ================= -->
+
+
+
+    <div id="modal-container">
+
+        <!-- Modal akan dimuat oleh JavaScript -->
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let currentMode = 'servis';
-        let cart = [];
-        let selectedPayment = 'Tunai';
 
-        function setMode(mode) {
-            currentMode = mode;
-            const tabServis = document.getElementById('tab-servis');
-            const tabPart = document.getElementById('tab-part');
-            const groupServis = document.getElementById('group-servis');
-            const groupJasa = document.getElementById('group-jasa');
-            const groupPembeli = document.getElementById('group-pembeli');
-            const btnTambah = document.getElementById('btn-tambah');
-            const billingType = document.getElementById('billing-type');
 
-            // Reset Cart ketika ganti mode transaksi agar data tidak tercampur
-            cart = [];
-            renderCart();
 
-            if (mode === 'servis') {
-                tabServis.className = "py-2.5 rounded-lg font-black text-sm transition-all shadow bg-red-600 text-white";
-                tabPart.className = "py-2.5 rounded-lg font-black text-sm transition-all text-gray-500 hover:text-gray-800";
-                groupServis.classList.remove('hidden');
-                groupJasa.classList.remove('hidden');
-                groupPembeli.classList.add('hidden');
-                
-                btnTambah.className = "w-full bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-xl transition shadow-lg text-sm";
-                billingType.className = "text-[10px] bg-red-900/50 text-red-300 px-2.5 py-1 rounded-full border border-red-700 font-bold";
-                billingType.innerText = "MODE SERVIS";
-            } else {
-                tabServis.className = "py-2.5 rounded-lg font-black text-sm transition-all text-gray-500 hover:text-gray-800";
-                tabPart.className = "py-2.5 rounded-lg font-black text-sm transition-all shadow bg-emerald-600 text-white";
-                groupServis.classList.add('hidden');
-                groupJasa.classList.add('hidden');
-                groupPembeli.classList.remove('hidden');
 
-                btnTambah.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl transition shadow-lg text-sm";
-                billingType.className = "text-[10px] bg-emerald-900/50 text-emerald-300 px-2.5 py-1 rounded-full border border-emerald-700 font-bold";
-                billingType.innerText = "PEMBELI LANGSUNG";
-            }
-        }
+    <!-- ================= FOOTER ================= -->
 
-        function tambahKeBilling() {
-            const produkRaw = document.getElementById('input-produk').value.split('|');
-            const name = produkRaw[0];
-            const price = parseInt(produkRaw[1]);
-            const qty = parseInt(document.getElementById('input-qty').value) || 1;
 
-            if (currentMode === 'servis') {
-                const nopol = document.getElementById('input-nopol').value.trim();
-                const mekanik = document.getElementById('input-mekanik').value;
-                const jasa = parseInt(document.getElementById('input-jasa').value) || 0;
+    <footer class="bg-white border-t p-4 text-center text-xs text-gray-500">
 
-                if (!nopol) { alert('Nomor Polisi wajib diisi untuk Mode Servis!'); return; }
+        OTOPOS © 2026 | Sistem Manajemen Bengkel
 
-                // Masukkan jasa servis jika belum ada di cart
-                if (jasa > 0 && !cart.some(x => x.type === 'jasa')) {
-                    const diagnosis = document.getElementById('input-diagnosis').value || 'Service';
-                    cart.push({ type: 'jasa', name: `Jasa: ${diagnosis} (${mekanik})`, price: jasa, qty: 1 });
-                }
-            }
+    </footer>
 
-            // Cari apakah part sudah terdaftar di keranjang billing
-            const existingItem = cart.find(x => x.name === name);
-            if (existingItem) {
-                existingItem.qty += qty;
-            } else {
-                cart.push({ type: 'part', name: name, price: price, qty: qty });
-            }
 
-            renderCart();
-        }
 
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) {
-                cart.splice(index, 1);
-            }
-            renderCart();
-        }
+</div>
 
-        function renderCart() {
-            const container = document.getElementById('cart-items');
-            const totalText = document.getElementById('cart-total');
-            container.innerHTML = '';
 
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center text-slate-500 text-xs py-12">Belum ada item. Silakan pilih menu di kiri lalu tekan Tambah.</div>`;
-                totalText.innerText = "Rp 0";
-                return;
-            }
 
-            let total = 0;
-            cart.forEach((item, index) => {
-                const itemTotal = item.price * item.qty;
-                total += itemTotal;
 
-                const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-slate-800 border border-slate-700 p-2.5 rounded-lg";
-                div.innerHTML = `
-                    <div class="text-xs">
-                        <p class="font-bold text-slate-200">${item.name}</p>
-                        <p class="text-slate-400 text-[10px] mt-0.5">Rp ${item.price.toLocaleString('id-ID')}</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center bg-slate-950 rounded border border-slate-700">
-                            <button onclick="changeQty(${index}, -1)" class="px-2 py-0.5 text-xs text-red-400 font-bold hover:bg-slate-900">-</button>
-                            <span class="px-2 text-xs font-mono font-bold">${item.qty}</span>
-                            <button onclick="changeQty(${index}, 1)" class="px-2 py-0.5 text-xs text-green-400 font-bold hover:bg-slate-900">+</button>
-                        </div>
-                        <span class="text-xs font-bold text-slate-200 min-w-[70px] text-right">Rp ${itemTotal.toLocaleString('id-ID')}</span>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
 
-            totalText.innerText = "Rp " + total.toLocaleString('id-ID');
-        }
+<!-- ================= JAVASCRIPT ================= -->
 
-        function setPayment(method) {
-            selectedPayment = method;
-            const buttons = document.querySelectorAll('.btn-pay');
-            buttons.forEach(btn => {
-                if (btn.innerText.includes(method)) {
-                    btn.className = "btn-pay bg-slate-800 border border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg text-center";
-                } else {
-                    btn.className = "btn-pay bg-slate-800 border border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg text-center hover:bg-slate-800";
-                }
-            });
-        }
 
-        function prosesCheckout() {
-            if (cart.length === 0) { alert('Keranjang billing kosong!'); return; }
-            alert(`Transaksi Berhasil Disimpan!\nMetode: ${selectedPayment}\nStruk siap dicetak.`);
-            cart = [];
-            renderCart();
-            document.getElementById('input-nopol').value = '';
-            document.getElementById('input-diagnosis').value = '';
-            document.getElementById('input-pembeli').value = '';
-        }
-    </script>
+<script src="js/util.js"></script>
+
+<script src="js/app.js"></script>
+
+<script src="js/render.js"></script>
+
+<script src="js/servis.js"></script>
+
+<script src="js/kasir.js"></script>
+
+<script src="js/mekanik.js"></script>
+
+<script src="js/part.js"></script>
+
+<script src="js/setting.js"></script>
+
+
 </body>
 </html>
