@@ -13,175 +13,56 @@
     </div>
 
     <div class="app-content">
-        
+        <!-- HOME -->
         <div id="page-home" class="page-container">
             <div class="profile-card">
-                <div class="logo-wrapper">
-                    <img src="logo.png" alt="Logo Bengkel" class="logo-profil">
-                </div>
                 <h2>Bengkel Maju Motor</h2>
-                <p>628886225629</p>
             </div>
-
             <div class="stats-grid">
-                <div class="stat-box">
-                    <span class="stat-label">Omset Hari Ini</span>
-                    <h2 id="stat-omset" class="text-green">Rp 0</h2>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-label">Servis Selesai</span>
-                    <h2 id="stat-selesai" class="text-blue">0</h2>
-                </div>
+                <div class="stat-box"><span class="stat-label">Omset</span><h2 id="stat-omset">Rp 0</h2></div>
+                <div class="stat-box"><span class="stat-label">Selesai</span><h2 id="stat-selesai">0</h2></div>
             </div>
-            
-            <div class="stat-box full-width bg-yellow-light">
-                <span class="stat-label">Kendaraan Dikerjakan</span>
-                <h3 id="stat-proses" class="text-orange">0 Kendaraan</h3>
-            </div>
-
             <div class="menu-list">
-                <div class="menu-item" onclick="navigateTo('servis')">
-                    <span class="menu-icon">🏍️</span>
-                    <div class="menu-info">
-                        <h4>Kendaraan Ditangani</h4>
-                        <p>Tambah & Proses Servis Lapangan</p>
-                    </div>
-                </div>
-                <div class="menu-item" onclick="navigateTo('riwayat')">
-                    <span class="menu-icon">📜</span>
-                    <div class="menu-info">
-                        <h4>Riwayat Transaksi</h4>
-                        <p>Lihat data transaksi yang sudah disimpan</p>
-                    </div>
-                </div>
-                <div class="menu-item" onclick="navigateTo('part')">
-                    <span class="menu-icon">📦</span>
-                    <div class="menu-info">
-                        <h4>Daftar Suku Cadang</h4>
-                        <p>Stok & Harga Suku Cadang Terintegrasi</p>
-                    </div>
-                </div>
-                <div class="menu-item" onclick="navigateTo('mekanik')">
-                    <span class="menu-icon">👨‍🔧</span>
-                    <div class="menu-info">
-                        <h4>Daftar Mekanik</h4>
-                        <p>Kelola data montir aktif</p>
-                    </div>
-                </div>
-                <div class="menu-item" onclick="navigateTo('setting')">
-                    <span class="menu-icon">⚙️</span>
-                    <div class="menu-info">
-                        <h4>Pengaturan Bengkel</h4>
-                        <p>Ubah profil nama, logo, dan kontak toko</p>
-                    </div>
-                </div>
+                <div class="menu-item" onclick="navigateTo('servis')"><span>🏍️</span> Kendaraan Ditangani</div>
+                <div class="menu-item" onclick="navigateTo('mekanik')"><span>👨‍🔧</span> Daftar Mekanik</div>
+                <div class="menu-item" onclick="navigateTo('setting')"><span>⚙️</span> Pengaturan</div>
             </div>
         </div>
 
-        <div id="page-kasir" class="page-container">
-            <div class="card">
-                <h3>Transaksi Kasir</h3>
-                <div class="form-group">
-                    <label for="kasir-pilih-antrean">Pilih Kendaraan Aktif</label>
-                    <select id="kasir-pilih-antrean">
-                        <option value="">-- Hubungkan dengan Plat Nomor --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Rincian Item / Biaya</label>
-                    <div id="kasir-item-list" class="empty-list-hint">Belum ada item ditambahkan</div>
-                </div>
-                <div class="total-box">
-                    <span>TOTAL BAYAR:</span>
-                    <span id="kasir-total">Rp 0</span>
-                </div>
-                <button class="btn btn-primary" onclick="prosesPembayaran()">Bayar & Cetak Struk</button>
-            </div>
-        </div>
-
-        <div id="page-laporan" class="page-container">
-            <div class="card bg-green-light text-center">
-                <span class="stat-label">Saldo Bengkel Saat Ini</span>
-                <h1 id="laporan-saldo-aktif" class="text-green">Rp 0</h1>
-                <button class="btn btn-secondary mt-2" onclick="tarikSaldoOwner()">💳 Tarik Saldo (Owner)</button>
-            </div>
-
-            <div class="card bg-blue-light text-center">
-                <span class="stat-label">Total Omset Keseluruhan (Riwayat)</span>
-                <h2 id="laporan-total-omset">Rp 0</h2>
-                <span id="laporan-jumlah-transaksi" class="badge-info">Jumlah Transaksi: 0</span>
-            </div>
-            
-            <div class="card">
-                <h3>Pendapatan Kerja Mekanik (Belum Digaji)</h3>
-                <p class="hint">* Klik nama mekanik untuk melihat rincian pekerjaan</p>
-                <div id="laporan-mekanik-list"></div>
-            </div>
-        </div>
-
-        <div id="page-servis" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
-            <div class="card">
-                <h3>Tambah Kendaraan Baru Masuk</h3>
-                <div class="form-group">
-                    <input type="text" id="input-nopol" placeholder="Nomor Polisi (Contoh: B 1234 ABC)" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="input-motor" placeholder="Jenis / Tipe Motor (Contoh: Beat, Vario)" required>
-                </div>
-                <button class="btn btn-primary" onclick="prosesTambahKendaraan()">Masukkan Antrean Kerja</button>
-            </div>
-            <div id="wrapper-antrean-lapangan"></div>
-        </div>
-
-        <div id="page-riwayat" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
-            <div class="card">
-                <h3>Riwayat Transaksi</h3>
-                <p class="hint text-center" style="margin-top:20px;">Belum ada data transaksi yang tersimpan.</p>
-            </div>
-        </div>
-
-        <div id="page-part" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
-            <div class="card">
-                <h3>Daftar Suku Cadang</h3>
-                <p class="hint text-center" style="margin-top:20px;">Belum ada data suku cadang ditambahkan.</p>
-            </div>
-        </div>
-
+        <!-- MEKANIK -->
         <div id="page-mekanik" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button>
             <div class="card">
-                <h3>Manajemen Mekanik</h3>
-                <p class="hint text-center" style="margin-top:20px;">Belum ada data mekanik yang terdaftar.</p>
+                <h3>Tambah Mekanik</h3>
+                <div class="form-group">
+                    <input type="text" id="input-nama-mekanik" placeholder="Nama Mekanik">
+                </div>
+                <button class="btn btn-primary" onclick="tambahMekanik()">Daftarkan Mekanik</button>
+            </div>
+            <div class="card">
+                <h3>Daftar Mekanik Aktif</h3>
+                <div id="list-mekanik"></div>
             </div>
         </div>
 
+        <!-- PENGATURAN -->
         <div id="page-setting" class="page-container">
-            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali</button>
             <div class="card">
-                <h3>Pengaturan Bengkel</h3>
-                <p class="hint text-center" style="margin-top:20px;">Halaman pengaturan sedang dalam tahap pengembangan.</p>
+                <h3>Identitas Bengkel</h3>
+                <input type="text" id="set-nama-bengkel" placeholder="Nama Bengkel">
+                <button class="btn btn-primary mt-2" onclick="simpanPengaturan()">Simpan</button>
+            </div>
+            <div class="card bg-blue-light">
+                <h3>Pusat Bantuan</h3>
+                <button class="btn btn-secondary" onclick="hubungiCS()">📧 Hubungi via Email</button>
             </div>
         </div>
-
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="navigateTo('home')">
-            <span>🏠</span>Home
-        </div>
-        <div class="nav-item" id="nav-kasir" onclick="navigateTo('kasir')">
-            <span>💵</span>Kasir
-        </div>
-        <div class="nav-item" id="nav-laporan" onclick="navigateTo('laporan')">
-            <span>📊</span>Laporan
-        </div>
+        <div class="nav-item active" id="nav-home" onclick="navigateTo('home')"><span>🏠</span>Home</div>
     </div>
-
-    <div id="area-struk-print" class="struk-container">
-        </div>
 
     <script src="script.js"></script>
 </body>
