@@ -1,33 +1,182 @@
 /* =====================================================
-   OTOPOS SERVICE SYSTEM
-   File : servis.js
-   Fungsi : proses data servis bengkel
+   OTOPOS SERVICE FORM DESKTOP
+   Tambahan : modal tambah servis
 ===================================================== */
 
 
 
 // ======================================
-// BUKA FORM TAMBAH SERVIS
+// FORM TAMBAH SERVIS
 // ======================================
+
 
 function bukaModalTambahServis(){
 
 
+
     if(dataAntrean.length >= 5){
 
+
         pesan(
-            "Antrean penuh! Maksimal 5 motor."
+            "Antrean servis penuh (maksimal 5 motor)"
         );
 
+
         return;
 
     }
 
 
 
-    pesan(
-        "Form Tambah Servis"
-    );
+tampilModal(`
+
+
+<div class="modal-bg">
+
+
+<div class="modal-box">
+
+
+<div class="flex justify-between mb-4">
+
+
+<h2 class="font-bold text-lg">
+🔴 Terima Motor Baru
+</h2>
+
+
+<button onclick="tutupSemuaModal()">
+❌
+</button>
+
+
+</div>
+
+
+
+
+
+<label class="form-label">
+Nomor Polisi
+</label>
+
+
+<input 
+id="srv-nopol"
+class="form-input mb-3"
+placeholder="B 1234 ABC">
+
+
+
+
+
+
+<label class="form-label">
+Tipe Motor
+</label>
+
+
+<input
+id="srv-motor"
+class="form-input mb-3"
+placeholder="Honda Beat / Nmax">
+
+
+
+
+
+
+<label class="form-label">
+Mekanik
+</label>
+
+
+<select
+id="srv-mekanik"
+class="form-input mb-3">
+
+
+</select>
+
+
+
+
+
+
+
+
+<label class="form-label">
+Jasa Servis
+</label>
+
+
+<input
+id="srv-jasa"
+class="form-input mb-3"
+placeholder="Servis ringan">
+
+
+
+
+
+
+
+<label class="form-label">
+Sparepart
+</label>
+
+
+<input
+id="srv-part"
+class="form-input mb-3"
+placeholder="Oli, busi, dll">
+
+
+
+
+
+
+
+<label class="form-label">
+Total Biaya
+</label>
+
+
+<input
+id="srv-total"
+type="number"
+class="form-input mb-4"
+placeholder="125000">
+
+
+
+
+
+<button
+onclick="simpanServisBaru()"
+
+class="bg-red-600 text-white px-5 py-2 rounded-lg">
+
+Masukkan Antrean
+
+</button>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+`);
+
+
+
+
+isiMekanikForm();
 
 
 }
@@ -38,145 +187,49 @@ function bukaModalTambahServis(){
 
 
 
-// ======================================
-// TAMBAH SERVIS BARU
-// ======================================
-
-
-function tambahServis(data){
-
-
-    const servisBaru = {
-
-
-        id:
-        generateID(dataAntrean),
-
-
-        nopol:
-        data.nopol,
-
-
-        motor:
-        data.motor,
-
-
-        mekanik:
-        data.mekanik,
-
-
-        jasa:
-        data.jasa,
-
-
-        part:
-        data.part,
-
-
-        total:
-        Number(data.total),
-
-
-        status:
-        "Proses"
-
-
-    };
-
-
-
-    dataAntrean.push(
-        servisBaru
-    );
-
-
-
-    renderUI();
-
-
-
-    pesan(
-        "Motor berhasil masuk antrean"
-    );
-
-
-}
-
-
-
-
-
-
 
 
 // ======================================
-// DETAIL SERVIS
+// ISI DROPDOWN MEKANIK
 // ======================================
 
 
-function bukaDetailServis(id){
+function isiMekanikForm(){
 
 
 
-    const item =
-    dataAntrean.find(
-        x=>x.id===id
-    );
+const select =
+document.getElementById(
+"srv-mekanik"
+);
 
 
 
-    if(!item){
-
-        return;
-
-    }
+if(!select)return;
 
 
 
-    let detail = `
 
-Nomor Polisi :
-${item.nopol}
+select.innerHTML="";
 
 
-Motor :
-${item.motor}
+
+daftarNamaMekanik()
+.forEach(
+nama=>{
 
 
-Mekanik :
-${item.mekanik}
+select.innerHTML += `
 
-
-Jasa :
-${item.jasa.join(", ")}
-
-
-Part :
-${item.part.join(", ")}
-
-
-Total :
-${formatRupiah(item.total)}
+<option>
+${nama}
+</option>
 
 `;
 
 
+});
 
-    let lanjut =
-    confirm(
-        detail +
-        "\n\nSelesaikan servis?"
-    );
-
-
-
-    if(lanjut){
-
-        selesaiServis(
-            id
-        );
-
-    }
 
 
 }
@@ -187,62 +240,74 @@ ${formatRupiah(item.total)}
 
 
 
+
+
 // ======================================
-// SELESAI SERVIS
+// SIMPAN SERVIS
 // ======================================
 
 
-function selesaiServis(id){
+function simpanServisBaru(){
 
 
 
-    const index =
-    dataAntrean.findIndex(
-        x=>x.id===id
-    );
+const nopol =
+document.getElementById(
+"srv-nopol"
+).value;
 
 
 
-    if(index === -1){
-
-        return;
-
-    }
-
+const motor =
+document.getElementById(
+"srv-motor"
+).value;
 
 
 
-    const item =
-    dataAntrean[index];
+const mekanik =
+document.getElementById(
+"srv-mekanik"
+).value;
 
 
 
-    omset +=
-    item.total;
+const jasa =
+document.getElementById(
+"srv-jasa"
+).value;
 
 
 
-    selesaiCount++;
+const part =
+document.getElementById(
+"srv-part"
+).value;
 
 
 
-    dataAntrean.splice(
-        index,
-        1
-    );
+const total =
+document.getElementById(
+"srv-total"
+).value;
 
 
 
-    renderUI();
 
+
+if(
+!nopol ||
+!motor ||
+!total
+){
 
 
     pesan(
-        "Servis selesai. Pembayaran masuk " 
-        +
-        formatRupiah(item.total)
+    "Nomor polisi, motor dan total wajib diisi"
     );
 
+
+    return;
 
 
 }
@@ -252,58 +317,41 @@ function selesaiServis(id){
 
 
 
-
-// ======================================
-// HAPUS SERVIS
-// ======================================
+tambahServis({
 
 
-function hapusServis(id){
+nopol:nopol,
+
+
+motor:motor,
+
+
+mekanik:mekanik,
+
+
+jasa:[
+jasa
+],
+
+
+part:[
+part
+],
+
+
+total:total
 
 
 
-    if(
-        !konfirmasiHapus()
-    ){
-
-        return;
-
-    }
-
-
-
-    dataAntrean =
-    dataAntrean.filter(
-        x=>x.id!==id
-    );
-
-
-
-    renderUI();
-
-
-}
+});
 
 
 
 
 
 
+tutupSemuaModal();
 
-// ======================================
-// CARI SERVIS
-// ======================================
-
-
-function cariServis(keyword){
-
-
-
-    return cariData(
-        dataAntrean,
-        keyword,
-        "nopol"
-    );
 
 
 }
