@@ -3,282 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OtoPOS - Aplikasi Kasir Bengkel</title>
-    <link rel="stylesheet" href="style.css">
+    <title>OTOPOS - Bengkel System</title>
+    <!-- Menggunakan Tailwind CSS untuk Tampilan Modern & Responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans min-h-screen flex justify-center items-center">
 
-    <div class="app-container">
-        <!-- HEADER / TOPBAR -->
-        <header class="topbar">
-            <div class="brand-wrapper">
-                <img src="gambarotopos192.png" alt="Logo" class="app-logo">
-                <h1 id="bengkelName">OTOPOS MOTOR</h1>
+    <!-- Container Utama (Diset Ukuran Layar HP agar Presisi) -->
+    <div class="w-full max-w-md bg-white min-h-[90vh] shadow-2xl rounded-2xl overflow-hidden flex flex-col justify-between border border-gray-200">
+        
+        <div>
+            <!-- Header: Logo & Nama Kecil -->
+            <header class="bg-blue-600 text-white p-3 flex justify-between items-center shadow-md">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🛠️</span>
+                    <div>
+                        <h1 class="text-sm font-black tracking-wider">OTOPOS</h1>
+                        <p class="text-[10px] text-blue-200">Bengkel Maju Motor</p>
+                    </div>
+                </div>
+                <button onclick="bukaSetting()" class="p-1 hover:bg-blue-700 rounded-full transition">
+                    <span class="text-lg">⚙️</span>
+                </button>
+            </header>
+
+            <!-- Bagian Atas: Data Ringkasan (Stats) -->
+            <section class="p-3 grid grid-cols-2 gap-2 bg-gray-50 border-b">
+                <div class="bg-white p-3 rounded-xl border border-gray-200 text-center shadow-sm">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Omset Hari Ini</p>
+                    <p class="text-md font-extrabold text-blue-600 mt-1" id="omset-text">Rp 720.000</p>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-gray-200 text-center shadow-sm">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Selesai</p>
+                    <p class="text-md font-extrabold text-green-600 mt-1" id="selesai-count">6 Unit</p>
+                </div>
+            </section>
+
+            <!-- Area Inti: Pembagian Servis (Kiri) & Penjualan (Kanan) -->
+            <main class="grid grid-cols-2 gap-2 p-3">
+                
+                <!-- KOLOM KIRI: DATA SERVIS (TEMA MERAH) -->
+                <section class="flex flex-col gap-2">
+                    <div class="bg-red-500 text-white text-center text-xs font-black py-1.5 rounded-t-lg shadow-sm">
+                        🔴 DATA SERVIS
+                    </div>
+                    <button onclick="bukaModalTambahServis()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold py-2 rounded-lg transition border border-red-200 shadow-sm">
+                        ➕ Terima Motor
+                    </button>
+                    
+                    <div class="flex flex-col gap-1 mt-1">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase px-1">Antrean (Maks 5)</p>
+                        <!-- List Antrean Dinamis -->
+                        <div id="antrean-container" class="flex flex-col gap-1.5">
+                            <!-- Diisi oleh Javascript -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- KOLOM KANAN: KASIR/PENJUALAN (TEMA HIJAU) -->
+                <section class="flex flex-col gap-2">
+                    <div class="bg-emerald-500 text-white text-center text-xs font-black py-1.5 rounded-t-lg shadow-sm">
+                        🟢 KASIR & PENJUALAN
+                    </div>
+                    <button onclick="bukaModalJualLangsung()" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-bold py-2 rounded-lg transition border border-emerald-200 shadow-sm">
+                        ➕ Jual Langsung
+                    </button>
+
+                    <div class="flex flex-col gap-1 mt-1">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase px-1">Pembeli Langsung</p>
+                        <!-- List Pesanan Langsung Dinamis -->
+                        <div id="pesanan-container" class="flex flex-col gap-1.5">
+                            <!-- Diisi oleh Javascript -->
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- Bagian Bawah: Menu Mingguan/Administrasi (Abu-abu) -->
+        <footer class="bg-gray-50 border-t p-3">
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-2 text-center">Menu Mingguan (Manajemen & Data)</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="alert('Membuka modul Stok Barang (Satu Minggu Sekali)')" class="bg-white border border-gray-200 hover:bg-gray-100 text-[11px] font-bold text-gray-600 py-2 rounded-lg text-center shadow-sm flex flex-col items-center gap-1">
+                    <span>📦</span> Stok Part
+                </button>
+                <button onclick="alert('Membuka modul Gaji Mekanik (Satu Minggu Sekali)')" class="bg-white border border-gray-200 hover:bg-gray-100 text-[11px] font-bold text-gray-600 py-2 rounded-lg text-center shadow-sm flex flex-col items-center gap-1">
+                    <span>👤</span> Gaji Mekanik
+                </button>
+                <button onclick="alert('Membuka modul Laporan Bengkel')" class="bg-white border border-gray-200 hover:bg-gray-100 text-[11px] font-bold text-gray-600 py-2 rounded-lg text-center shadow-sm flex flex-col items-center gap-1">
+                    <span>📊</span> Laporan
+                </button>
             </div>
-            
-            <!-- NAVIGASI UTAMA (Semua Tombol Berfungsi) -->
-            <nav class="nav-tabs">
-                <button onclick="switchTab('kasir')" id="btnTabKasir" class="tab-btn active">KASIR</button>
-                <button onclick="switchTab('manajemen')" id="btnTabManajemen" class="tab-btn">KELOLA DATA</button>
-                <button onclick="switchTab('laporan')" id="btnTabLaporan" class="tab-btn">LAPORAN & OMSET</button>
-                <button onclick="switchTab('setting')" id="btnTabSetting" class="tab-btn">PENGATURAN</button>
-            </nav>
+        </footer>
 
-            <div class="action-buttons">
-                <button onclick="setModeKasir('part')" id="btnModePart" class="btn btn-secondary active">Mode Jual Part</button>
-                <button onclick="setModeKasir('servis')" id="btnModeServis" class="btn btn-primary">Mode Servis</button>
-            </div>
-        </header>
-
-        <!-- ================= TAB 1: KASIR ================= -->
-        <main id="tabKasir" class="main-content tab-content">
-            <!-- PANEL KIRI: Antrian Servis (Hanya muncul di Mode Servis) -->
-            <section id="panelAntrian" class="left-panel hidden" style="max-width: 320px; flex: 0 0 320px;">
-                <div class="card" style="height: 100%;">
-                    <h2>Registrasi Antrian</h2>
-                    <div class="form-group-vertical" style="gap: 5px; margin-bottom: 15px;">
-                        <input type="text" id="regPlat" placeholder="No. Plat (cth: D 1234 AB)">
-                        <input type="text" id="regMotor" placeholder="Tipe Motor (cth: Beat FI)">
-                        <select id="regMekanik">
-                            <option value="">-- Pilih Mekanik --</option>
-                        </select>
-                        <button onclick="tambahKeAntrian()" class="btn btn-primary" style="width: 100%;">Masukan Antrian</button>
-                    </div>
-                    
-                    <h2>Daftar Motor Di-Servis</h2>
-                    <div id="listAntrianActive" class="queue-container">
-                        <!-- Render antrian lewat JS -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- PANEL TENGAH: Detail Transaksi Aktif -->
-            <section class="left-panel">
-                <div class="card" style="height: 100%;">
-                    <div class="card-header">
-                        <h2 id="lblJudulKeranjang">Keranjang Belanja: Penjualan Langsung</h2>
-                        <span id="lblMode" class="badge badge-part">DIRECT PART</span>
-                    </div>
-
-                    <div style="flex-grow: 1; overflow-y: auto;">
-                        <table class="pos-table">
-                            <thead>
-                                <tr>
-                                    <th>Item / Jasa</th>
-                                    <th width="120">Harga (Rp)</th>
-                                    <th width="80">Qty</th>
-                                    <th width="120">Subtotal</th>
-                                    <th width="50">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cartItems"></tbody>
-                        </table>
-                    </div>
-                    
-                    <div style="display:flex; gap:10px; margin-top:15px;">
-                        <button class="btn btn-danger" onclick="kosongkanKeranjang()">Kosongkan Keranjang</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PANEL KANAN: Pencarian & Pembayaran -->
-            <section class="right-panel" style="max-width: 380px;">
-                <div class="card" style="margin-bottom: 15px;">
-                    <h2>Pencarian Item/Jasa (F2)</h2>
-                    <input type="text" id="txtCari" placeholder="Ketik nama part, barcode, atau jasa..." onkeyup="cariItem()">
-                    <div id="searchResult" class="search-results-box"></div>
-                </div>
-
-                <div class="card payment-card">
-                    <h2>Kalkulator Pembayaran (F12)</h2>
-                    <div class="payment-row">
-                        <span>Subtotal</span>
-                        <span id="lblSubtotal">Rp0</span>
-                    </div>
-                    <div class="payment-row">
-                        <span>Diskon (Rp)</span>
-                        <input type="number" id="numDiskon" value="0" oninput="hitungTotalAkhir()">
-                    </div>
-                    <div class="payment-row grand-total-row">
-                        <span>TOTAL AKHIR</span>
-                        <span id="lblTotalAkhir">Rp0</span>
-                    </div>
-                    <div class="payment-row">
-                        <span>Bayar (F12)</span>
-                        <input type="number" id="numBayar" placeholder="Uang Bayar" oninput="hitungKembalian()">
-                    </div>
-                    <div class="payment-row kembalian-row">
-                        <span>Kembalian</span>
-                        <span id="lblKembalian">Rp0</span>
-                    </div>
-                    <button class="btn-checkout" onclick="prosesSimpanTransaksi()">PROSES & CETAK STRUK</button>
-                </div>
-            </section>
-        </main>
-
-        <!-- ================= TAB 2: KELOLA DATA ================= -->
-        <main id="tabManajemen" class="main-content tab-content hidden" style="overflow-y: auto;">
-            <!-- SEKSI SPAREPART (PAGINATED Gudang) -->
-            <section class="left-panel">
-                <div class="card">
-                    <h2>Tambah / Edit Sparepart</h2>
-                    <div class="form-grid">
-                        <input type="hidden" id="editPartId">
-                        <input type="text" id="addPartBarcode" placeholder="Kode Barcode">
-                        <input type="text" id="addPartNama" placeholder="Nama Sparepart">
-                        <input type="number" id="addPartHarga" placeholder="Harga Jual (Rp)">
-                        <input type="number" id="addPartStok" placeholder="Jumlah Stok">
-                        <button onclick="simpanSparepart()" class="btn btn-primary" id="btnSimpanPart">Simpan Sparepart</button>
-                    </div>
-
-                    <h2 style="margin-top: 25px;">Daftar Stok Gudang (Anti-Lemot)</h2>
-                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <input type="text" id="txtCariGudang" placeholder="Cari sparepart di gudang..." onkeyup="filterGudang()" style="flex:1;">
-                    </div>
-                    <table class="pos-table">
-                        <thead>
-                            <tr>
-                                <th>Barcode</th>
-                                <th>Nama Barang</th>
-                                <th>Harga</th>
-                                <th>Stok</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tblStokGudang"></tbody>
-                    </table>
-                    
-                    <!-- Paginasi Gudang -->
-                    <div class="pagination-container">
-                        <button onclick="gantiHalamanGudang(-1)" id="btnPrevGudang" class="btn btn-secondary">Sebelumnya</button>
-                        <span id="lblHalamanGudang">Halaman 1</span>
-                        <button onclick="gantiHalamanGudang(1)" id="btnNextGudang" class="btn btn-secondary">Selanjutnya</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SEKSI MEKANIK & JASA -->
-            <section class="right-panel">
-                <div class="card" style="flex: none; margin-bottom: 15px;">
-                    <h2>Kelola Mekanik</h2>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="addMekanikNama" placeholder="Nama Mekanik Baru">
-                        <button onclick="tambahMekanik()" class="btn btn-primary">Tambah</button>
-                    </div>
-                    <ul id="listMekanik" class="simple-list" style="margin-top: 10px;"></ul>
-                </div>
-
-                <div class="card">
-                    <h2>Kelola Jasa Servis</h2>
-                    <div class="form-grid">
-                        <input type="text" id="addJasaNama" placeholder="Nama Jasa Servis">
-                        <input type="number" id="addJasaHarga" placeholder="Tarif Jasa (Rp)">
-                        <button onclick="tambahJasa()" class="btn btn-primary">Tambah Jasa</button>
-                    </div>
-                    <table class="pos-table" style="margin-top: 15px;">
-                        <thead>
-                            <tr>
-                                <th>Nama Jasa</th>
-                                <th>Tarif</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tblJasa"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <!-- ================= TAB 3: LAPORAN & OMSET ================= -->
-        <main id="tabLaporan" class="main-content tab-content hidden" style="overflow-y: auto;">
-            <section class="left-panel">
-                <div class="card">
-                    <h2>Ringkasan Keuangan Bengkel</h2>
-                    <div class="dashboard-grid">
-                        <div class="dash-box">
-                            <h3>TOTAL OMSET</h3>
-                            <p id="dashOmset">Rp0</p>
-                        </div>
-                        <div class="dash-box">
-                            <h3>TRANSAKSI SELESAI</h3>
-                            <p id="dashTrxCount">0 Trx</p>
-                        </div>
-                    </div>
-
-                    <h2 style="margin-top: 25px;">Riwayat Transaksi</h2>
-                    <table class="pos-table">
-                        <thead>
-                            <tr>
-                                <th>ID Trx</th>
-                                <th>Tanggal</th>
-                                <th>Tipe</th>
-                                <th>Total</th>
-                                <th>Mekanik</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tblRiwayatTrx"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="right-panel">
-                <div class="card">
-                    <h2>Pendapatan & Komisi Mekanik</h2>
-                    <table class="pos-table">
-                        <thead>
-                            <tr>
-                                <th>Nama Mekanik</th>
-                                <th>Total Komisi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tblKomisiMekanik"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <!-- ================= TAB 4: PENGATURAN SYSTEM ================= -->
-        <main id="tabSetting" class="main-content tab-content hidden">
-            <section class="left-panel" style="max-width: 600px; margin: 0 auto;">
-                <div class="card">
-                    <h2>Pengaturan Bengkel & Kebijakan Toko</h2>
-                    <div class="form-group-vertical" style="gap: 12px;">
-                        <div>
-                            <label>Nama Bengkel</label>
-                            <input type="text" id="setNamaBengkel">
-                        </div>
-                        <div>
-                            <label>Alamat Bengkel</label>
-                            <input type="text" id="setAlamat">
-                        </div>
-                        <div>
-                            <label>No. Telepon / WA</label>
-                            <input type="text" id="setTelp">
-                        </div>
-
-                        <hr style="border: 0; border-top: 1px solid #ddd; margin: 10px 0;">
-                        <h3>Sistem Gaji / Komisi Mekanik</h3>
-                        
-                        <div>
-                            <label>Komisi Jasa Servis (%)</label>
-                            <input type="number" id="setKomisiJasa" min="0" max="100">
-                            <small style="display: block; color: #666; margin-top: 3px;">Mekanik mendapatkan persentase ini dari tarif jasa yang dia kerjakan.</small>
-                        </div>
-                        <div>
-                            <label>Komisi Sparepart (%)</label>
-                            <input type="number" id="setKomisiPart" min="0" max="100">
-                            <small style="display: block; color: #666; margin-top: 3px;">Mekanik mendapatkan persentase ini dari harga sparepart yang dia pasang.</small>
-                        </div>
-                        
-                        <button onclick="simpanPengaturan()" class="btn btn-primary" style="margin-top: 10px; padding: 12px;">Simpan Pengaturan</button>
-                    </div>
-                </div>
-            </section>
-        </main>
     </div>
 
-    <iframe id="printFrame" style="display: none;"></iframe>
-    <script src="app.js"></script>
+    <!-- ================= MODAL POPUP (DYNAMIC & FUNCTIONAL) ================= -->
+    
+    <!-- Modal Detail Servis (Nopol di-klik) -->
+    <div id="modal-detail-servis" class="hidden fixed inset-0 bg-black/50 flex justify-center items-center p-4 z-50">
+        <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-2xl border border-gray-100">
+            <div class="flex justify-between items-center border-b pb-2 mb-3">
+                <h3 class="font-black text-gray-800 text-sm">🛠️ Detail Pengerjaan</h3>
+                <button onclick="tutupModal('modal-detail-servis')" class="text-gray-400 hover:text-gray-600 text-lg font-bold">×</button>
+            </div>
+            <div class="text-xs space-y-2 text-gray-700">
+                <div class="flex justify-between"><span class="font-bold">No. Polisi:</span> <span id="dt-nopol" class="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-blue-600"></span></div>
+                <div class="flex justify-between"><span class="font-bold">Unit Motor:</span> <span id="dt-motor"></span></div>
+                <div class="flex justify-between border-t pt-2"><span class="font-bold text-red-600">👤 Mekanik:</span> <span id="dt-mekanik" class="font-bold"></span></div>
+                <div class="border-t pt-2">
+                    <span class="font-bold">🔧 Jasa Servis:</span>
+                    <ul id="dt-jasa" class="list-disc list-inside pl-1 text-gray-500 mt-1"></ul>
+                </div>
+                <div class="border-t pt-2">
+                    <span class="font-bold">📦 Sparepart Dipakai:</span>
+                    <ul id="dt-part" class="list-disc list-inside pl-1 text-gray-500 mt-1"></ul>
+                </div>
+                <div class="flex justify-between border-t pt-2 text-sm font-extrabold text-gray-900">
+                    <span>Total Pembayaran:</span>
+                    <span id="dt-total" class="text-green-600"></span>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+                <button onclick="tutupModal('modal-detail-servis')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-lg">Kembali</button>
+                <button id="btn-selesaikan-servis" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 rounded-lg shadow-md shadow-green-100">Selesai & Bayar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Jual Langsung (Tanpa Mekanik/Nopol) -->
+    <div id="modal-jual-langsung" class="hidden fixed inset-0 bg-black/50 flex justify-center items-center p-4 z-50">
+        <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-2 mb-3">
+                <h3 class="font-black text-gray-800 text-sm">🟢 Penjualan Langsung</h3>
+                <button onclick="tutupModal('modal-jual-langsung')" class="text-gray-400 hover:text-gray-600 text-lg font-bold">×</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 mb-1">NAMA PEMBELI (OPSIONAL)</label>
+                    <input type="text" id="jl-nama" placeholder="Contoh: Pak Budi" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 mb-1">PART YANG DIBELI</label>
+                    <select id="jl-part" class="w-full border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                        <option value="Oli Mesin MPX2|45000">Oli Mesin MPX2 (Rp 45.000)</option>
+                        <option value="Busi NGK|25000">Busi NGK (Rp 25.000)</option>
+                        <option value="Kampas Rem Depan|55000">Kampas Rem Depan (Rp 55.000)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <button onclick="tutupModal('modal-jual-langsung')" class="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-lg">Batal</button>
+                <button onclick="prosesJualLangsung()" class="w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg shadow-md shadow-emerald-100">Langsung Bayar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Servis Baru -->
+    <div id="modal-tambah-servis" class="hidden fixed inset-0 bg-black/50 flex justify-center items-center p-4 z-50">
+        <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-2 mb-3">
+                <h3 class="font-black text-gray-800 text-sm">🔴 Terima Motor Baru</h3>
+                <button onclick="tutupModal('modal-tambah-servis')" class="text-gray-400 hover:text-gray-600 text-lg font-bold">×</button>
+            </div>
+            <div class="space-y-2 text-xs">
+                <div>
+                    <label class="block text-[9px] font-bold text-gray-500 mb-1">NOMOR POLISI</label>
+                    <input type="text" id="add-nopol" placeholder="B 1234 ABC" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-red-500 outline-none uppercase font-mono">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-bold text-gray-500 mb-1">TIPE MOTOR</label>
+                    <input type="text" id="add-motor" placeholder="Beat / Vario / Mio" class="w-full border border-gray-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-red-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[9px] font-bold text-gray-500 mb-1">MEKANIK YANG MENANGANI</label>
+                    <select id="add-mekanik" class="w-full border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                        <option value="Mas Joko">Mas Joko</option>
+                        <option value="Kang Dani">Kang Dani</option>
+                        <option value="Asep Knalpot">Asep Knalpot</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-bold text-gray-500 mb-1">JASA & PART</label>
+                    <select id="add-paket" class="w-full border border-gray-300 rounded-lg p-2 text-xs outline-none">
+                        <option value="Servis Ringan|Oli MPX2|125000">Servis Ringan + Oli MPX2 (Rp 125.000)</option>
+                        <option value="Ganti Ban Dalam|Ban Dalam|75000">Ganti Ban Dalam + Part (Rp 75.000)</option>
+                        <option value="Turun Mesin|Piston Kit|450000">Turun Mesin + Piston Kit (Rp 450.000)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <button onclick="tutupModal('modal-tambah-servis')" class="w-1/3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded-lg">Batal</button>
+                <button onclick="prosesTambahServis()" class="w-2/3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded-lg shadow-md">Masuk Antrean</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= LOGIKA JAVASCRIPT (PROSES NYATA) ================= -->
+    <script>
+        // DATA STATE SISTEM (Dinamis, saat data berubah UI langsung ter-update)
+        let omset = 720000;
+        let selesaiCount = 6;
+
+        // Data awal antrean servis (Maks 5)
+        let dataAntrean = [
+            { id: 1, nopol: "B 1234 ABC", motor: "Honda Beat", mekanik: "Mas Joko", jasa: ["Servis Ringan", "Setting Karbu"], part: ["Oli MPX2 (1 pcs)", "Busi NGK"], total: 125000 },
+            { id: 2, nopol: "F 5678 XY", motor: "Yamaha NMax", mekanik: "Kang Dani", jasa: ["Ganti Kampas Rem"], part: ["Kampas Rem Depan"], total: 95000 },
+            { id: 3, nopol: "D 9012 EF", motor: "Suzuki Nex", mekanik: "Asep Knalpot", jasa: ["Tambal Ban"], part: ["Cairan Tubeless"], total: 45000 }
+        ];
+
+        // Data awal pembeli langsung (Tanpa mekanik & Nopol)
+        let dataPesananLangsung = [
+            { id: 101, nama: "Budi (Langsung)", part: "Oli SPX2", total: 65000 },
+            { id: 102, nama: "Andi (Langsung)", part: "Busi Champion", total: 20000 }
+        ];
+
+        // FUNGSI RENDER: Untuk menggambarkan ulang tampilan list saat ada data berubah
+        function renderUI() {
+            // Update Ringkasan Atas
+            document.getElementById('omset-text').innerText = "Rp " + omset.toLocaleString('id-ID');
+            document.getElementById('selesai-count').innerText = selesaiCount + " Unit";
+
+            // Render List Antrean Servis (Kiri)
+            const antreanContainer = document.getElementById('antrean-container');
+            antreanContainer.innerHTML = '';
+            
+            dataAntrean.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "bg-red-50 hover:bg-red-100 border border-red-200 p-2 rounded-lg cursor-pointer transition flex flex-col justify-between shadow-sm active:scale-95 duration-100";
+                itemDiv.onclick = () => bukaDetailServis(item.id);
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-mono text-xs font-bold text-gray-800">${item.nopol}</span>
+                        <span class="text-[9px] bg-red-200 text-red-800 px-1 rounded font-bold">Slot ${index + 1}</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-[10px] text-gray-500">${item.motor}</span>
+                        <span class="text-[10px] font-bold text-red-600">➔</span>
+                    </div>
+                `;
+                antreanContainer.appendChild(itemDiv);
+            });
+
+            // Isi slot kosong jika antrean kurang dari 5
+            for(let i = dataAntrean.length; i < 5; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = "border border-dashed border-gray-300 p-3 rounded-lg text-center text-gray-400 text-[10px]";
+                emptyDiv.innerText = `-- Slot Antrean ${i+1} Kosong --`;
+                antreanContainer.appendChild(emptyDiv);
+            }
+
+            // Render List Pembelian Langsung (Kanan)
+            const pesananContainer = document.getElementById('pesanan-container');
+            pesananContainer.innerHTML = '';
+
+            dataPesananLangsung.forEach((item) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 p-2 rounded-lg cursor-pointer transition flex flex-col justify-between shadow-sm active:scale-95 duration-100";
+                itemDiv.onclick = () => bayarLangsung(item.id);
+                itemDiv.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-800">${item.nama}</span>
+                        <span class="text-[10px] font-bold text-emerald-600">Bayar</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-[10px] text-gray-500">${item.part}</span>
+                        <span class="text-[10px] font-bold text-emerald-700">Rp ${item.total.toLocaleString('id-ID')}</span>
+                    </div>
+                `;
+                pesananContainer.appendChild(itemDiv);
+            });
+
+            if (dataPesananLangsung.length === 0) {
+                pesananContainer.innerHTML = `<div class="text-center text-gray-400 text-[10px] py-4">Tidak ada pesanan langsung</div>`;
+            }
+        }
+
+        // FUNGSI AKSI: DETAIL SERVIS (MODAL)
+        function bukaDetailServis(id) {
+            const item = dataAntrean.find(x => x.id === id);
+            if (!item) return;
+
+            document.getElementById('dt-nopol').innerText = item.nopol;
+            document.getElementById('dt-motor').innerText = item.motor;
+            document.getElementById('dt-mekanik').innerText = item.mekanik;
+            
+            // Jasa list
+            const jasaUl = document.getElementById('dt-jasa');
+            jasaUl.innerHTML = '';
+            item.jasa.forEach(j => jasaUl.innerHTML += `<li>${j}</li>`);
+
+            // Part list
+            const partUl = document.getElementById('dt-part');
+            partUl.innerHTML = '';
+            item.part.forEach(p => partUl.innerHTML += `<li>${p}</li>`);
+
+            document.getElementById('dt-total').innerText = "Rp " + item.total.toLocaleString('id-ID');
+
+            // Set aksi tombol Selesai & Bayar
+            const btnSelesai = document.getElementById('btn-selesaikan-servis');
+            btnSelesai.onclick = () => prosesSelesaiServis(id);
+
+            tutupSemuaModal();
+            document.getElementById('modal-detail-servis').classList.remove('hidden');
+        }
+
+        function prosesSelesaiServis(id) {
+            const index = dataAntrean.findIndex(x => x.id === id);
+            if (index !== -1) {
+                const item = dataAntrean[index];
+                
+                // Kalkulasi omset dan selesaikan transaksi
+                omset += item.total;
+                selesaiCount += 1;
+
+                // Hapus dari antrean servis
+                dataAntrean.splice(index, 1);
+                
+                tutupModal('modal-detail-servis');
+                renderUI();
+                alert(`Transaksi selesai! Pembayaran Rp ${item.total.toLocaleString('id-ID')} untuk nopol ${item.nopol} berhasil masuk pembukuan.`);
+            }
+        }
+
+        // FUNGSI AKSI: TAMBAH ANTRIAN BARU
+        function bukaModalTambahServis() {
+            if (dataAntrean.length >= 5) {
+                alert("Antrean penuh! Maksimal hanya 5 kendaraan dalam satu waktu.");
+                return;
+            }
+            tutupSemuaModal();
+            document.getElementById('modal-tambah-servis').classList.remove('hidden');
+        }
+
+        function prosesTambahServis() {
+            const nopol = document.getElementById('add-nopol').value.trim().toUpperCase();
+            const motor = document.getElementById('add-motor').value.trim();
+            const mekanik = document.getElementById('add-mekanik').value;
+            const paketRaw = document.getElementById('add-paket').value.split('|');
+
+            if (!nopol || !motor) {
+                alert("Harap isi Nomor Polisi dan Tipe Motor!");
+                return;
+            }
+
+            const dataBaru = {
+                id: Date.now(),
+                nopol: nopol,
+                motor: motor,
+                mekanik: mekanik,
+                jasa: [paketRaw[0]],
+                part: [paketRaw[1]],
+                total: parseInt(paketRaw[2])
+            };
+
+            dataAntrean.push(dataBaru);
+            
+            // Reset input form
+            document.getElementById('add-nopol').value = '';
+            document.getElementById('add-motor').value = '';
+
+            tutupModal('modal-tambah-servis');
+            renderUI();
+        }
+
+        // FUNGSI AKSI: PENJUALAN LANGSUNG (TANPA MEKANIK)
+        function bukaModalJualLangsung() {
+            tutupSemuaModal();
+            document.getElementById('modal-jual-langsung').classList.remove('hidden');
+        }
+
+        function prosesJualLangsung() {
+            const nama = document.getElementById('jl-nama').value.trim() || "Pembeli Langsung";
+            const partRaw = document.getElementById('jl-part').value.split('|');
+            const namaPart = partRaw[0];
+            const hargaPart = parseInt(partRaw[1]);
+
+            // Tambahkan langsung ke pendapatan (tidak perlu antre lama)
+            omset += hargaPart;
+            selesaiCount += 1; // Opsional: anggap 1 transaksi selesai
+
+            document.getElementById('jl-nama').value = ''; // Reset nama
+
+            tutupModal('modal-jual-langsung');
+            renderUI();
+            alert(`Penjualan langsung berhasil! Uang masuk: Rp ${hargaPart.toLocaleString('id-ID')} (${namaPart})`);
+        }
+
+        // FUNGSI AKSI: BAYAR PESANAN LANGSUNG YANG SUDAH ADA
+        function bayarLangsung(id) {
+            const index = dataPesananLangsung.findIndex(x => x.id === id);
+            if (index !== -1) {
+                const item = dataPesananLangsung[index];
+                omset += item.total;
+                selesaiCount += 1;
+
+                dataPesananLangsung.splice(index, 1);
+                renderUI();
+                alert(`Pembayaran langsung Rp ${item.total.toLocaleString('id-ID')} dari ${item.nama} Diterima!`);
+            }
+        }
+
+        // FUNGSI UTILITY MODAL
+        function tutupModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function tutupSemuaModal() {
+            document.getElementById('modal-detail-servis').classList.add('hidden');
+            document.getElementById('modal-jual-langsung').classList.add('hidden');
+            document.getElementById('modal-tambah-servis').classList.add('hidden');
+        }
+
+        function bukaSetting() {
+            alert("Membuka Pengaturan Bengkel (Diakses Berkala)");
+        }
+
+        // Inisialisasi awal saat halaman dibuka
+        renderUI();
+    </script>
 </body>
 </html>
