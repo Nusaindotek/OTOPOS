@@ -28,46 +28,35 @@
                 <div class="stat-box"><span>Selesai</span><h2 id="statSelesai" style="color:#0066ff;">0</h2></div>
                 <div class="stat-box full"><span>Antrean</span><h3 id="statProses">0 Kendaraan</h3></div>
             </div>
-            <div class="menu-item" onclick="openSubPage('kendaraan')"><span class="menu-icon">🏍️</span><div><h4>Kendaraan Ditangani</h4><p>Tambah & Proses Service</p></div></div>
-            <div class="menu-item" onclick="openSubPage('riwayat')"><span class="menu-icon">📜</span><div><h4>Riwayat Transaksi</h4><p>Data transaksi tersimpan</p></div></div>
-            <div class="menu-item" onclick="openSubPage('parts')"><span class="menu-icon">📦</span><div><h4>Daftar Part</h4><p>Stok & Harga</p></div></div>
-            <div class="menu-item" onclick="openSubPage('mekanik')"><span class="menu-icon">👨‍🔧</span><div><h4>Daftar Mekanik</h4><p>Kelola data montir</p></div></div>
-            <div class="menu-item" onclick="openSubPage('setting')"><span class="menu-icon">⚙️</span><div><h4>Setting Bengkel</h4><p>Ubah profil bengkel</p></div></div>
+            <div class="menu-item" onclick="openSubPage('kendaraan')"><span>🏍️</span><div style="margin-left:10px;"><h4>Kendaraan Ditangani</h4></div></div>
+            <div class="menu-item" onclick="openSubPage('riwayat')"><span>📜</span><div style="margin-left:10px;"><h4>Riwayat Transaksi</h4></div></div>
+            <div class="menu-item" onclick="openSubPage('parts')"><span>📦</span><div style="margin-left:10px;"><h4>Daftar Part</h4></div></div>
+            <div class="menu-item" onclick="openSubPage('mekanik')"><span>👨‍🔧</span><div style="margin-left:10px;"><h4>Daftar Mekanik</h4></div></div>
+            <div class="menu-item" onclick="openSubPage('setting')"><span>⚙️</span><div style="margin-left:10px;"><h4>Setting Bengkel</h4></div></div>
         </div>
 
         <!-- 2. KASIR -->
         <div id="page-kasir" class="page">
             <div style="display:flex; gap:5px; margin-bottom:10px;">
                 <button class="btn-primary" id="modeServisBtn" onclick="setKasirMode('servis')" style="flex:1">Servis</button>
-                <button class="btn-outline" id="modePartBtn" onclick="setKasirMode('part')" style="flex:1">Part Langsung</button>
+                <button class="btn-outline" id="modePartBtn" onclick="setKasirMode('part')" style="flex:1">Part</button>
             </div>
-            <div id="formKasirServis"><div class="form-group"><label>Pilih Kendaraan Selesai</label><select class="form-control" id="optKendaraanServis" onchange="loadActiveServiceToKasir()"></select></div></div>
+            <div id="formKasirServis"><div class="form-group"><label>Pilih Kendaraan</label><select class="form-control" id="optKendaraanServis" onchange="loadActiveServiceToKasir()"></select></div></div>
             <div id="formKasirPartDirect" style="display:none;"><div class="form-group"><label>Pilih Produk</label><select class="form-control" id="optPilihPartDirect"></select><button class="btn-primary" style="margin-top:5px; width:100%" onclick="addPartDirectToCart()">+ Tambah</button></div></div>
-            <div class="card"><div class="card-title">Rincian</div><div id="kasirItemsList"></div><div style="margin-top:15px; border-top:2px solid #333; padding-top:10px; display:flex; justify-content:space-between;"><span>TOTAL BAYAR:</span> <span id="lblTotalBayar" class="text-green" style="font-size:20px;">Rp 0</span></div></div>
+            <div class="card"><div class="card-title">Rincian</div><div id="kasirItemsList"></div><div style="margin-top:15px; border-top:2px solid #333; padding-top:10px; display:flex; justify-content:space-between;"><span>TOTAL:</span> <span id="lblTotalBayar" class="text-green" style="font-size:20px;">Rp 0</span></div></div>
             <button class="btn-block btn-success" onclick="prosesSimpanTransaksi()">SELESAI & SIMPAN</button>
         </div>
 
         <!-- 3. LAPORAN -->
         <div id="page-laporan" class="page">
-            <div class="card" style="text-align: center;">
-                <span style="color: #666; font-size: 14px;">Total Omset</span>
-                <h1 id="lapTotalOmset" style="color: #27ae60; margin: 8px 0; font-size: 28px; font-weight: bold;">Rp 0</h1>
-                <span id="lapJumlahServis" style="color: #333; font-size: 14px; font-weight: 500;">Jumlah Transaksi: 0</span>
-            </div>
-            <div class="card">
-                <div class="card-title">Pendapatan Kerja Mekanik <small style="color:#888;">*klik nama</small></div>
-                <div id="lapMekanikList"></div>
-            </div>
-            <div class="card">
-                <div class="card-title">Ringkasan Produk Terjual</div>
-                <div id="lapProdukTerjualList"></div>
-            </div>
-            <button class="btn-block" style="background:#e74c3c; color:white; margin-top: 15px;" onclick="resetGajianMingguan()">🔄 RESET GAJIAN MINGGUAN</button>
+            <div class="card" style="text-align:center;"><span>Total Omset</span><h1 id="lapTotalOmset" style="color:#27ae60;">Rp 0</h1><span id="lapJumlahServis">Jumlah Transaksi: 0</span></div>
+            <div class="card"><div class="card-title">Pendapatan Mekanik</div><div id="lapMekanikList"></div></div>
+            <div class="card"><div class="card-title">Produk Terjual</div><div id="lapProdukTerjualList"></div></div>
         </div>
 
         <!-- 4. SUB KENDARAAN -->
         <div id="page-sub-kendaraan" class="page">
-            <div class="card" id="formTambahKendaraan" style="display:none; background:#f9f9f9;">
+            <div class="card" id="formTambahKendaraan" style="display:none;">
                 <div class="card-title">Tambah Kendaraan</div>
                 <div class="form-group"><label>Nama Motor</label><input type="text" class="form-control" id="txtNamaMotor"></div>
                 <div class="form-group"><label>No. Polisi</label><input type="text" class="form-control" id="txtNopol"></div>
@@ -94,7 +83,7 @@
 
         <!-- 6. SUB PARTS -->
         <div id="page-sub-parts" class="page">
-            <div class="card" id="formTambahPart" style="display:none; background:#f9f9f9;">
+            <div class="card" id="formTambahPart" style="display:none;">
                 <div class="card-title">Tambah Part</div>
                 <div class="form-group"><label>Nama Part</label><input type="text" class="form-control" id="txtPartNama"></div>
                 <div class="form-group"><label>Kode</label><input type="text" class="form-control" id="txtPartKode"></div>
@@ -107,7 +96,7 @@
 
         <!-- 7. SUB MEKANIK -->
         <div id="page-sub-mekanik" class="page">
-            <div class="card" id="formTambahMekanik" style="display:none; background:#f9f9f9;">
+            <div class="card" id="formTambahMekanik" style="display:none;">
                 <div class="card-title">Tambah Mekanik</div>
                 <div class="form-group"><label>Nama Mekanik</label><input type="text" class="form-control" id="txtMekanikNama"></div>
                 <button class="btn-block btn-primary" onclick="simpanMekanikBaru()">Simpan</button>
@@ -118,7 +107,7 @@
         <!-- 8. SUB RIWAYAT -->
         <div id="page-sub-riwayat" class="page"><div id="daftarRiwayatList"></div></div>
 
-        <!-- 9. SUB SETTING -->
+        <!-- 9. SUB SETTING + FOOTER STRUK -->
         <div id="page-sub-setting" class="page">
             <div class="card">
                 <div class="card-title">Data Profil Bengkel</div>
@@ -131,23 +120,20 @@
                 <div class="form-group"><label>Nomor Telepon</label><input type="text" class="form-control" id="cfgTelpBengkel"></div>
                 <button class="btn-block btn-primary" onclick="simpanSettingBengkel()">SIMPAN</button>
             </div>
-        </div>
-
-        <!-- 10. SUB DETAIL MEKANIK -->
-        <div id="page-sub-detail-mekanik" class="page">
-            <div class="card" style="background: #e8f4fd; text-align: center;">
-                <h3 id="detMekanikNama" style="color: #0066ff;">Nama Mekanik</h3>
-                <p>Total Hak Jasa: <strong id="detMekanikTotal" class="text-green">Rp 0</strong></p>
+            <div class="card">
+                <div class="card-title">Footer Struk / Bantuan</div>
+                <div class="form-group"><label>BT Koneksi / Teknisi</label><input type="text" class="form-control" id="cfgBtKoneksi"></div>
+                <div class="form-group"><label>Email CS</label><input type="email" class="form-control" id="cfgEmailCS"></div>
+                <div class="form-group"><label>WA CS</label><input type="text" class="form-control" id="cfgWaCS" placeholder="62857xxxx"></div>
+                <button class="btn-block btn-success" onclick="simpanFooterStruk()">SIMPAN FOOTER</button>
             </div>
-            <h4 style="font-size:14px; margin: 15px 0 10px 5px;">Riwayat Pekerjaan:</h4>
-            <div id="detMekanikRiwayatList"></div>
         </div>
     </div>
 
     <div class="navbar">
-        <div class="nav-item active" id="nav-home" onclick="switchMainTab('home')"><span class="nav-icon">🏠</span>Home</div>
-        <div class="nav-item" id="nav-kasir" onclick="switchMainTab('kasir')"><span class="nav-icon">💵</span>Kasir</div>
-        <div class="nav-item" id="nav-laporan" onclick="switchMainTab('laporan')"><span class="nav-icon">📊</span>Laporan</div>
+        <div class="nav-item active" id="nav-home" onclick="switchMainTab('home')">🏠Home</div>
+        <div class="nav-item" id="nav-kasir" onclick="switchMainTab('kasir')">💵Kasir</div>
+        <div class="nav-item" id="nav-laporan" onclick="switchMainTab('laporan')">📊Laporan</div>
     </div>
 
     <script src="script.js"></script>
