@@ -100,9 +100,15 @@
         </div>
 
         <div id="page-laporan" class="page-container">
+            <div class="card bg-green-light text-center">
+                <span class="stat-label">Saldo Bengkel Saat Ini</span>
+                <h1 id="laporan-saldo-aktif" class="text-green">Rp 0</h1>
+                <button class="btn btn-secondary mt-2" onclick="tarikSaldoOwner()">💳 Tarik Saldo (Owner)</button>
+            </div>
+
             <div class="card bg-blue-light text-center">
-                <span class="stat-label">Total Omset Keseluruhan</span>
-                <h1 id="laporan-total-omset">Rp 0</h1>
+                <span class="stat-label">Total Omset Keseluruhan (Riwayat)</span>
+                <h2 id="laporan-total-omset">Rp 0</h2>
                 <span id="laporan-jumlah-transaksi" class="badge-info">Jumlah Transaksi: 0</span>
             </div>
             
@@ -110,11 +116,6 @@
                 <h3>Pendapatan Kerja Mekanik (Belum Digaji)</h3>
                 <p class="hint">* Klik nama mekanik untuk melihat rincian pekerjaan</p>
                 <div id="laporan-mekanik-list"></div>
-            </div>
-
-            <div class="card">
-                <h3>Ringkasan Produk Terjual</h3>
-                <div id="laporan-produk-list"></div>
             </div>
         </div>
 
@@ -133,6 +134,38 @@
             <div id="wrapper-antrean-lapangan"></div>
         </div>
 
+        <div id="page-riwayat" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <div class="card">
+                <h3>Riwayat Transaksi</h3>
+                <p class="hint text-center" style="margin-top:20px;">Belum ada data transaksi yang tersimpan.</p>
+            </div>
+        </div>
+
+        <div id="page-part" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <div class="card">
+                <h3>Daftar Suku Cadang</h3>
+                <p class="hint text-center" style="margin-top:20px;">Belum ada data suku cadang ditambahkan.</p>
+            </div>
+        </div>
+
+        <div id="page-mekanik" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <div class="card">
+                <h3>Manajemen Mekanik</h3>
+                <p class="hint text-center" style="margin-top:20px;">Belum ada data mekanik yang terdaftar.</p>
+            </div>
+        </div>
+
+        <div id="page-setting" class="page-container">
+            <button class="btn btn-secondary mb-3" onclick="navigateTo('home')">⬅ Kembali ke Utama</button>
+            <div class="card">
+                <h3>Pengaturan Bengkel</h3>
+                <p class="hint text-center" style="margin-top:20px;">Halaman pengaturan sedang dalam tahap pengembangan.</p>
+            </div>
+        </div>
+
     </div>
 
     <div class="bottom-nav">
@@ -146,6 +179,9 @@
             <span>📊</span>Laporan
         </div>
     </div>
+
+    <div id="area-struk-print" class="struk-container">
+        </div>
 
     <script src="script.js"></script>
 </body>
