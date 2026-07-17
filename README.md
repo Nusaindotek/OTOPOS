@@ -29,3 +29,12 @@ Tekan Ctrl + Enter untuk menambah ke keranjang.
 Tekan Ctrl + P untuk mencetak struk.
 
 Bantuan: Jika lupa tombolnya, tekan saja F1 kapan saja.
+
+Panduan Ringkas Penggunaan:
+Stok: Masukkan data via menu Settings > Import/Stok dengan format Nama,Harga,Stok per baris. Contoh: Oli MPX,55000,10.
+
+Transaksi: Pilih Mode Servis atau Direct Part di dashboard, pilih produk, masukkan qty, tekan "Tambah ke Kasir".
+
+Checkout: Tekan "Proses & Cetak". Stok akan otomatis terpotong dari database.
+
+Laporan: Buka Settings > Laporan untuk melihat rekap omset dan jumlah konsumen secara instan.
