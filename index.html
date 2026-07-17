@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS v2.9 - Final Master</title>
+    <title>OTOPOS - Professional Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; } }
-        #cart-items::-webkit-scrollbar { width: 4px; } #cart-items::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; } }
         .tab-active { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .btn-press:active { transform: translateY(2px); }
     </style>
@@ -16,8 +15,8 @@
 
     <!-- HEADER -->
     <header class="bg-blue-600 text-white p-3 rounded-xl shadow-md flex justify-between items-center">
-        <div><h1 class="font-black">OTOPOS</h1><p class="text-xs text-blue-200">Bengkel HELICOPTER</p></div>
-        <button onclick="toggleModal('settings-modal')" class="bg-blue-800 px-4 py-2 rounded-lg text-xs font-bold">⚙️ SETTINGS & LAPORAN</button>
+        <div><h1 class="font-black">OTOPOS</h1><p class="text-xs text-blue-200">Sistem Inventaris & Kasir</p></div>
+        <button onclick="toggleModal('settings-modal')" class="bg-blue-800 px-4 py-2 rounded-lg text-xs font-bold">⚙️ SETTINGS</button>
     </header>
 
     <!-- CONTENT -->
@@ -40,38 +39,38 @@
 
         <aside class="col-span-4 bg-slate-900 text-white p-4 rounded-xl shadow-md">
             <h2 class="text-emerald-400 font-black mb-3">🛒 BILLING</h2>
-            <div id="cart-items" class="space-y-2 mb-4 text-sm max-h-60 overflow-y-auto"></div>
-            <div class="border-t pt-3 font-bold text-lg text-emerald-400">Total: <span id="cart-total">Rp 0</span></div>
+            <div id="cart-items" class="space-y-2 mb-4 text-sm"></div>
+            <div class="border-t pt-3 font-bold text-lg">Total: <span id="cart-total">Rp 0</span></div>
             <button onclick="prosesCheckout()" class="w-full bg-emerald-500 mt-4 py-3 rounded-lg font-black text-slate-950">PROSES & CETAK</button>
         </aside>
     </main>
 
-    <!-- SETTINGS & LAPORAN MODAL -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg p-6 rounded-2xl max-h-[80vh] overflow-y-auto">
             <h3 class="font-black mb-4">⚙️ PENGATURAN</h3>
-            <div class="flex gap-2 border-b mb-4 overflow-x-auto">
+            <div class="flex gap-2 border-b mb-4">
                 <button onclick="openTab('tab-data')" class="px-3 py-2 border-b-2 font-bold text-xs">Import/Stok</button>
                 <button onclick="openTab('tab-laporan')" class="px-3 py-2 border-b-2 font-bold text-xs">Laporan</button>
             </div>
             
-            <div id="tab-data" class="tab-content space-y-3">
+            <div id="tab-data" class="tab-content hidden space-y-3">
                 <textarea id="csv-input" class="w-full h-20 border p-2 text-xs" placeholder="Nama,Harga,Stok"></textarea>
-                <button onclick="handleImportCSV()" class="w-full bg-blue-600 text-white py-2 rounded font-bold">Import CSV</button>
+                <button onclick="handleImportCSV()" class="w-full bg-blue-600 text-white py-2 rounded">Import CSV</button>
             </div>
 
             <div id="tab-laporan" class="tab-content hidden space-y-3">
-                <button onclick="generateLaporan()" class="w-full bg-indigo-600 text-white py-2 rounded text-xs font-bold">Refresh Laporan</button>
-                <div id="area-laporan" class="text-xs space-y-4 bg-gray-50 p-3 rounded h-60 overflow-y-auto"></div>
+                <button onclick="generateLaporan()" class="w-full bg-indigo-600 text-white py-2 rounded text-xs font-bold">Refresh & Tampilkan Laporan</button>
+                <div id="area-laporan" class="text-xs space-y-2 bg-gray-50 p-2 rounded h-40 overflow-y-auto"></div>
             </div>
             
-            <button onclick="toggleModal('settings-modal')" class="w-full mt-4 bg-gray-200 py-2 rounded text-xs font-bold">Tutup</button>
+            <button onclick="toggleModal('settings-modal')" class="w-full mt-4 bg-gray-200 py-2 rounded text-xs">Tutup</button>
         </div>
     </div>
 
-    <!-- STRUK PRINT -->
+    <!-- STRUK -->
     <div id="print-receipt" class="hidden text-[9px] font-mono">
-        <div class="text-center font-bold">BENGKEL HELICOPTER</div>
+        <div class="text-center font-bold">OTOPOS</div>
         <div id="print-items"></div>
         <div class="border-t mt-2 pt-1 font-bold" id="print-total"></div>
     </div>
@@ -83,11 +82,12 @@
         let riwayatTransaksi = JSON.parse(localStorage.getItem('otopos_history')) || [];
         let currentMode = 'servis';
 
+        // INITIALIZE
         window.onload = () => { refreshDatalist(); };
 
         function refreshDatalist() {
             const list = document.getElementById('list-produk');
-            list.innerHTML = parts.map(p => `<option value="${p.name}">Stok: ${p.stock} | Rp ${p.price}</option>').join('');
+            list.innerHTML = parts.map(p => `<option value="${p.name}">Stok: ${p.stock} | Rp ${p.price}</option>`).join('');
         }
 
         function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
@@ -107,7 +107,7 @@
             const input = document.getElementById('csv-input').value;
             input.split('\n').forEach(line => {
                 const [name, price, stock] = line.split(',');
-                if(name) parts.push({name, price: parseInt(price), stock: parseInt(stock)||0});
+                if(name) parts.push({name, price: parseInt(price), stock: parseInt(stock)});
             });
             localStorage.setItem('otopos_parts', JSON.stringify(parts));
             refreshDatalist();
@@ -132,12 +132,15 @@
 
         function prosesCheckout() {
             const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+            
+            // Kurangi Stok
             cart.forEach(item => {
                 const p = parts.find(x => x.name === item.name);
                 if(p) p.stock -= item.qty;
             });
             localStorage.setItem('otopos_parts', JSON.stringify(parts));
-            
+
+            // Simpan Riwayat
             riwayatTransaksi.push({
                 tipe: currentMode,
                 items: cart,
@@ -156,12 +159,15 @@
         function generateLaporan() {
             const area = document.getElementById('area-laporan');
             const mingguLalu = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
+            
             const omset = riwayatTransaksi.filter(t => t.timestamp > mingguLalu).reduce((sum, t) => sum + t.total, 0);
+            const dataBelanja = riwayatTransaksi.filter(t => t.tipe === 'part');
+            const dataServis = riwayatTransaksi.filter(t => t.tipe === 'servis');
 
             area.innerHTML = `
-                <div><h4 class="font-bold border-b">Omset Penjualan Mingguan</h4><p class="text-emerald-600 font-bold">Rp ${omset.toLocaleString()}</p></div>
-                <div><h4 class="font-bold border-b">Data Konsumen Belanja</h4>${riwayatTransaksi.filter(t=>t.tipe==='part').map(t=>`<p>Umum: Rp ${t.total.toLocaleString()}</p>`).join('')}</div>
-                <div><h4 class="font-bold border-b">Data Konsumen Servis</h4>${riwayatTransaksi.filter(t=>t.tipe==='servis').map(t=>`<p>Servis: Rp ${t.total.toLocaleString()}</p>`).join('')}</div>
+                <div class="border-b pb-2"><b>Omset Mingguan:</b> Rp ${omset.toLocaleString()}</div>
+                <div><b>Konsumen Belanja:</b> ${dataBelanja.length} transaksi</div>
+                <div><b>Konsumen Servis:</b> ${dataServis.length} transaksi</div>
             `;
         }
     </script>
