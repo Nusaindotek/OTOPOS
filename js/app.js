@@ -1,14 +1,14 @@
 /* =====================================================
    OTOPOS APPLICATION DATABASE
    File : app.js
-   Fungsi : Menyimpan data utama aplikasi
+   Fungsi : Database Utama OTOPOS
 ===================================================== */
 
 
-// ================================
-// DATA SISTEM
-// ================================
 
+// =====================================================
+// DASHBOARD
+// =====================================================
 
 let omset = 720000;
 
@@ -16,116 +16,233 @@ let selesaiCount = 6;
 
 
 
-// ================================
-// DATA ANTREAN SERVIS
-// ================================
+// =====================================================
+// DATABASE WORK ORDER
+// =====================================================
 
-
-let dataAntrean = [
+let dataWorkOrder = [
 
     {
-        id: 1,
 
-        nopol: "B 1234 ABC",
+        id : 1,
 
-        motor: "Honda Beat",
+        nomor : "WO-20260001",
 
-        mekanik: "Mas Joko",
+        status : "Proses",
 
-        jasa: [
-            "Servis Ringan",
-            "Setting Karbu"
+        tanggal : new Date(),
+
+        pelanggan : {
+            nama : "Budi",
+            telepon : "08123456789"
+        },
+
+        motor : {
+            nopol : "B 1234 ABC",
+            merk : "Honda",
+            tipe : "Beat",
+            kilometer : 12000
+        },
+
+        keluhan : [
+            "Servis Berkala"
         ],
 
-        part: [
-            "Oli MPX2",
-            "Busi NGK"
+        diagnosa : [
+
         ],
 
-        total:125000,
+        jasa : [
 
-        status:"Proses"
+            {
+                nama : "Servis Ringan",
+                harga : 80000,
+                fee : 40000
+            },
+
+            {
+                nama : "Setting Karbu",
+                harga : 20000,
+                fee : 10000
+            }
+
+        ],
+
+        part : [
+
+            {
+                nama : "Oli MPX2",
+                qty : 1,
+                harga : 45000
+            }
+
+        ],
+
+        mekanik : [
+
+            {
+                id : 1,
+                nama : "Mas Joko",
+                pekerjaan : "Servis",
+                fee : 50000
+            }
+
+        ],
+
+        timeline : [
+
+            {
+                waktu : new Date(),
+                aktivitas : "Work Order dibuat"
+            }
+
+        ],
+
+        total : 145000
+
     },
 
 
-    {
-        id:2,
-
-        nopol:"F 5678 XY",
-
-        motor:"Yamaha NMax",
-
-        mekanik:"Kang Dani",
-
-        jasa:[
-            "Ganti Kampas Rem"
-        ],
-
-        part:[
-            "Kampas Rem Depan"
-        ],
-
-        total:95000,
-
-        status:"Proses"
-    },
-
 
     {
-        id:3,
 
-        nopol:"D 9012 EF",
+        id : 2,
 
-        motor:"Suzuki Nex",
+        nomor : "WO-20260002",
 
-        mekanik:"Asep Knalpot",
+        status : "Proses",
 
-        jasa:[
-            "Tambal Ban"
+        tanggal : new Date(),
+
+        pelanggan : {
+            nama : "Andi",
+            telepon : ""
+        },
+
+        motor : {
+            nopol : "F 5678 XY",
+            merk : "Yamaha",
+            tipe : "NMAX",
+            kilometer : 5000
+        },
+
+        keluhan : [
+            "Rem depan bunyi"
         ],
 
-        part:[
-            "Cairan Tubeless"
+        diagnosa : [
+
         ],
 
-        total:45000,
+        jasa : [
 
-        status:"Proses"
+            {
+                nama : "Ganti Kampas Rem",
+                harga : 40000,
+                fee : 20000
+            }
+
+        ],
+
+        part : [
+
+            {
+                nama : "Kampas Rem Depan",
+                qty : 1,
+                harga : 55000
+            }
+
+        ],
+
+        mekanik : [
+
+            {
+                id : 2,
+                nama : "Kang Dani",
+                pekerjaan : "Rem",
+                fee : 20000
+            }
+
+        ],
+
+        timeline : [
+
+            {
+                waktu : new Date(),
+                aktivitas : "Work Order dibuat"
+            }
+
+        ],
+
+        total : 95000
+
     }
 
 ];
 
 
 
+/* =====================================================
+   KOMPATIBILITAS VERSI LAMA
+
+   Sementara render.js masih memakai dataAntrean.
+
+   Nantinya bagian ini akan dihapus.
+===================================================== */
+
+let dataAntrean = dataWorkOrder.map(item => ({
+
+    id : item.id,
+
+    nomor : item.nomor,
+
+    nopol : item.motor.nopol,
+
+    motor : item.motor.tipe,
+
+    mekanik : item.mekanik.length
+        ? item.mekanik.map(x=>x.nama).join(", ")
+        : "-",
+
+    jasa : item.jasa,
+
+    part : item.part,
+
+    total : item.total,
+
+    status : item.status
+
+}));
 
 
-// ================================
-// DATA KASIR LANGSUNG
-// ================================
 
+// =====================================================
+// PENJUALAN LANGSUNG
+// =====================================================
 
 let dataPesananLangsung = [
 
     {
-        id:101,
 
-        nama:"Budi",
+        id : 101,
 
-        part:"Oli SPX2",
+        nama : "Budi",
 
-        total:65000
+        part : "Oli SPX2",
+
+        total : 65000
 
     },
 
-
     {
-        id:102,
 
-        nama:"Andi",
+        id : 102,
 
-        part:"Busi Champion",
+        nama : "Andi",
 
-        total:20000
+        part : "Busi Champion",
+
+        total : 20000
 
     }
 
@@ -133,54 +250,57 @@ let dataPesananLangsung = [
 
 
 
-
-
-
-// ================================
+// =====================================================
 // MASTER MEKANIK
-// ================================
-
+// =====================================================
 
 let dataMekanik = [
 
     {
-        id:1,
 
-        nama:"Mas Joko",
+        id : 1,
 
-        telepon:"08123456789",
+        nama : "Mas Joko",
 
-        alamat:"Jakarta",
+        telepon : "08123456789",
 
-        status:"Aktif"
+        alamat : "Jakarta",
 
-    },
+        status : "Aktif",
 
-
-    {
-        id:2,
-
-        nama:"Kang Dani",
-
-        telepon:"08234567890",
-
-        alamat:"Bandung",
-
-        status:"Aktif"
+        persentase : 80
 
     },
 
+    {
+
+        id : 2,
+
+        nama : "Kang Dani",
+
+        telepon : "08234567890",
+
+        alamat : "Bandung",
+
+        status : "Aktif",
+
+        persentase : 80
+
+    },
 
     {
-        id:3,
 
-        nama:"Asep Knalpot",
+        id : 3,
 
-        telepon:"08345678901",
+        nama : "Asep Knalpot",
 
-        alamat:"Depok",
+        telepon : "08345678901",
 
-        status:"Aktif"
+        alamat : "Depok",
+
+        status : "Aktif",
+
+        persentase : 80
 
     }
 
@@ -188,61 +308,53 @@ let dataMekanik = [
 
 
 
-
-
-
-
-// ================================
+// =====================================================
 // MASTER PART
-// ================================
-
+// =====================================================
 
 let dataPart = [
 
     {
-        id:1,
 
-        kode:"OLI001",
+        id : 1,
 
-        nama:"Oli MPX2",
+        kode : "OLI001",
 
-        kategori:"Oli",
+        nama : "Oli MPX2",
 
-        harga:45000,
+        kategori : "Oli",
 
-        stok:20
+        hargaBeli : 35000,
 
-    },
+        harga : 45000,
 
+        stok : 20,
 
-    {
-        id:2,
+        stokMinimum : 5,
 
-        kode:"BRK001",
-
-        nama:"Kampas Rem Depan",
-
-        kategori:"Rem",
-
-        harga:55000,
-
-        stok:15
+        supplier : "PT Oli Jaya"
 
     },
 
-
     {
-        id:3,
 
-        kode:"BUS001",
+        id : 2,
 
-        nama:"Busi NGK",
+        kode : "BRK001",
 
-        kategori:"Elektrik",
+        nama : "Kampas Rem Depan",
 
-        harga:25000,
+        kategori : "Rem",
 
-        stok:30
+        hargaBeli : 45000,
+
+        harga : 55000,
+
+        stok : 15,
+
+        stokMinimum : 3,
+
+        supplier : "PT Rem Indonesia"
 
     }
 
@@ -250,82 +362,49 @@ let dataPart = [
 
 
 
-
-
-
-
-// ================================
+// =====================================================
 // SUPPLIER
-// ================================
+// =====================================================
 
-
-let dataSupplier = [
-
-    {
-        id:1,
-
-        nama:"PT Oli Jaya",
-
-        kontak:"081111111",
-
-        alamat:"Jakarta"
-
-    }
-
-];
+let dataSupplier = [];
 
 
 
-
-
-
-
-// ================================
-// DATA MOTOR PELANGGAN
-// ================================
-
+// =====================================================
+// DATA MOTOR
+// =====================================================
 
 let dataMotor = [];
 
 
 
-
-
-
-
-// ================================
+// =====================================================
 // TARIF JASA
-// ================================
-
+// =====================================================
 
 let dataTarif = [
 
     {
-        id:1,
 
-        jasa:"Servis Ringan",
+        id : 1,
 
-        harga:80000
+        jasa : "Servis Ringan",
 
-    },
+        harga : 80000,
 
-
-    {
-        id:2,
-
-        jasa:"Turun Mesin",
-
-        harga:450000
+        feeDefault : 40000
 
     },
 
-
     {
-        id:3,
 
-        jasa:"Tambal Ban",
+        id : 2,
 
-        harga:20000
+        jasa : "Turun Mesin",
+
+        harga : 450000,
+
+        feeDefault : 225000
 
     }
 
@@ -333,25 +412,21 @@ let dataTarif = [
 
 
 
-
-
-
-
-// ================================
-// USER APLIKASI
-// ================================
-
+// =====================================================
+// USER
+// =====================================================
 
 let dataUser = [
 
     {
-        id:1,
 
-        nama:"Admin",
+        id : 1,
 
-        username:"admin",
+        nama : "Administrator",
 
-        level:"Administrator"
+        username : "admin",
+
+        level : "Administrator"
 
     }
 
@@ -359,46 +434,36 @@ let dataUser = [
 
 
 
-
-
-
-// ================================
-// KONFIGURASI
-// ================================
-
+// =====================================================
+// PENGATURAN
+// =====================================================
 
 let settingSystem = {
 
-    namaBengkel:"Bengkel Maju Motor",
+    namaBengkel : "Bengkel Maju Motor",
 
-    alamat:"Jakarta",
+    alamat : "Jakarta",
 
-    telepon:"08123456789",
+    telepon : "08123456789",
 
-    notaFooter:"Terima kasih sudah menggunakan jasa kami"
+    notaFooter : "Terima kasih telah mempercayakan kendaraan Anda."
 
 };
 
 
 
-
-
-// ================================
-// ID GENERATOR
-// ================================
-
+// =====================================================
+// GENERATOR ID
+// =====================================================
 
 function generateID(array){
 
-    if(array.length === 0){
+    if(array.length===0){
 
         return 1;
 
     }
 
-
-    return Math.max(
-        ...array.map(item=>item.id)
-    ) + 1;
+    return Math.max(...array.map(x=>x.id))+1;
 
 }
