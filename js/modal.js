@@ -848,3 +848,54 @@ Selesaikan
     tampilModal(html);
 
 }
+/* =====================================================
+   DETAIL WORK ORDER
+===================================================== */
+
+function bukaDetailServis(id){
+
+    const wo = getWorkOrder(id);
+
+    if(!wo) return;
+
+    bukaModal("modal-detail-servis");
+
+    setText("dt-status",wo.status);
+    setText("dt-nopol",wo.nopol);
+    setText("dt-pelanggan",wo.pelanggan);
+    setText("dt-motor",wo.motor);
+    setText("dt-km",wo.km);
+
+    renderDetailMekanik(wo);
+
+    renderDetailJasa(wo);
+
+    renderDetailPart(wo);
+
+    setText(
+        "dt-total",
+        formatRupiah(
+            hitungGrandTotal(wo.id)
+        )
+    );
+
+    const btn =
+    document.getElementById(
+        "btn-selesai-servis"
+    );
+
+    if(btn){
+
+        btn.onclick=function(){
+
+            siapBayar(wo.id);
+
+            tutupModal(
+                "modal-detail-servis"
+            );
+
+        };
+
+    }
+
+}
