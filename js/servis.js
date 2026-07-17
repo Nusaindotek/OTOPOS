@@ -1,357 +1,394 @@
 /* =====================================================
-   OTOPOS SERVICE FORM DESKTOP
-   Tambahan : modal tambah servis
+   OTOPOS WORK ORDER ENGINE
+   File : servis.js
+   Fungsi : Mengelola seluruh proses servis bengkel
 ===================================================== */
 
 
 
 // ======================================
-// FORM TAMBAH SERVIS
+// GENERATE NOMOR WORK ORDER
 // ======================================
 
-
-function bukaModalTambahServis(){
-
-
-
-    if(dataAntrean.length >= 5){
-
-
-        pesan(
-            "Antrean servis penuh (maksimal 5 motor)"
-        );
-
-
-        return;
-
-    }
-
-
-
-tampilModal(`
-
-
-<div class="modal-bg">
-
-
-<div class="modal-box">
-
-
-<div class="flex justify-between mb-4">
-
-
-<h2 class="font-bold text-lg">
-🔴 Terima Motor Baru
-</h2>
-
-
-<button onclick="tutupSemuaModal()">
-❌
-</button>
-
-
-</div>
-
-
-
-
-
-<label class="form-label">
-Nomor Polisi
-</label>
-
-
-<input 
-id="srv-nopol"
-class="form-input mb-3"
-placeholder="B 1234 ABC">
-
-
-
-
-
-
-<label class="form-label">
-Tipe Motor
-</label>
-
-
-<input
-id="srv-motor"
-class="form-input mb-3"
-placeholder="Honda Beat / Nmax">
-
-
-
-
-
-
-<label class="form-label">
-Mekanik
-</label>
-
-
-<select
-id="srv-mekanik"
-class="form-input mb-3">
-
-
-</select>
-
-
-
-
-
-
-
-
-<label class="form-label">
-Jasa Servis
-</label>
-
-
-<input
-id="srv-jasa"
-class="form-input mb-3"
-placeholder="Servis ringan">
-
-
-
-
-
-
-
-<label class="form-label">
-Sparepart
-</label>
-
-
-<input
-id="srv-part"
-class="form-input mb-3"
-placeholder="Oli, busi, dll">
-
-
-
-
-
-
-
-<label class="form-label">
-Total Biaya
-</label>
-
-
-<input
-id="srv-total"
-type="number"
-class="form-input mb-4"
-placeholder="125000">
-
-
-
-
-
-<button
-onclick="simpanServisBaru()"
-
-class="bg-red-600 text-white px-5 py-2 rounded-lg">
-
-Masukkan Antrean
-
-</button>
-
-
-
-
-</div>
-
-
-</div>
-
-
-
-`);
-
-
-
-
-isiMekanikForm();
-
+function generateNomorWO(){
+
+    const now = new Date();
+
+    return "WO-" +
+        now.getFullYear() +
+        String(now.getMonth()+1).padStart(2,"0") +
+        String(now.getDate()).padStart(2,"0") +
+        "-" +
+        Date.now().toString().slice(-5);
 
 }
 
 
 
-
-
-
-
-
-
 // ======================================
-// ISI DROPDOWN MEKANIK
+// BUAT WORK ORDER BARU
 // ======================================
 
+function buatWorkOrder(data){
 
-function isiMekanikForm(){
+    const wo = {
 
+        id : generateID(dataAntrean),
 
+        nomor : generateNomorWO(),
 
-const select =
-document.getElementById(
-"srv-mekanik"
-);
+        status : "Menunggu",
 
+        tanggal : new Date(),
 
+        pelanggan : data.pelanggan || "",
 
-if(!select)return;
+        telepon : data.telepon || "",
 
+        nopol : data.nopol,
 
+        motor : data.motor,
 
+        kilometer : data.kilometer || 0,
 
-select.innerHTML="";
+        keluhan : data.keluhan || [],
 
+        diagnosa : [],
 
+        jasa : [],
 
-daftarNamaMekanik()
-.forEach(
-nama=>{
+        part : [],
 
+        mekanik : [],
 
-select.innerHTML += `
+        timeline : [],
 
-<option>
-${nama}
-</option>
+        total : 0
 
-`;
-
-
-});
-
-
-
-}
+    };
 
 
-
-
-
-
-
-
-
-// ======================================
-// SIMPAN SERVIS
-// ======================================
-
-
-function simpanServisBaru(){
-
-
-
-const nopol =
-document.getElementById(
-"srv-nopol"
-).value;
-
-
-
-const motor =
-document.getElementById(
-"srv-motor"
-).value;
-
-
-
-const mekanik =
-document.getElementById(
-"srv-mekanik"
-).value;
-
-
-
-const jasa =
-document.getElementById(
-"srv-jasa"
-).value;
-
-
-
-const part =
-document.getElementById(
-"srv-part"
-).value;
-
-
-
-const total =
-document.getElementById(
-"srv-total"
-).value;
-
-
-
-
-
-if(
-!nopol ||
-!motor ||
-!total
-){
-
-
-    pesan(
-    "Nomor polisi, motor dan total wajib diisi"
+    tambahTimeline(
+        wo,
+        "Work Order dibuat"
     );
 
 
-    return;
+    dataAntrean.push(wo);
 
+    renderUI();
+
+    return wo;
 
 }
 
 
 
+// ======================================
+// TAMBAH JASA
+// ======================================
+
+function tambahJasa(id,data){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
+
+
+    wo.jasa.push({
+
+        id : Date.now(),
+
+        nama : data.nama,
+
+        harga : Number(data.harga),
+
+        fee : Number(data.fee || 0)
+
+    });
+
+
+    tambahTimeline(
+        wo,
+        "Tambah jasa : " + data.nama
+    );
+
+
+    hitungTotalWO(wo);
+
+}
 
 
 
-tambahServis({
+// ======================================
+// TAMBAH PART
+// ======================================
+
+function tambahPart(id,data){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
 
 
-nopol:nopol,
+    wo.part.push({
+
+        id : Date.now(),
+
+        nama : data.nama,
+
+        qty : Number(data.qty),
+
+        harga : Number(data.harga)
+
+    });
 
 
-motor:motor,
+    tambahTimeline(
+        wo,
+        "Tambah part : " + data.nama
+    );
 
 
-mekanik:mekanik,
+    hitungTotalWO(wo);
 
-
-jasa:[
-jasa
-],
-
-
-part:[
-part
-],
-
-
-total:total
-
-
-
-});
-
+}
 
 
 
+// ======================================
+// TAMBAH MEKANIK
+// ======================================
+
+function tambahMekanikWO(id,data){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
 
 
-tutupSemuaModal();
+    wo.mekanik.push({
+
+        id : data.id,
+
+        nama : data.nama,
+
+        pekerjaan : data.pekerjaan || "",
+
+        fee : Number(data.fee || 0)
+
+    });
 
 
+    tambahTimeline(
+        wo,
+        "Mekanik : " + data.nama
+    );
+
+}
+
+
+
+// ======================================
+// TAMBAH DIAGNOSA
+// ======================================
+
+function tambahDiagnosa(id,text){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
+
+
+    wo.diagnosa.push(text);
+
+
+    tambahTimeline(
+        wo,
+        "Diagnosa ditambah"
+    );
+
+}
+
+
+
+// ======================================
+// UBAH STATUS
+// ======================================
+
+function ubahStatusWO(id,status){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
+
+
+    wo.status = status;
+
+
+    tambahTimeline(
+        wo,
+        "Status menjadi : " + status
+    );
+
+
+    renderUI();
+
+}
+
+
+
+// ======================================
+// HITUNG TOTAL
+// ======================================
+
+function hitungTotalWO(wo){
+
+    let total = 0;
+
+
+    wo.jasa.forEach(item=>{
+
+        total += Number(item.harga);
+
+    });
+
+
+    wo.part.forEach(item=>{
+
+        total +=
+            Number(item.qty) *
+            Number(item.harga);
+
+    });
+
+
+    wo.total = total;
+
+}
+
+
+
+// ======================================
+// HITUNG TOTAL FEE MEKANIK
+// ======================================
+
+function hitungFeeMekanik(idMekanik){
+
+    let total = 0;
+
+
+    dataAntrean.forEach(wo=>{
+
+        wo.mekanik.forEach(m=>{
+
+            if(m.id===idMekanik){
+
+                total += Number(m.fee);
+
+            }
+
+        });
+
+    });
+
+
+    return total;
+
+}
+
+
+
+// ======================================
+// TIMELINE
+// ======================================
+
+function tambahTimeline(wo,aktivitas){
+
+    wo.timeline.push({
+
+        waktu : new Date(),
+
+        aktivitas : aktivitas
+
+    });
+
+}
+
+
+
+// ======================================
+// CARI WORK ORDER
+// ======================================
+
+function cariWO(id){
+
+    return dataAntrean.find(
+        item=>item.id===id
+    );
+
+}
+
+
+
+// ======================================
+// DETAIL WORK ORDER
+// ======================================
+
+function getWorkOrder(id){
+
+    return cariWO(id);
+
+}
+
+
+
+// ======================================
+// SELESAIKAN
+// ======================================
+
+function selesaikanWorkOrder(id){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
+
+
+    wo.status = "Ready Bayar";
+
+
+    tambahTimeline(
+        wo,
+        "Pekerjaan selesai"
+    );
+
+
+    renderUI();
+
+}
+
+
+
+// ======================================
+// BATALKAN
+// ======================================
+
+function batalkanWorkOrder(id){
+
+    const wo = cariWO(id);
+
+    if(!wo) return;
+
+
+    wo.status = "Batal";
+
+
+    tambahTimeline(
+        wo,
+        "Work Order dibatalkan"
+    );
+
+
+    renderUI();
 
 }
