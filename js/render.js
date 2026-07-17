@@ -1,16 +1,14 @@
 /* =====================================================
    OTOPOS RENDER SYSTEM
    File : render.js
-   Fungsi : menampilkan data ke halaman
+   Fungsi : Menampilkan seluruh data ke Dashboard
 ===================================================== */
 
 
 
-
-
-// ======================================
-// RENDER SEMUA TAMPILAN
-// ======================================
+// =====================================================
+// RENDER SEMUA
+// =====================================================
 
 function renderUI(){
 
@@ -24,111 +22,66 @@ function renderUI(){
 
 
 
-
-
-
-
-// ======================================
+// =====================================================
 // DASHBOARD
-// ======================================
-
+// =====================================================
 
 function renderDashboard(){
 
+    const omsetText =
+        document.getElementById("omset-text");
 
-    const omset =
-        document.getElementById(
-            "omset-text"
-        );
-
-
-    const selesai =
-        document.getElementById(
-            "selesai-count"
-        );
+    const selesaiText =
+        document.getElementById("selesai-count");
 
 
+    if(omsetText){
 
-    if(omset){
-
-        omset.innerText =
-            formatRupiah(omsetGlobal());
+        omsetText.innerText =
+            formatRupiah(omset);
 
     }
 
 
+    if(selesaiText){
 
-    if(selesai){
-
-        selesai.innerText =
+        selesaiText.innerText =
             selesaiCount + " Unit";
 
     }
 
-
 }
 
 
 
-
-
-
-
-// ======================================
-// TOTAL OMSET
-// ======================================
-
-
-function omsetGlobal(){
-
-    return omset;
-
-}
-
-
-
-
-
-
-
-// ======================================
-// RENDER ANTREAN SERVIS
-// ======================================
-
+// =====================================================
+// RENDER WORK ORDER
+// =====================================================
 
 function renderAntrean(){
-
 
     const container =
         document.getElementById(
             "antrean-container"
         );
 
-
     if(!container) return;
 
-
-
-    container.innerHTML="";
+    container.innerHTML = "";
 
 
 
-    if(dataAntrean.length===0){
+    if(dataWorkOrder.length===0){
 
+        container.innerHTML=`
 
-        container.innerHTML = `
+        <div class="text-center text-gray-400 p-5">
 
-        <div class="
-            text-center
-            text-gray-400
-            text-sm
-            p-5
-        ">
-            Tidak ada antrean
+            Tidak ada Work Order
+
         </div>
 
         `;
-
 
         return;
 
@@ -136,148 +89,182 @@ function renderAntrean(){
 
 
 
+    dataWorkOrder.forEach(wo=>{
 
 
-    dataAntrean.forEach(
-        item => {
+        let warna="bg-red-50 border-red-300";
+
+        if(wo.status==="Ready Bayar"){
+
+            warna="bg-green-50 border-green-300";
+
+        }
+
+        else if(wo.status==="Menunggu Part"){
+
+            warna="bg-yellow-50 border-yellow-300";
+
+        }
+
+        else if(wo.status==="QC"){
+
+            warna="bg-blue-50 border-blue-300";
+
+        }
 
 
 
-        const div =
-        document.createElement(
-            "div"
-        );
+        const card=document.createElement("div");
 
-
-
-        div.className =
+        card.className=
         `
         data-card
-        border-red-200
-        bg-red-50
+        border
+        rounded-xl
+        p-3
+        cursor-pointer
+        hover:shadow-lg
+        ${warna}
         `;
 
 
 
-        div.onclick =
-        function(){
+        card.onclick=function(){
 
-            bukaDetailServis(
-                item.id
-            );
+            bukaDetailServis(wo.id);
 
         };
 
 
 
+        card.innerHTML=`
 
-        div.innerHTML = `
+        <div class="flex justify-between">
 
-            <div class="
-                flex
-                justify-between
-            ">
+            <div>
 
-                <b class="text-sm">
-                    ${item.nopol}
-                </b>
+                <div class="font-bold">
 
+                    ${wo.motor.nopol}
 
-                <span class="
-                    text-xs
-                    text-red-600
-                ">
-                    ${item.status}
-                </span>
+                </div>
 
-            </div>
+                <div class="text-xs text-gray-500">
 
+                    ${wo.motor.merk}
+                    ${wo.motor.tipe}
 
-            <div class="
-                text-xs
-                text-gray-500
-                mt-2
-            ">
-
-                ${item.motor}
+                </div>
 
             </div>
 
+            <div class="text-xs font-bold">
 
-            <div class="
-                text-xs
-                font-bold
-                text-gray-700
-                mt-1
-            ">
-
-                ${item.mekanik}
+                ${wo.status}
 
             </div>
 
+        </div>
+
+
+
+        <hr class="my-2">
+
+
+
+        <div class="text-xs">
+
+            👤
+            ${wo.pelanggan.nama}
+
+        </div>
+
+
+        <div class="text-xs mt-1">
+
+            🔧
+            ${wo.mekanik.map(x=>x.nama).join(", ")}
+
+        </div>
+
+
+        <div class="text-xs mt-1">
+
+            Jasa :
+
+            ${wo.jasa.length}
+
+        </div>
+
+
+        <div class="text-xs">
+
+            Part :
+
+            ${wo.part.length}
+
+        </div>
+
+
+
+        <div class="flex justify-between mt-3">
+
+            <div class="text-sm font-bold">
+
+                ${formatRupiah(wo.total)}
+
+            </div>
+
+            <div class="text-xs text-blue-600">
+
+                ${wo.nomor}
+
+            </div>
+
+        </div>
 
         `;
 
 
 
-        container.appendChild(div);
+        container.appendChild(card);
 
 
 
     });
 
-
 }
 
 
 
-
-
-
-
-
-// ======================================
-// RENDER KASIR
-// ======================================
-
+// =====================================================
+// KASIR
+// =====================================================
 
 function renderKasir(){
-
 
     const container =
         document.getElementById(
             "pesanan-container"
         );
 
-
-
     if(!container) return;
-
-
 
     container.innerHTML="";
 
 
 
+    if(dataPesananLangsung.length===0){
 
-    if(
-        dataPesananLangsung.length===0
-    ){
+        container.innerHTML=`
 
+        <div class="text-center text-gray-400 p-5">
 
-        container.innerHTML = `
-
-        <div class="
-            text-center
-            text-gray-400
-            p-5
-            text-sm
-        ">
             Tidak ada transaksi
+
         </div>
 
         `;
-
 
         return;
 
@@ -285,67 +272,54 @@ function renderKasir(){
 
 
 
+    dataPesananLangsung.forEach(item=>{
 
 
+        const card=document.createElement("div");
 
-    dataPesananLangsung.forEach(
-        item=>{
-
-
-        const div =
-        document.createElement(
-            "div"
-        );
-
-
-
-        div.className =
+        card.className=
         `
         data-card
-        bg-green-50
+        border
         border-green-200
+        bg-green-50
+        rounded-xl
+        p-3
+        cursor-pointer
+        hover:shadow-lg
         `;
 
 
 
-        div.onclick =
-        ()=>bayarLangsung(
-            item.id
-        );
+        card.onclick=function(){
+
+            bayarLangsung(item.id);
+
+        };
 
 
 
+        card.innerHTML=`
 
-        div.innerHTML = `
+        <div class="flex justify-between">
 
-        <div class="
-            flex
-            justify-between
-        ">
+            <b>
 
-
-            <b class="text-sm">
                 ${item.nama}
+
             </b>
 
+            <span class="text-green-600">
 
-            <span class="
-                text-xs
-                text-green-600
-            ">
                 Bayar
-            </span>
 
+            </span>
 
         </div>
 
 
 
-        <div class="
-            text-xs
-            mt-2
-            text-gray-500
-        ">
+        <div class="text-xs mt-2">
 
             ${item.part}
 
@@ -353,47 +327,38 @@ function renderKasir(){
 
 
 
-        <div class="
-            text-sm
-            font-bold
-            mt-1
-        ">
+        <div class="mt-2 font-bold">
 
             ${formatRupiah(item.total)}
 
         </div>
 
-
         `;
 
 
 
-        container.appendChild(div);
+        container.appendChild(card);
 
 
 
     });
 
-
 }
 
 
 
-
-
-
-
-
-// ======================================
-// JALANKAN SAAT WEB DIBUKA
-// ======================================
-
+// =====================================================
+// START
+// =====================================================
 
 document.addEventListener(
+
     "DOMContentLoaded",
+
     function(){
 
         renderUI();
 
     }
+
 );
