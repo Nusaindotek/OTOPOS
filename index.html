@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS - PC Dashboard v2.4</title>
+    <title>OTOPOS - PC Dashboard v2.41</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; } }
+        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; }
         #cart-items::-webkit-scrollbar { width: 4px; } #cart-items::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
-      .tab-active { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
-      .btn-press { transition: all 75ms; }.btn-press:active { transform: translateY(2px); box-shadow: none!important; }
-      .antrian-item:hover { background-color: #fee2e2; }
-      .antrian-active { background-color: #fecaca!important; border-left: 4px solid #dc2626; }
+     .tab-active { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+     .btn-press { transition: all 75ms; }.btn-press:active { transform: translateY(2px); box-shadow: none!important; }
+     .antrian-item:hover { background-color: #fee2e2; }
+     .antrian-active { background-color: #fecaca!important; border-left: 4px solid #dc2626; }
+      body { min-width: 1024px; } /* PAKSA LEBAR MINIMAL BIAR GAK NURUN */
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-3 font-sans flex-col gap-3">
+<body class="bg-gray-100 min-h-screen p-3 font-sans flex-col gap-3 overflow-x-auto">
 
     <!-- TOP BAR -->
     <header class="bg-blue-600 text-white p-3 rounded-xl shadow-md flex justify-between items-center">
@@ -29,11 +30,11 @@
         </div>
     </header>
 
-    <!-- WRAPPER UTAMA 70 : 30 -->
-    <div class="grid grid-cols-12 gap-3 flex-1">
+    <!-- WRAPPER UTAMA 70 : 30 PAKSA -->
+    <div class="grid grid-cols-10 gap-3 flex-1">
 
         <!-- SIDE KIRI 70%: AREA OPERASIONAL -->
-        <main class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-md border p-4 flex-col gap-4">
+        <main class="col-span-7 bg-white rounded-xl shadow-md border p-4 flex-col gap-4">
             <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl border mb-3">
                 <button id="tab-servis" onclick="setMode('servis')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg"><span class="bg-white/20 px-1.5 rounded text-">F2</span> MODE SERVIS</button>
                 <button id="tab-part" onclick="setMode('part')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"><span class="bg-gray-200 px-1.5 rounded text-">F3</span> DIRECT PART</button>
@@ -73,8 +74,8 @@
             </div>
         </main>
 
-        <!-- SIDE KANAN 30%: KASIR PANEL -->
-        <aside class="col-span-12 lg:col-span-4 bg-slate-900 text-white rounded-xl shadow-md p-4 flex-col justify-between border border-slate-800">
+        <!-- SIDE KAN 30%: KASIR PANEL -->
+        <aside class="col-span-3 bg-slate-900 text-white rounded-xl shadow-md p-4 flex-col justify-between border-slate-800">
             <div>
                 <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-3">
                     <h2 class="font-black text-md tracking-wide text-emerald-400">🛒 BILLING</h2>
@@ -90,22 +91,16 @@
         </aside>
     </div>
 
-    <!-- MODAL TAMBAH ANTRIAN -->
+    <!-- SISA MODAL SAMA SEPERTI SEBELUMNYA -->
     <div id="antrian-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-sm p-5"><h3 class="font-black mb-3 text-red-600">+ TAMBAH ANTRIAN SERVIS</h3><div class="space-y-2"><input type="text" id="input-nopol-baru" placeholder="Nopol: D 1234 AB" class="w-full border p-2.5 rounded-lg text-sm uppercase"><input type="text" id="input-motor-baru" placeholder="Motor: Honda Beat" class="w-full border p-2.5 rounded-lg text-sm"></div><button onclick="tambahAntrian()" class="w-full bg-red-600 hover:bg-red-700 btn-press text-white py-2 rounded-lg font-bold text-sm mt-3">Masukkan Antrian</button><button onclick="toggleModal('antrian-modal')" class="w-full bg-gray-200 hover:bg-gray-300 btn-press py-2 rounded-lg font-bold text-xs mt-2">Batal</button></div>
     </div>
-
-    <!-- MODAL INPUT PART CEPAT F5 -->
     <div id="input-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-md p-5"><h3 class="font-black mb-3 text-orange-600">➕ INPUT SPAREPART CEPAT</h3><div class="space-y-2"><input type="text" id="input-part-name" placeholder="Nama Part: Oli Gardan" class="w-full border p-2.5 rounded-lg text-sm"><div class="grid grid-cols-2 gap-2"><input type="number" id="input-part-price" placeholder="Harga Jual" class="w-full border p-2.5 rounded-lg text-sm"><input type="number" id="input-part-stock" placeholder="Stok Awal" value="0" class="w-full border p-2.5 rounded-lg text-sm"></div></div><div class="text-xs text-gray-500 mt-2 max-h-20 overflow-y-auto" id="last-input-list"></div><div class="flex gap-2 mt-3"><button onclick="handleQuickAdd(true)" class="w-full bg-orange-500 hover:bg-orange-600 btn-press text-white py-2 rounded-lg font-bold text-sm">Simpan & Lagi</button><button onclick="handleQuickAdd(false)" class="w-full bg-orange-700 hover:bg-orange-800 btn-press text-white py-2 rounded-lg font-bold text-sm">Simpan</button></div><button onclick="toggleModal('input-modal')" class="w-full bg-gray-200 hover:bg-gray-300 btn-press py-2 rounded-lg font-bold text-xs mt-2">Tutup</button></div>
     </div>
-
-    <!-- MODAL SETTING F4 -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-lg p-5 max-h- overflow-y-auto"><h3 class="font-black mb-3">⚙️ PENGATURAN</h3><div class="flex border-b mb-3"><button onclick="openTab('tab-mekanik')" class="tab-btn px-4 py-2 text-sm font-bold border-b-2 border-blue-600 text-blue-600">Data Mekanik</button><button onclick="openTab('tab-toko')" class="tab-btn px-4 py-2 text-sm font-bold text-gray-500">Data Toko</button><button onclick="openTab('tab-data')" class="tab-btn px-4 py-2 text-sm font-bold text-gray-500">Manajemen Data</button></div><div id="tab-mekanik" class="tab-content"><button onclick="tambahMekanik()" class="bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-bold mb-2">+ Tambah Mekanik</button><div id="list-mekanik" class="text-xs space-y-1"></div></div><div id="tab-toko" class="tab-content hidden space-y-2"><input type="text" id="setting-nama" placeholder="Nama Bengkel" class="w-full border p-2 rounded text-sm"><input type="text" id="setting-alamat" placeholder="Alamat" class="w-full border p-2 rounded text-sm"><input type="text" id="setting-telp" placeholder="No Telp" class="w-full border p-2 rounded text-sm"><input type="text" id="setting-footer" placeholder="Footer Struk" class="w-full border p-2 rounded text-sm"><button onclick="simpanSettingToko()" class="w-full bg-blue-600 text-white py-2 rounded font-bold text-sm">Simpan Data Toko</button></div><div id="tab-data" class="tab-content hidden space-y-2"><textarea id="csv-input" class="w-full h-20 border p-2 text-xs" placeholder="Nama,Harga,Stok&#10;Oli MPX,55000,10"></textarea><button onclick="handleImportCSV()" class="w-full bg-blue-600 text-white py-2 rounded font-bold text-xs">Import CSV</button><button onclick="exportBackup()" class="w-full bg-emerald-600 text-white py-2 rounded font-bold text-xs">Export Backup.json</button></div><button onclick="toggleModal('settings-modal')" class="w-full bg-gray-200 hover:bg-gray-300 btn-press py-2 rounded font-bold text-xs mt-3">Tutup</button></div>
     </div>
-
-    <!-- PRINT AREA 58mm -->
     <div id="print-receipt" class="hidden font-mono p-2 w- text-[9px]"><div class="text-center font-bold" id="print-nama-toko">BENGKEL HELICOPTER</div><div class="text-center" id="print-alamat-toko"></div><hr class="my-1 border-dashed"><div id="print-info"></div><hr class="my-1 border-dashed"><div id="print-items"></div><hr class="my-1 border-dashed"><div>Bayar: <span id="print-payment"></span></div><div class="font-bold text-right" id="print-total"></div><div class="text-center mt-1" id="print-footer">Terima Kasih 🙏</div></div>
 
     <script>
@@ -119,7 +114,6 @@
         let selectedPayment = 'Tunai';
 
         window.onload = () => { refreshDatalist(); renderCart(); renderMekanik(); loadSetting(); renderAntrian(); };
-
         document.addEventListener('keydown', (e) => { if(e.key === 'F2') { e.preventDefault(); setMode('servis'); } if(e.key === 'F3') { e.preventDefault(); setMode('part'); } if(e.key === 'F4') { e.preventDefault(); toggleModal('settings-modal'); } if(e.key === 'F5') { e.preventDefault(); toggleModal('input-modal'); } if(e.ctrlKey && e.key === 'Enter') { e.preventDefault(); tambahKeBilling(); } if(e.ctrlKey && e.key === 'p') { e.preventDefault(); prosesCheckout(); } });
 
         function setMode(mode) { currentMode = mode; cart = []; selectedAntrian = null; renderCart(); renderAntrian(); document.getElementById('form-servis-detail').classList.add('hidden');
@@ -127,46 +121,21 @@
             if(mode === 'servis') { document.getElementById('area-servis').classList.remove('hidden'); document.getElementById('area-part').classList.add('hidden'); tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg"; tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"; document.getElementById('billing-type').innerText = "SERVIS"; }
             else { document.getElementById('area-servis').classList.add('hidden'); document.getElementById('area-part').classList.remove('hidden'); tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-emerald-600 text-white shadow-lg"; tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"; document.getElementById('billing-type').innerText = "DIRECT"; }
         }
-
         function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
         function openTab(id) { document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('border-blue-600','text-blue-600')); event.target.classList.add('border-blue-600','text-blue-600'); }
-
         function tambahAntrian() { const nopol = document.getElementById('input-nopol-baru').value.toUpperCase(); const motor = document.getElementById('input-motor-baru').value; if(!nopol ||!motor) return alert('Nopol dan Motor wajib!'); antrian.push({id: Date.now(), nopol, motor}); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); document.getElementById('input-nopol-baru').value=''; document.getElementById('input-motor-baru').value=''; toggleModal('antrian-modal'); }
         function renderAntrian() { const list = document.getElementById('list-antrian'); if(antrian.length === 0) { list.innerHTML = `<p class="text-center text-gray-400 text-xs py-10">Belum ada antrian. Klik + Tambah Antrian</p>`; } else { list.innerHTML = antrian.map(a => `<div onclick="pilihAntrian(${a.id})" class="antrian-item p-3 border rounded-lg cursor-pointer ${selectedAntrian?.id === a.id? 'antrian-active' : ''}"><p class="font-black text-red-600">${a.nopol}</p><p class="text-xs text-gray-600">${a.motor}</p></div>`).join(''); } }
         function pilihAntrian(id) { selectedAntrian = antrian.find(a=>a.id===id); renderAntrian(); const form = document.getElementById('form-servis-detail'); form.classList.remove('hidden'); form.innerHTML = `<h4 class="font-black mb-2 text-sm">Proses: ${selectedAntrian.nopol} - ${selectedAntrian.motor}</h4><div class="grid grid-cols-2 gap-2"><div><label class="text-xs font-bold">Mekanik</label><select id="input-mekanik" class="w-full border p-2 rounded text-sm">${mekanik.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')}</select></div><div><label class="text-xs font-bold">Biaya Jasa</label><input type="number" id="input-jasa" value="0" class="w-full border p-2 rounded text-sm"></div></div><div class="mt-2 grid-cols-3 gap-2"><div class="col-span-2"><input type="text" id="input-produk-search" list="list-produk" placeholder="Tambah Part..." class="w-full border p-2 rounded text-sm"></div><div><input type="number" id="input-qty" value="1" class="w-full border p-2 rounded text-sm"></div></div><button onclick="tambahKeBilling()" class="btn-press w-full bg-red-600 hover:bg-red-700 active:bg-red-800 shadow-lg text-white font-black py-2.5 rounded-xl text-sm mt-2">➕ Tambah ke Billing</button>`; }
-
         function refreshDatalist() { const list = document.getElementById('list-produk'); list.innerHTML = ''; parts.forEach(p => { const opt = document.createElement('option'); opt.value = p.name; list.appendChild(opt); }); const last = document.getElementById('last-input-list'); if(last) last.innerHTML = '<b>Terakhir:</b><br>' + parts.slice(-3).reverse().map(p=>`${p.name} - Rp ${p.price.toLocaleString()}`).join('<br>'); }
-        function handleQuickAdd(loop) { const name = document.getElementById('input-part-name').value.trim(); const price = parseInt(document.getElementById('input-part-price').value); const stock = parseInt(document.getElementById('input-part-stock').value) || 0; if(!name ||!price) return alert('Nama dan Harga wajib!'); parts.push({name, price, stock}); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); if(loop) { document.getElementById('input-part-name').value=''; document.getElementById('input-part-price').value=''; document.getElementById('input-part-name').focus(); } else { toggleModal('input-modal'); } }
+        function handleQuickAdd(loop) { const name = document.getElementById('input-part-name').value.trim(); const price = parseInt(document.getElementById('input-part-price').value); const stock = parseInt(document.getElementById('input-part-stock').value) || 0; if(!name ||!price) return alert('Nama dan Harga wajib!'); parts.push({name, price, stock}); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); if(loop) { document.getElementById('input-part-name').value=''; document.getElementById('input-part-price').value=''; document.getElementById('input-part-name').focus(); } else { toggleModal('input-modal'); }
         function handleImportCSV() { document.getElementById('csv-input').value.split('\n').forEach(line => { const [name, price, stock] = line.split(','); if(name && price) parts.push({name: name.trim(), price: parseInt(price), stock: parseInt(stock)||0}); }); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); alert('Import Berhasil!'); }
-
-        function tambahKeBilling() {
-            const name = document.getElementById('input-produk-search').value; const item = parts.find(p => p.name === name); if(!item) return alert('Produk tidak ditemukan!');
-            const qty = parseInt(document.getElementById('input-qty').value) || 1; const existing = cart.find(c => c.name === name);
-            if(existing) existing.qty += qty; else cart.push({...item, qty, type: 'part'});
-            if(currentMode === 'servis' && document.getElementById('input-jasa')) { const jasa = parseInt(document.getElementById('input-jasa').value) || 0; const jasaItem = cart.find(c => c.type === 'jasa'); if(jasa > 0) { if(jasaItem) jasaItem.price = jasa; else cart.push({type: 'jasa', name: 'Biaya Jasa', price: jasa, qty: 1}); } }
-            localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1;
-        }
-
+        function tambahKeBilling() { const name = document.getElementById('input-produk-search').value; const item = parts.find(p => p.name === name); if(!item) return alert('Produk tidak ditemukan!'); const qty = parseInt(document.getElementById('input-qty').value) || 1; const existing = cart.find(c => c.name === name); if(existing) existing.qty += qty; else cart.push({...item, qty, type: 'part'}); if(currentMode === 'servis' && document.getElementById('input-jasa')) { const jasa = parseInt(document.getElementById('input-jasa').value) || 0; const jasaItem = cart.find(c => c.type === 'jasa'); if(jasa > 0) { if(jasaItem) jasaItem.price = jasa; else cart.push({type: 'jasa', name: 'Biaya Jasa', price: jasa, qty: 1}); } localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1; }
         function changeQty(index, delta) { cart[index].qty += delta; if (cart[index].qty <= 0) cart.splice(index, 1); localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); }
         function renderCart() { const container = document.getElementById('cart-items'); if(cart.length === 0) { container.innerHTML = `<p class="text-center text-slate-500 text-xs py-10">Keranjang kosong</p>`; } else { container.innerHTML = cart.map((i, idx) => `<div class="flex justify-between items-center bg-slate-800 p-2 rounded-lg text-xs"><div><p class="font-bold">${i.name}</p><p class="text-slate-400 text-">x${i.qty} @ Rp ${i.price.toLocaleString()}</p></div><div class="flex items-center gap-1"><button onclick="changeQty(${idx},-1)" class="px-1.5 bg-slate-700 rounded">-</button><span>${i.qty}</span><button onclick="changeQty(${idx},1)" class="px-1.5 bg-slate-700 rounded">+</button><button onclick="changeQty(${idx},-999)" class="text-red-400">✕</button></div></div>`).join(''); } const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); document.getElementById('cart-total').innerText = 'Rp ' + total.toLocaleString(); }
         function setPayment(method) { selectedPayment = method; document.querySelectorAll('.btn-pay').forEach(btn => { btn.className = btn.innerText.includes(method)? "btn-pay btn-press bg-slate-800 border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg" : "btn-pay btn-press bg-slate-800 border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg"; }); }
-
-        function prosesCheckout() {
-            if(cart.length === 0) return alert('Keranjang kosong!'); const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
-            if(currentMode === 'servis') {
-                if(!selectedAntrian) return alert('Pilih antrian dulu!');
-                const namaMekanik = document.getElementById('input-mekanik').value; const jasa = cart.find(c=>c.type==='jasa')?.price || 0;
-                const m = mekanik.find(x=>x.nama===namaMekanik); if(m){ m.servis++; m.pendapatan+=jasa; localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); }
-                document.getElementById('print-info').innerHTML = `Nopol: ${selectedAntrian.nopol}<br>Motor: ${selectedAntrian.motor}<br>Mekanik: ${namaMekanik}`;
-                antrian = antrian.filter(a=>a.id!== selectedAntrian.id); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); selectedAntrian = null; document.getElementById('form-servis-detail').classList.add('hidden');
-            } else { document.getElementById('print-info').innerHTML = `Pembeli: ${document.getElementById('input-pembeli').value || '-'}`; }
-
-            document.getElementById('print-nama-toko').innerText = setting.nama; document.getElementById('print-alamat-toko').innerText = setting.alamat; document.getElementById('print-footer').innerText = setting.footer; document.getElementById('print-payment').innerText = selectedPayment; document.getElementById('print-items').innerHTML = cart.map(i => `${i.name} x${i.qty}<div class="text-right">Rp ${(i.price * i.qty).toLocaleString()}</div>`).join(''); document.getElementById('print-total').innerText = 'TOTAL: Rp ' + total.toLocaleString(); window.print();
-            cart = []; localStorage.removeItem('otopos_cart'); renderCart();
-        }
-
+        function prosesCheckout() { if(cart.length === 0) return alert('Keranjang kosong!'); const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); if(currentMode === 'servis') { if(!selectedAntrian) return alert('Pilih antrian dulu!'); const namaMekanik = document.getElementById('input-mekanik').value; const jasa = cart.find(c=>c.type==='jasa')?.price || 0; const m = mekanik.find(x=>x.nama===namaMekanik); if(m){ m.servis++; m.pendapatan+=jasa; localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); } document.getElementById('print-info').innerHTML = `Nopol: ${selectedAntrian.nopol}<br>Motor: ${selectedAntrian.motor}<br>Mekanik: ${namaMekanik}`; antrian = antrian.filter(a=>a.id!== selectedAntrian.id); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); selectedAntrian = null; document.getElementById('form-servis-detail').classList.add('hidden'); } else { document.getElementById('print-info').innerHTML = `Pembeli: ${document.getElementById('input-pembeli').value || '-'}`; } document.getElementById('print-nama-toko').innerText = setting.nama; document.getElementById('print-alamat-toko').innerText = setting.alamat; document.getElementById('print-footer').innerText = setting.footer; document.getElementById('print-payment').innerText = selectedPayment; document.getElementById('print-items').innerHTML = cart.map(i => `${i.name} x${i.qty}<div class="text-right">Rp ${(i.price * i.qty).toLocaleString()}</div>`).join(''); document.getElementById('print-total').innerText = 'TOTAL: Rp ' + total.toLocaleString(); window.print(); cart = []; localStorage.removeItem('otopos_cart'); renderCart(); }
         function renderMekanik() { document.getElementById('list-mekanik').innerHTML = mekanik.map(m=>`<div class="flex justify-between bg-gray-100 p-1.5 rounded">${m.nama} | ${m.servis}x | Rp ${m.pendapatan.toLocaleString()}</div>`).join(''); }
-        function tambahMekanik() { const nama = prompt('Nama Mekanik Baru:'); if(nama){ mekanik.push({nama, servis:0, pendapatan:0}); localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); renderMekanik(); } }
+        function tambahMekanik() { const nama = prompt('Nama Mekanik Baru:'); if(nama){ mekanik.push({nama, servis:0, pendapatan:0}); localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); renderMekanik(); }
         function loadSetting() { document.getElementById('setting-nama').value=setting.nama; document.getElementById('setting-alamat').value=setting.alamat; document.getElementById('setting-telp').value=setting.telp; document.getElementById('setting-footer').value=setting.footer; document.getElementById('nama-toko-header').innerText=setting.nama; }
         function simpanSettingToko() { setting.nama=document.getElementById('setting-nama').value; setting.alamat=document.getElementById('setting-alamat').value; setting.telp=document.getElementById('setting-telp').value; setting.footer=document.getElementById('setting-footer').value; localStorage.setItem('otopos_setting_toko', JSON.stringify(setting)); loadSetting(); alert('Tersimpan!'); }
         function exportBackup() { const data = {parts, mekanik, setting}; const blob = new Blob([JSON.stringify(data)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'otopos-backup.json'; a.click(); }
