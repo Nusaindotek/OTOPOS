@@ -1,399 +1,256 @@
 /* =====================================================
-   OTOPOS RENDER SYSTEM
-   File : render.js
-   Fungsi : menampilkan data ke halaman
+   OTOPOS
+   Version : 1.0.0
+   File : util.js
+   Module : Core Utility
+   Fungsi : Helper yang digunakan seluruh sistem
 ===================================================== */
 
 
 
-
-
 // ======================================
-// RENDER SEMUA TAMPILAN
+// FORMAT RUPIAH
 // ======================================
 
-function renderUI(){
+function formatRupiah(angka){
 
-    renderDashboard();
+    angka = Number(angka) || 0;
 
-    renderAntrean();
-
-    renderKasir();
+    return "Rp " +
+        angka.toLocaleString(
+            "id-ID"
+        );
 
 }
 
 
 
+// ======================================
+// FORMAT TANGGAL
+// ======================================
 
+function formatTanggal(tanggal = new Date()){
+
+    return tanggal.toLocaleDateString(
+        "id-ID",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+
+}
 
 
 
 // ======================================
-// DASHBOARD
+// FORMAT JAM
 // ======================================
 
+function formatJam(tanggal = new Date()){
 
-function renderDashboard(){
+    return tanggal.toLocaleTimeString(
+        "id-ID",
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
 
-
-    const omset =
-        document.getElementById(
-            "omset-text"
-        );
-
-
-    const selesai =
-        document.getElementById(
-            "selesai-count"
-        );
+}
 
 
 
-    if(omset){
+// ======================================
+// POPUP PESAN
+// ======================================
 
-        omset.innerText =
-            formatRupiah(omsetGlobal());
+function pesan(teks){
+
+    alert(teks);
+
+}
+
+
+
+// ======================================
+// KONFIRMASI
+// ======================================
+
+function konfirmasi(teks){
+
+    return confirm(teks);
+
+}
+
+
+
+// ======================================
+// KONFIRMASI HAPUS
+// ======================================
+
+function konfirmasiHapus(){
+
+    return confirm(
+        "Yakin ingin menghapus data ini?"
+    );
+
+}
+
+
+
+// ======================================
+// DOM HELPER
+// ======================================
+
+function getEl(id){
+
+    return document.getElementById(id);
+
+}
+
+
+
+function setHTML(id, html){
+
+    const el = getEl(id);
+
+    if(el){
+
+        el.innerHTML = html;
 
     }
 
+}
 
 
-    if(selesai){
 
-        selesai.innerText =
-            selesaiCount + " Unit";
+function showElement(id){
+
+    const el = getEl(id);
+
+    if(el){
+
+        el.classList.remove("hidden");
 
     }
 
-
 }
 
 
 
+function hideElement(id){
 
+    const el = getEl(id);
 
+    if(el){
 
-
-// ======================================
-// TOTAL OMSET
-// ======================================
-
-
-function omsetGlobal(){
-
-    return omset;
-
-}
-
-
-
-
-
-
-
-// ======================================
-// RENDER ANTREAN SERVIS
-// ======================================
-
-
-function renderAntrean(){
-
-
-    const container =
-        document.getElementById(
-            "antrean-container"
-        );
-
-
-    if(!container) return;
-
-
-
-    container.innerHTML="";
-
-
-
-    if(dataAntrean.length===0){
-
-
-        container.innerHTML = `
-
-        <div class="
-            text-center
-            text-gray-400
-            text-sm
-            p-5
-        ">
-            Tidak ada antrean
-        </div>
-
-        `;
-
-
-        return;
+        el.classList.add("hidden");
 
     }
 
-
-
-
-
-    dataAntrean.forEach(
-        item => {
-
-
-
-        const div =
-        document.createElement(
-            "div"
-        );
-
-
-
-        div.className =
-        `
-        data-card
-        border-red-200
-        bg-red-50
-        `;
-
-
-
-        div.onclick =
-        function(){
-
-            bukaDetailServis(
-                item.id
-            );
-
-        };
-
-
-
-
-        div.innerHTML = `
-
-            <div class="
-                flex
-                justify-between
-            ">
-
-                <b class="text-sm">
-                    ${item.nopol}
-                </b>
-
-
-                <span class="
-                    text-xs
-                    text-red-600
-                ">
-                    ${item.status}
-                </span>
-
-            </div>
-
-
-            <div class="
-                text-xs
-                text-gray-500
-                mt-2
-            ">
-
-                ${item.motor}
-
-            </div>
-
-
-            <div class="
-                text-xs
-                font-bold
-                text-gray-700
-                mt-1
-            ">
-
-                ${item.mekanik}
-
-            </div>
-
-
-        `;
-
-
-
-        container.appendChild(div);
-
-
-
-    });
-
-
 }
 
 
 
-
-
-
-
-
 // ======================================
-// RENDER KASIR
+// VALIDASI
 // ======================================
 
+function isEmpty(value){
 
-function renderKasir(){
+    if(value === null) return true;
 
+    if(value === undefined) return true;
 
-    const container =
-        document.getElementById(
-            "pesanan-container"
-        );
+    if(value.toString().trim()===""){
 
-
-
-    if(!container) return;
-
-
-
-    container.innerHTML="";
-
-
-
-
-    if(
-        dataPesananLangsung.length===0
-    ){
-
-
-        container.innerHTML = `
-
-        <div class="
-            text-center
-            text-gray-400
-            p-5
-            text-sm
-        ">
-            Tidak ada transaksi
-        </div>
-
-        `;
-
-
-        return;
+        return true;
 
     }
 
-
-
-
-
-
-    dataPesananLangsung.forEach(
-        item=>{
-
-
-        const div =
-        document.createElement(
-            "div"
-        );
-
-
-
-        div.className =
-        `
-        data-card
-        bg-green-50
-        border-green-200
-        `;
-
-
-
-        div.onclick =
-        ()=>bayarLangsung(
-            item.id
-        );
-
-
-
-
-        div.innerHTML = `
-
-        <div class="
-            flex
-            justify-between
-        ">
-
-
-            <b class="text-sm">
-                ${item.nama}
-            </b>
-
-
-            <span class="
-                text-xs
-                text-green-600
-            ">
-                Bayar
-            </span>
-
-
-        </div>
-
-
-
-        <div class="
-            text-xs
-            mt-2
-            text-gray-500
-        ">
-
-            ${item.part}
-
-        </div>
-
-
-
-        <div class="
-            text-sm
-            font-bold
-            mt-1
-        ">
-
-            ${formatRupiah(item.total)}
-
-        </div>
-
-
-        `;
-
-
-
-        container.appendChild(div);
-
-
-
-    });
-
+    return false;
 
 }
 
 
 
+// ======================================
+// GENERATE NOMOR INVOICE
+// ======================================
 
+function generateInvoice(){
 
+    const now = new Date();
+
+    return "INV-" +
+
+        now.getFullYear() +
+
+        String(
+            now.getMonth()+1
+        ).padStart(2,"0") +
+
+        String(
+            now.getDate()
+        ).padStart(2,"0") +
+
+        "-" +
+
+        Date.now()
+            .toString()
+            .slice(-5);
+
+}
 
 
 
 // ======================================
-// JALANKAN SAAT WEB DIBUKA
+// TOGGLE MENU SETTING
 // ======================================
 
+function toggleSettingMenu(){
+
+    const menu =
+        getEl(
+            "settingMenu"
+        );
+
+    if(!menu) return;
+
+    menu.classList.toggle(
+        "hidden"
+    );
+
+}
+
+
+
+// ======================================
+// TUTUP MENU SETTING
+// SAAT KLIK DI LUAR MENU
+// ======================================
 
 document.addEventListener(
-    "DOMContentLoaded",
-    function(){
+    "click",
+    function(e){
 
-        renderUI();
+        const menu =
+            getEl("settingMenu");
+
+        if(!menu) return;
+
+        if(
+            !menu.contains(e.target) &&
+            !e.target.closest("button")
+        ){
+
+            menu.classList.add(
+                "hidden"
+            );
+
+        }
 
     }
 );
