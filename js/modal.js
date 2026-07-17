@@ -899,3 +899,38 @@ function bukaDetailServis(id){
     }
 
 }
+/* =====================================================
+   TAMBAH JASA KE WORK ORDER
+===================================================== */
+
+function pilihJasaWO(idWO){
+
+    const idTarif =
+    prompt("ID Jasa");
+
+    if(!idTarif) return;
+
+    const tarif =
+    dataTarif.find(
+        item=>item.id==idTarif
+    );
+
+    if(!tarif){
+
+        pesan("Jasa tidak ditemukan");
+
+        return;
+
+    }
+
+    tambahJasa(idWO,{
+
+        nama:tarif.jasa,
+
+        harga:tarif.harga
+
+    });
+
+    bukaDetailServis(idWO);
+
+}
