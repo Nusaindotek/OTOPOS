@@ -37,4 +37,4 @@ Transaksi: Pilih Mode Servis atau Direct Part di dashboard, pilih produk, masukk
 
 Checkout: Tekan "Proses & Cetak". Stok akan otomatis terpotong dari database.
 
-Laporan: Buka Settings > Laporan untuk melihat rekap omset dan jumlah konsumen secara instan.
+Laporan: Buka Settings > Laporan untuk melihat rekap omset dan jumlah konsumen secara instan..
