@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS - PC Dashboard v2.41</title>
+    <title>OTOPOS - PC Dashboard v2.51</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; }
+        @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; } }
         #cart-items::-webkit-scrollbar { width: 4px; } #cart-items::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        #list-antrian::-webkit-scrollbar { width: 4px; } #list-antrian::-webkit-scrollbar-thumb { background: #fca5a5; border-radius: 10px; }
      .tab-active { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
      .btn-press { transition: all 75ms; }.btn-press:active { transform: translateY(2px); box-shadow: none!important; }
      .antrian-item:hover { background-color: #fee2e2; }
      .antrian-active { background-color: #fecaca!important; border-left: 4px solid #dc2626; }
-      body { min-width: 1024px; } /* PAKSA LEBAR MINIMAL BIAR GAK NURUN */
+       html, body { height: 100%; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-3 font-sans flex-col gap-3 overflow-x-auto">
+<body class="bg-gray-100 h-screen p-3 font-sans flex flex-col gap-3">
 
     <!-- TOP BAR -->
-    <header class="bg-blue-600 text-white p-3 rounded-xl shadow-md flex justify-between items-center">
+    <header class="bg-blue-600 text-white p-3 rounded-xl shadow-md flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-3">
             <span class="text-2xl">🛠️</span>
             <div><h1 class="text-lg font-black tracking-wider">OTOPOS</h1><p class="text-xs text-blue-200" id="nama-toko-header">Bengkel HELICOPTER</p></div>
@@ -30,60 +31,62 @@
         </div>
     </header>
 
-    <!-- WRAPPER UTAMA 70 : 30 PAKSA -->
-    <div class="grid grid-cols-10 gap-3 flex-1">
+    <!-- WRAPPER UTAMA 70 : 30 TINGGI FULL -->
+    <div class="grid grid-cols-12 gap-3 flex-1 min-h-0">
 
-        <!-- SIDE KIRI 70%: AREA OPERASIONAL -->
-        <main class="col-span-7 bg-white rounded-xl shadow-md border p-4 flex-col gap-4">
-            <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl border mb-3">
+        <!-- SIDE KIRI 70%: AREA OPERASIONAL FULL TINGGI -->
+        <main class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-md border p-4 flex flex-col">
+            <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl border mb-3 flex-shrink-0">
                 <button id="tab-servis" onclick="setMode('servis')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg"><span class="bg-white/20 px-1.5 rounded text-">F2</span> MODE SERVIS</button>
                 <button id="tab-part" onclick="setMode('part')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"><span class="bg-gray-200 px-1.5 rounded text-">F3</span> DIRECT PART</button>
             </div>
 
-            <!-- AREA SERVIS: LIST ANTRIAN -->
-            <div id="area-servis">
-                <div class="flex justify-between items-center mb-2">
+            <!-- AREA SERVIS: LIST ANTRIAN + FORM -->
+            <div id="area-servis" class="flex-1 flex flex-col min-h-0">
+                <div class="flex justify-between items-center mb-2 flex-shrink-0">
                     <h3 class="font-black text-sm text-red-600">DAFTAR ANTRIAN SERVIS</h3>
                     <button onclick="toggleModal('antrian-modal')" class="bg-red-600 hover:bg-red-700 btn-press text-white px-3 py-1.5 rounded-lg text-xs font-bold">+ Tambah Antrian</button>
                 </div>
-                <div id="list-antrian" class="space-y-2 max-h-96 overflow-y-auto"></div>
-                <div id="form-servis-detail" class="hidden mt-3 border-t pt-3"></div>
+                <div id="list-antrian" class="space-y-2 flex-1 overflow-y-auto mb-3"></div>
+                <div id="form-servis-detail" class="hidden border-t pt-3 flex-shrink-0"></div>
             </div>
 
-            <!-- AREA PART: FORM LANGSUNG -->
-            <div id="area-part" class="hidden space-y-3">
-                 <h3 class="font-black text-sm text-emerald-600">FORM JUAL LANGSUNG</h3>
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-black text-gray-500 mb-1">NAMA PEMBELI (OPSIONAL)</label>
-                        <input type="text" id="input-pembeli" placeholder="Contoh: Pak Budi" class="w-full border-gray-300 bg-emerald-50/30 rounded-lg p-2.5 text-sm outline-none">
+            <!-- AREA PART: FORM LANGSUNG FULL TINGGI -->
+            <div id="area-part" class="hidden flex-1 flex flex-col">
+                 <h3 class="font-black text-sm text-emerald-600 flex-shrink-0 mb-3">FORM JUAL LANGSUNG</h3>
+                 <div>
+                    <label class="block text-xs font-black text-gray-500 mb-1">NAMA PEMBELI (OPSIONAL)</label>
+                    <input type="text" id="input-pembeli" placeholder="Contoh: Pak Budi" class="w-full border-gray-300 bg-emerald-50/30 rounded-lg p-2.5 text-sm outline-none">
+                </div>
+            </div>
+
+            <!-- INPUT MANUAL SELALU MUNCUL DI BAWAH -->
+            <div id="input-manual-part" class="mt-auto pt-3 border-t">
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-2">
+                        <label class="block text-xs font-black text-gray-500 mb-1">CARI PRODUK</label>
+                        <input type="text" id="input-produk-search" list="list-produk" placeholder="Ketik nama part..." class="w-full border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <datalist id="list-produk"></datalist>
                     </div>
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="col-span-2">
-                            <label class="block text-xs font-black text-gray-500 mb-1">CARI PRODUK</label>
-                            <input type="text" id="input-produk-search" list="list-produk" placeholder="Ketik nama part..." class="w-full border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-                            <datalist id="list-produk"></datalist>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-black text-gray-500 mb-1">QTY</label>
-                            <input type="number" id="input-qty" value="1" min="1" class="w-full border-gray-300 rounded-lg p-2.5 text-sm text-center outline-none">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-black text-gray-500 mb-1">QTY</label>
+                        <input type="number" id="input-qty" value="1" min="1" class="w-full border-gray-300 rounded-lg p-2.5 text-sm text-center outline-none">
                     </div>
                 </div>
-                <button id="btn-tambah" onclick="tambahKeBilling()" class="btn-press w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-lg text-white font-black py-3 rounded-xl text-sm flex justify-center items-center gap-2">➕ TAMBAH KE KASIR <span class="bg-white/20 px-1.5 rounded text-">Ctrl + Enter</span></button>
+                <button id="btn-tambah" onclick="tambahKeBilling()" class="btn-press w-full mt-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-lg text-white font-black py-3 rounded-xl text-sm flex justify-center items-center gap-2">➕ TAMBAH KE KASIR <span class="bg-white/20 px-1.5 rounded text-">Ctrl + Enter</span></button>
             </div>
         </main>
 
-        <!-- SIDE KAN 30%: KASIR PANEL -->
-        <aside class="col-span-3 bg-slate-900 text-white rounded-xl shadow-md p-4 flex-col justify-between border-slate-800">
-            <div>
-                <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-3">
+        <!-- SIDE KANAN 30%: KASIR PANEL FULL TINGGI -->
+        <aside class="col-span-12 lg:col-span-4 bg-slate-900 text-white rounded-xl shadow-md p-4 flex flex-col justify-between border-slate-800">
+            <div class="flex-1 flex flex-col min-h-0">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-3 flex-shrink-0">
                     <h2 class="font-black text-md tracking-wide text-emerald-400">🛒 BILLING</h2>
                     <span id="billing-type" class="text- bg-red-900/50 text-red-300 px-2.5 py-1 rounded-full border-red-700 font-bold">SERVIS</span>
                 </div>
-                <div id="cart-items" class="space-y-2 min-h-[250px] max-h-[350px] overflow-y-auto pr-1"></div>
+                <div id="cart-items" class="space-y-2 flex-1 overflow-y-auto pr-1"></div>
             </div>
-            <div class="border-t border-slate-700 pt-3 mt-3 space-y-3">
+            <div class="border-t border-slate-700 pt-3 mt-3 space-y-3 flex-shrink-0">
                 <div class="flex justify-between items-center"><span class="text-sm font-bold text-slate-400">TOTAL:</span><span id="cart-total" class="text-2xl font-black text-emerald-400">Rp 0</span></div>
                 <div><label class="block text- font-bold text-slate-400 mb-2">BAYAR</label><div class="grid grid-cols-3 gap-2"><button onclick="setPayment('Tunai')" class="btn-pay btn-press bg-slate-800 border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg">💵 Tunai</button><button onclick="setPayment('QRIS')" class="btn-pay btn-press bg-slate-800 border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg">📱 QRIS</button><button onclick="setPayment('Debit')" class="btn-pay btn-press bg-slate-800 border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg">💳 Debit</button></div></div>
                 <button onclick="prosesCheckout()" class="btn-press w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 shadow-xl text-slate-950 font-black py-3.5 rounded-xl text-sm flex justify-center items-center gap-2">🟩 SELESAI & CETAK <span class="bg-black/20 px-1.5 rounded text-">Ctrl + P</span></button>
@@ -91,7 +94,7 @@
         </aside>
     </div>
 
-    <!-- SISA MODAL SAMA SEPERTI SEBELUMNYA -->
+    <!-- MODAL SAMA -->
     <div id="antrian-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-sm p-5"><h3 class="font-black mb-3 text-red-600">+ TAMBAH ANTRIAN SERVIS</h3><div class="space-y-2"><input type="text" id="input-nopol-baru" placeholder="Nopol: D 1234 AB" class="w-full border p-2.5 rounded-lg text-sm uppercase"><input type="text" id="input-motor-baru" placeholder="Motor: Honda Beat" class="w-full border p-2.5 rounded-lg text-sm"></div><button onclick="tambahAntrian()" class="w-full bg-red-600 hover:bg-red-700 btn-press text-white py-2 rounded-lg font-bold text-sm mt-3">Masukkan Antrian</button><button onclick="toggleModal('antrian-modal')" class="w-full bg-gray-200 hover:bg-gray-300 btn-press py-2 rounded-lg font-bold text-xs mt-2">Batal</button></div>
     </div>
@@ -116,26 +119,52 @@
         window.onload = () => { refreshDatalist(); renderCart(); renderMekanik(); loadSetting(); renderAntrian(); };
         document.addEventListener('keydown', (e) => { if(e.key === 'F2') { e.preventDefault(); setMode('servis'); } if(e.key === 'F3') { e.preventDefault(); setMode('part'); } if(e.key === 'F4') { e.preventDefault(); toggleModal('settings-modal'); } if(e.key === 'F5') { e.preventDefault(); toggleModal('input-modal'); } if(e.ctrlKey && e.key === 'Enter') { e.preventDefault(); tambahKeBilling(); } if(e.ctrlKey && e.key === 'p') { e.preventDefault(); prosesCheckout(); } });
 
-        function setMode(mode) { currentMode = mode; cart = []; selectedAntrian = null; renderCart(); renderAntrian(); document.getElementById('form-servis-detail').classList.add('hidden');
-            const tabS = document.getElementById('tab-servis'); const tabP = document.getElementById('tab-part');
-            if(mode === 'servis') { document.getElementById('area-servis').classList.remove('hidden'); document.getElementById('area-part').classList.add('hidden'); tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg"; tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"; document.getElementById('billing-type').innerText = "SERVIS"; }
-            else { document.getElementById('area-servis').classList.add('hidden'); document.getElementById('area-part').classList.remove('hidden'); tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-emerald-600 text-white shadow-lg"; tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"; document.getElementById('billing-type').innerText = "DIRECT"; }
+        function setMode(mode) {
+            currentMode = mode; cart = []; selectedAntrian = null; renderCart(); renderAntrian();
+            document.getElementById('form-servis-detail').classList.add('hidden');
+            const tabS = document.getElementById('tab-servis'); const tabP = document.getElementById('tab-part'); const btn = document.getElementById('btn-tambah');
+            if(mode === 'servis') {
+                document.getElementById('area-servis').classList.remove('hidden'); document.getElementById('area-part').classList.add('hidden');
+                tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg";
+                tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800";
+                document.getElementById('billing-type').innerText = "SERVIS";
+                btn.className = "btn-press w-full mt-3 bg-red-600 hover:bg-red-700 active:bg-red-800 shadow-lg text-white font-black py-3 rounded-xl text-sm flex justify-center items-center gap-2";
+            }
+            else {
+                document.getElementById('area-servis').classList.add('hidden'); document.getElementById('area-part').classList.remove('hidden');
+                tabP.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-emerald-600 text-white shadow-lg";
+                tabS.className = "btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800";
+                document.getElementById('billing-type').innerText = "DIRECT";
+                btn.className = "btn-press w-full mt-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-lg text-white font-black py-3 rounded-xl text-sm flex justify-center items-center gap-2";
+            }
         }
         function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
         function openTab(id) { document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('border-blue-600','text-blue-600')); event.target.classList.add('border-blue-600','text-blue-600'); }
         function tambahAntrian() { const nopol = document.getElementById('input-nopol-baru').value.toUpperCase(); const motor = document.getElementById('input-motor-baru').value; if(!nopol ||!motor) return alert('Nopol dan Motor wajib!'); antrian.push({id: Date.now(), nopol, motor}); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); document.getElementById('input-nopol-baru').value=''; document.getElementById('input-motor-baru').value=''; toggleModal('antrian-modal'); }
         function renderAntrian() { const list = document.getElementById('list-antrian'); if(antrian.length === 0) { list.innerHTML = `<p class="text-center text-gray-400 text-xs py-10">Belum ada antrian. Klik + Tambah Antrian</p>`; } else { list.innerHTML = antrian.map(a => `<div onclick="pilihAntrian(${a.id})" class="antrian-item p-3 border rounded-lg cursor-pointer ${selectedAntrian?.id === a.id? 'antrian-active' : ''}"><p class="font-black text-red-600">${a.nopol}</p><p class="text-xs text-gray-600">${a.motor}</p></div>`).join(''); } }
-        function pilihAntrian(id) { selectedAntrian = antrian.find(a=>a.id===id); renderAntrian(); const form = document.getElementById('form-servis-detail'); form.classList.remove('hidden'); form.innerHTML = `<h4 class="font-black mb-2 text-sm">Proses: ${selectedAntrian.nopol} - ${selectedAntrian.motor}</h4><div class="grid grid-cols-2 gap-2"><div><label class="text-xs font-bold">Mekanik</label><select id="input-mekanik" class="w-full border p-2 rounded text-sm">${mekanik.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')}</select></div><div><label class="text-xs font-bold">Biaya Jasa</label><input type="number" id="input-jasa" value="0" class="w-full border p-2 rounded text-sm"></div></div><div class="mt-2 grid-cols-3 gap-2"><div class="col-span-2"><input type="text" id="input-produk-search" list="list-produk" placeholder="Tambah Part..." class="w-full border p-2 rounded text-sm"></div><div><input type="number" id="input-qty" value="1" class="w-full border p-2 rounded text-sm"></div></div><button onclick="tambahKeBilling()" class="btn-press w-full bg-red-600 hover:bg-red-700 active:bg-red-800 shadow-lg text-white font-black py-2.5 rounded-xl text-sm mt-2">➕ Tambah ke Billing</button>`; }
+        function pilihAntrian(id) { selectedAntrian = antrian.find(a=>a.id===id); renderAntrian(); const form = document.getElementById('form-servis-detail'); form.classList.remove('hidden'); form.innerHTML = `<h4 class="font-black mb-2 text-sm">Proses: ${selectedAntrian.nopol} - ${selectedAntrian.motor}</h4><div class="grid grid-cols-2 gap-2"><div><label class="text-xs font-bold">Mekanik</label><select id="input-mekanik" class="w-full border p-2 rounded text-sm">${mekanik.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('')}</select></div><div><label class="text-xs font-bold">Biaya Jasa</label><input type="number" id="input-jasa" value="0" class="w-full border p-2 rounded text-sm"></div></div>`; }
         function refreshDatalist() { const list = document.getElementById('list-produk'); list.innerHTML = ''; parts.forEach(p => { const opt = document.createElement('option'); opt.value = p.name; list.appendChild(opt); }); const last = document.getElementById('last-input-list'); if(last) last.innerHTML = '<b>Terakhir:</b><br>' + parts.slice(-3).reverse().map(p=>`${p.name} - Rp ${p.price.toLocaleString()}`).join('<br>'); }
-        function handleQuickAdd(loop) { const name = document.getElementById('input-part-name').value.trim(); const price = parseInt(document.getElementById('input-part-price').value); const stock = parseInt(document.getElementById('input-part-stock').value) || 0; if(!name ||!price) return alert('Nama dan Harga wajib!'); parts.push({name, price, stock}); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); if(loop) { document.getElementById('input-part-name').value=''; document.getElementById('input-part-price').value=''; document.getElementById('input-part-name').focus(); } else { toggleModal('input-modal'); }
+        function handleQuickAdd(loop) { const name = document.getElementById('input-part-name').value.trim(); const price = parseInt(document.getElementById('input-part-price').value); const stock = parseInt(document.getElementById('input-part-stock').value) || 0; if(!name ||!price) return alert('Nama dan Harga wajib!'); parts.push({name, price, stock}); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); if(loop) { document.getElementById('input-part-name').value=''; document.getElementById('input-part-price').value=''; document.getElementById('input-part-name').focus(); } else { toggleModal('input-modal'); } }
         function handleImportCSV() { document.getElementById('csv-input').value.split('\n').forEach(line => { const [name, price, stock] = line.split(','); if(name && price) parts.push({name: name.trim(), price: parseInt(price), stock: parseInt(stock)||0}); }); localStorage.setItem('otopos_parts', JSON.stringify(parts)); refreshDatalist(); alert('Import Berhasil!'); }
-        function tambahKeBilling() { const name = document.getElementById('input-produk-search').value; const item = parts.find(p => p.name === name); if(!item) return alert('Produk tidak ditemukan!'); const qty = parseInt(document.getElementById('input-qty').value) || 1; const existing = cart.find(c => c.name === name); if(existing) existing.qty += qty; else cart.push({...item, qty, type: 'part'}); if(currentMode === 'servis' && document.getElementById('input-jasa')) { const jasa = parseInt(document.getElementById('input-jasa').value) || 0; const jasaItem = cart.find(c => c.type === 'jasa'); if(jasa > 0) { if(jasaItem) jasaItem.price = jasa; else cart.push({type: 'jasa', name: 'Biaya Jasa', price: jasa, qty: 1}); } localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1; }
+
+        function tambahKeBilling() {
+            const name = document.getElementById('input-produk-search').value; const item = parts.find(p => p.name === name); if(!item) return alert('Produk tidak ditemukan!');
+            const qty = parseInt(document.getElementById('input-qty').value) || 1; const existing = cart.find(c => c.name === name);
+            if(existing) existing.qty += qty; else cart.push({...item, qty, type: 'part'});
+            if(currentMode === 'servis') {
+                if(!selectedAntrian) return alert('Pilih antrian dulu!');
+                const jasa = parseInt(document.getElementById('input-jasa').value) || 0; const jasaItem = cart.find(c => c.type === 'jasa');
+                if(jasa > 0) { if(jasaItem) jasaItem.price = jasa; else cart.push({type: 'jasa', name: 'Biaya Jasa', price: jasa, qty: 1}); }
+            }
+            localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1;
+        }
+
         function changeQty(index, delta) { cart[index].qty += delta; if (cart[index].qty <= 0) cart.splice(index, 1); localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); }
         function renderCart() { const container = document.getElementById('cart-items'); if(cart.length === 0) { container.innerHTML = `<p class="text-center text-slate-500 text-xs py-10">Keranjang kosong</p>`; } else { container.innerHTML = cart.map((i, idx) => `<div class="flex justify-between items-center bg-slate-800 p-2 rounded-lg text-xs"><div><p class="font-bold">${i.name}</p><p class="text-slate-400 text-">x${i.qty} @ Rp ${i.price.toLocaleString()}</p></div><div class="flex items-center gap-1"><button onclick="changeQty(${idx},-1)" class="px-1.5 bg-slate-700 rounded">-</button><span>${i.qty}</span><button onclick="changeQty(${idx},1)" class="px-1.5 bg-slate-700 rounded">+</button><button onclick="changeQty(${idx},-999)" class="text-red-400">✕</button></div></div>`).join(''); } const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); document.getElementById('cart-total').innerText = 'Rp ' + total.toLocaleString(); }
         function setPayment(method) { selectedPayment = method; document.querySelectorAll('.btn-pay').forEach(btn => { btn.className = btn.innerText.includes(method)? "btn-pay btn-press bg-slate-800 border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg" : "btn-pay btn-press bg-slate-800 border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg"; }); }
         function prosesCheckout() { if(cart.length === 0) return alert('Keranjang kosong!'); const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); if(currentMode === 'servis') { if(!selectedAntrian) return alert('Pilih antrian dulu!'); const namaMekanik = document.getElementById('input-mekanik').value; const jasa = cart.find(c=>c.type==='jasa')?.price || 0; const m = mekanik.find(x=>x.nama===namaMekanik); if(m){ m.servis++; m.pendapatan+=jasa; localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); } document.getElementById('print-info').innerHTML = `Nopol: ${selectedAntrian.nopol}<br>Motor: ${selectedAntrian.motor}<br>Mekanik: ${namaMekanik}`; antrian = antrian.filter(a=>a.id!== selectedAntrian.id); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); selectedAntrian = null; document.getElementById('form-servis-detail').classList.add('hidden'); } else { document.getElementById('print-info').innerHTML = `Pembeli: ${document.getElementById('input-pembeli').value || '-'}`; } document.getElementById('print-nama-toko').innerText = setting.nama; document.getElementById('print-alamat-toko').innerText = setting.alamat; document.getElementById('print-footer').innerText = setting.footer; document.getElementById('print-payment').innerText = selectedPayment; document.getElementById('print-items').innerHTML = cart.map(i => `${i.name} x${i.qty}<div class="text-right">Rp ${(i.price * i.qty).toLocaleString()}</div>`).join(''); document.getElementById('print-total').innerText = 'TOTAL: Rp ' + total.toLocaleString(); window.print(); cart = []; localStorage.removeItem('otopos_cart'); renderCart(); }
         function renderMekanik() { document.getElementById('list-mekanik').innerHTML = mekanik.map(m=>`<div class="flex justify-between bg-gray-100 p-1.5 rounded">${m.nama} | ${m.servis}x | Rp ${m.pendapatan.toLocaleString()}</div>`).join(''); }
-        function tambahMekanik() { const nama = prompt('Nama Mekanik Baru:'); if(nama){ mekanik.push({nama, servis:0, pendapatan:0}); localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); renderMekanik(); }
+        function tambahMekanik() { const nama = prompt('Nama Mekanik Baru:'); if(nama){ mekanik.push({nama, servis:0, pendapatan:0}); localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); renderMekanik(); } }
         function loadSetting() { document.getElementById('setting-nama').value=setting.nama; document.getElementById('setting-alamat').value=setting.alamat; document.getElementById('setting-telp').value=setting.telp; document.getElementById('setting-footer').value=setting.footer; document.getElementById('nama-toko-header').innerText=setting.nama; }
         function simpanSettingToko() { setting.nama=document.getElementById('setting-nama').value; setting.alamat=document.getElementById('setting-alamat').value; setting.telp=document.getElementById('setting-telp').value; setting.footer=document.getElementById('setting-footer').value; localStorage.setItem('otopos_setting_toko', JSON.stringify(setting)); loadSetting(); alert('Tersimpan!'); }
         function exportBackup() { const data = {parts, mekanik, setting}; const blob = new Blob([JSON.stringify(data)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'otopos-backup.json'; a.click(); }
