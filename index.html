@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTOPOS - PC Dashboard v2.51</title>
+    <title>OTOPOS - PC Dashboard v2.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print { body * { visibility: hidden; } #print-receipt, #print-receipt * { visibility: visible; } #print-receipt { position: absolute; left: 0; top: 0; width: 58mm; padding: 5px; } }
@@ -35,7 +35,7 @@
     <div class="grid grid-cols-12 gap-3 flex-1 min-h-0">
 
         <!-- SIDE KIRI 70%: AREA OPERASIONAL FULL TINGGI -->
-        <main class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-md border p-4 flex flex-col">
+        <main class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-md border p-4 flex-col">
             <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-xl border mb-3 flex-shrink-0">
                 <button id="tab-servis" onclick="setMode('servis')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 tab-active bg-red-600 text-white shadow-lg"><span class="bg-white/20 px-1.5 rounded text-">F2</span> MODE SERVIS</button>
                 <button id="tab-part" onclick="setMode('part')" class="btn-press py-2.5 rounded-lg font-black text-sm flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800"><span class="bg-gray-200 px-1.5 rounded text-">F3</span> DIRECT PART</button>
@@ -77,9 +77,9 @@
             </div>
         </main>
 
-        <!-- SIDE KANAN 30%: KASIR PANEL FULL TINGGI -->
-        <aside class="col-span-12 lg:col-span-4 bg-slate-900 text-white rounded-xl shadow-md p-4 flex flex-col justify-between border-slate-800">
-            <div class="flex-1 flex flex-col min-h-0">
+        <!-- SIDE KAN 30%: KASIR PANEL FULL TINGGI -->
+        <aside class="col-span-12 lg:col-span-4 bg-slate-900 text-white rounded-xl shadow-md p-4 flex-col justify-between border-slate-800">
+            <div class="flex-1 flex-col min-h-0">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-3 flex-shrink-0">
                     <h2 class="font-black text-md tracking-wide text-emerald-400">🛒 BILLING</h2>
                     <span id="billing-type" class="text- bg-red-900/50 text-red-300 px-2.5 py-1 rounded-full border-red-700 font-bold">SERVIS</span>
@@ -107,7 +107,11 @@
     <div id="print-receipt" class="hidden font-mono p-2 w- text-[9px]"><div class="text-center font-bold" id="print-nama-toko">BENGKEL HELICOPTER</div><div class="text-center" id="print-alamat-toko"></div><hr class="my-1 border-dashed"><div id="print-info"></div><hr class="my-1 border-dashed"><div id="print-items"></div><hr class="my-1 border-dashed"><div>Bayar: <span id="print-payment"></span></div><div class="font-bold text-right" id="print-total"></div><div class="text-center mt-1" id="print-footer">Terima Kasih 🙏</div></div>
 
     <script>
-        let cart = JSON.parse(localStorage.getItem('otopos_cart')) || [];
+        // PISAH KERANJANG BIAR GAK HILANG
+        let cartServis = JSON.parse(localStorage.getItem('otopos_cartServis')) || [];
+        let cartDirect = JSON.parse(localStorage.getItem('otopos_cartDirect')) || [];
+        let cart = cartServis; // default
+
         let parts = JSON.parse(localStorage.getItem('otopos_parts')) || [{name: 'Oli MPX 1', price: 55000, stock: 10}];
         let mekanik = JSON.parse(localStorage.getItem('otopos_mekanik')) || [{nama:'Wowo', servis:0, pendapatan:0}];
         let setting = JSON.parse(localStorage.getItem('otopos_setting_toko')) || {nama:'BENGKEL HELICOPTER', alamat:'', telp:'', footer:'Terima Kasih 🙏'};
@@ -117,11 +121,21 @@
         let selectedPayment = 'Tunai';
 
         window.onload = () => { refreshDatalist(); renderCart(); renderMekanik(); loadSetting(); renderAntrian(); };
+
         document.addEventListener('keydown', (e) => { if(e.key === 'F2') { e.preventDefault(); setMode('servis'); } if(e.key === 'F3') { e.preventDefault(); setMode('part'); } if(e.key === 'F4') { e.preventDefault(); toggleModal('settings-modal'); } if(e.key === 'F5') { e.preventDefault(); toggleModal('input-modal'); } if(e.ctrlKey && e.key === 'Enter') { e.preventDefault(); tambahKeBilling(); } if(e.ctrlKey && e.key === 'p') { e.preventDefault(); prosesCheckout(); } });
 
         function setMode(mode) {
-            currentMode = mode; cart = []; selectedAntrian = null; renderCart(); renderAntrian();
-            document.getElementById('form-servis-detail').classList.add('hidden');
+            // SIMPAN DULU KERANJANG LAMA
+            if(currentMode === 'servis') { cartServis = cart; localStorage.setItem('otopos_cartServis', JSON.stringify(cartServis)); }
+            else { cartDirect = cart; localStorage.setItem('otopos_cartDirect', JSON.stringify(cartDirect)); }
+
+            currentMode = mode;
+            selectedAntrian = null;
+
+            // LOAD KERANJANG BARU
+            if(mode === 'servis') { cart = cartServis; } else { cart = cartDirect; }
+
+            renderCart(); renderAntrian(); document.getElementById('form-servis-detail').classList.add('hidden');
             const tabS = document.getElementById('tab-servis'); const tabP = document.getElementById('tab-part'); const btn = document.getElementById('btn-tambah');
             if(mode === 'servis') {
                 document.getElementById('area-servis').classList.remove('hidden'); document.getElementById('area-part').classList.add('hidden');
@@ -156,13 +170,29 @@
                 const jasa = parseInt(document.getElementById('input-jasa').value) || 0; const jasaItem = cart.find(c => c.type === 'jasa');
                 if(jasa > 0) { if(jasaItem) jasaItem.price = jasa; else cart.push({type: 'jasa', name: 'Biaya Jasa', price: jasa, qty: 1}); }
             }
-            localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1;
+            simpanCart(); renderCart(); document.getElementById('input-produk-search').value = ''; document.getElementById('input-qty').value = 1;
         }
+        function simpanCart() { if(currentMode === 'servis') localStorage.setItem('otopos_cartServis', JSON.stringify(cart)); else localStorage.setItem('otopos_cartDirect', JSON.stringify(cart)); }
 
-        function changeQty(index, delta) { cart[index].qty += delta; if (cart[index].qty <= 0) cart.splice(index, 1); localStorage.setItem('otopos_cart', JSON.stringify(cart)); renderCart(); }
+        function changeQty(index, delta) { cart[index].qty += delta; if (cart[index].qty <= 0) cart.splice(index, 1); simpanCart(); renderCart(); }
         function renderCart() { const container = document.getElementById('cart-items'); if(cart.length === 0) { container.innerHTML = `<p class="text-center text-slate-500 text-xs py-10">Keranjang kosong</p>`; } else { container.innerHTML = cart.map((i, idx) => `<div class="flex justify-between items-center bg-slate-800 p-2 rounded-lg text-xs"><div><p class="font-bold">${i.name}</p><p class="text-slate-400 text-">x${i.qty} @ Rp ${i.price.toLocaleString()}</p></div><div class="flex items-center gap-1"><button onclick="changeQty(${idx},-1)" class="px-1.5 bg-slate-700 rounded">-</button><span>${i.qty}</span><button onclick="changeQty(${idx},1)" class="px-1.5 bg-slate-700 rounded">+</button><button onclick="changeQty(${idx},-999)" class="text-red-400">✕</button></div></div>`).join(''); } const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); document.getElementById('cart-total').innerText = 'Rp ' + total.toLocaleString(); }
         function setPayment(method) { selectedPayment = method; document.querySelectorAll('.btn-pay').forEach(btn => { btn.className = btn.innerText.includes(method)? "btn-pay btn-press bg-slate-800 border-emerald-500/50 text-emerald-400 text-xs font-bold py-2 rounded-lg" : "btn-pay btn-press bg-slate-800 border-slate-700 text-slate-400 text-xs font-bold py-2 rounded-lg"; }); }
-        function prosesCheckout() { if(cart.length === 0) return alert('Keranjang kosong!'); const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0); if(currentMode === 'servis') { if(!selectedAntrian) return alert('Pilih antrian dulu!'); const namaMekanik = document.getElementById('input-mekanik').value; const jasa = cart.find(c=>c.type==='jasa')?.price || 0; const m = mekanik.find(x=>x.nama===namaMekanik); if(m){ m.servis++; m.pendapatan+=jasa; localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); } document.getElementById('print-info').innerHTML = `Nopol: ${selectedAntrian.nopol}<br>Motor: ${selectedAntrian.motor}<br>Mekanik: ${namaMekanik}`; antrian = antrian.filter(a=>a.id!== selectedAntrian.id); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); selectedAntrian = null; document.getElementById('form-servis-detail').classList.add('hidden'); } else { document.getElementById('print-info').innerHTML = `Pembeli: ${document.getElementById('input-pembeli').value || '-'}`; } document.getElementById('print-nama-toko').innerText = setting.nama; document.getElementById('print-alamat-toko').innerText = setting.alamat; document.getElementById('print-footer').innerText = setting.footer; document.getElementById('print-payment').innerText = selectedPayment; document.getElementById('print-items').innerHTML = cart.map(i => `${i.name} x${i.qty}<div class="text-right">Rp ${(i.price * i.qty).toLocaleString()}</div>`).join(''); document.getElementById('print-total').innerText = 'TOTAL: Rp ' + total.toLocaleString(); window.print(); cart = []; localStorage.removeItem('otopos_cart'); renderCart(); }
+        function prosesCheckout() {
+            if(cart.length === 0) return alert('Keranjang kosong!'); const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+            if(currentMode === 'servis') {
+                if(!selectedAntrian) return alert('Pilih antrian dulu!');
+                const namaMekanik = document.getElementById('input-mekanik').value; const jasa = cart.find(c=>c.type==='jasa')?.price || 0;
+                const m = mekanik.find(x=>x.nama===namaMekanik); if(m){ m.servis++; m.pendapatan+=jasa; localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); }
+                document.getElementById('print-info').innerHTML = `Nopol: ${selectedAntrian.nopol}<br>Motor: ${selectedAntrian.motor}<br>Mekanik: ${namaMekanik}`;
+                antrian = antrian.filter(a=>a.id!== selectedAntrian.id); localStorage.setItem('otopos_antrian', JSON.stringify(antrian)); renderAntrian(); selectedAntrian = null; document.getElementById('form-servis-detail').classList.add('hidden');
+                cartServis = []; localStorage.setItem('otopos_cartServis', JSON.stringify(cartServis));
+            } else {
+                document.getElementById('print-info').innerHTML = `Pembeli: ${document.getElementById('input-pembeli').value || '-'}`;
+                cartDirect = []; localStorage.setItem('otopos_cartDirect', JSON.stringify(cartDirect));
+            }
+            document.getElementById('print-nama-toko').innerText = setting.nama; document.getElementById('print-alamat-toko').innerText = setting.alamat; document.getElementById('print-footer').innerText = setting.footer; document.getElementById('print-payment').innerText = selectedPayment; document.getElementById('print-items').innerHTML = cart.map(i => `${i.name} x${i.qty}<div class="text-right">Rp ${(i.price * i.qty).toLocaleString()}</div>`).join(''); document.getElementById('print-total').innerText = 'TOTAL: Rp ' + total.toLocaleString(); window.print();
+            cart = []; simpanCart(); renderCart();
+        }
         function renderMekanik() { document.getElementById('list-mekanik').innerHTML = mekanik.map(m=>`<div class="flex justify-between bg-gray-100 p-1.5 rounded">${m.nama} | ${m.servis}x | Rp ${m.pendapatan.toLocaleString()}</div>`).join(''); }
         function tambahMekanik() { const nama = prompt('Nama Mekanik Baru:'); if(nama){ mekanik.push({nama, servis:0, pendapatan:0}); localStorage.setItem('otopos_mekanik', JSON.stringify(mekanik)); renderMekanik(); } }
         function loadSetting() { document.getElementById('setting-nama').value=setting.nama; document.getElementById('setting-alamat').value=setting.alamat; document.getElementById('setting-telp').value=setting.telp; document.getElementById('setting-footer').value=setting.footer; document.getElementById('nama-toko-header').innerText=setting.nama; }
